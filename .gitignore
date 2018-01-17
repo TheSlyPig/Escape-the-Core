@@ -23,7 +23,6 @@ config/initializers/secret_token.rb
 .env
 
 ## Environment normalization:
-/.bundle
 /vendor/bundle
 
 # these should all be checked in to normalize the environment:
@@ -42,3 +41,5 @@ bower.json
 
 # Ignore Byebug command history file.
 .byebug_history
+
+.DS_Store

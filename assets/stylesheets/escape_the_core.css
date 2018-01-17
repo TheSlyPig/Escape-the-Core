@@ -1,0 +1,16 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#game {
+  border: 1px solid black;
+  margin-top: auto;
+  height: 70vh;
+  min-height: 500px;
+  min-width: 500px;
+  background-position: center;
+  position: relative;
+  margin-top: 100px;
+}
