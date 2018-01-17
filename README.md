@@ -20,11 +20,11 @@ Inspired by Terry Cavanagh's Hexagon - https://terrycavanaghgames.com/hexagon/
 
 This project will use vanilla JS, HTML, and CSS, along with the Canvas library.
 
-##Wireframe
+## Wireframe
 
 ![Escape-the-Core](https://i.imgur.com/XM42EWZ.png)
 
-##Implementation Timeline
+## Implementation Timeline
 
 Day 1: Features 1 - 3
 
