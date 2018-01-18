@@ -75,7 +75,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 window.leftPressed = false;
 window.rightPressed = false;
 
-document.addEventListener('DOMContentLoaded', ()=> {
+const menuBgm = new Audio('./assets/audio/Mangetsu.mp3');
+menuBgm.addEventListener('ended', function () {
+  this.currentTime = 0;
+  this.play();
+}, false);
+
+menuBgm.play();
+
+const bgm = new Audio('./assets/audio/Xeleuiem.mp3');
+bgm.addEventListener('ended', function () {
+  this.currentTime = 0;
+  this.play();
+}, false);
+
+const hitSound = new Audio('./assets/audio/hitSound.mp3');
+
+document.addEventListener('DOMContentLoaded', () => {
   const gameCanvas = document.getElementById('game');
   gameCanvas.height = 500;
   gameCanvas.width = 500;
@@ -86,6 +102,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
     gameCanvas,
     gameCanvas.width,
     gameCanvas.height,
+    bgm,
+    hitSound
   );
 
   window.addEventListener('keydown', checkKeyPressed, false);
@@ -100,13 +118,27 @@ document.addEventListener('DOMContentLoaded', ()=> {
         window.rightPressed = true;
         break;
       case 32:
-        game.begin();
+        if (game.gameActive === false) {
+          game.gameActive = true;
+          menuBgm.pause();
+          bgm.play();
+          game.begin();
+        }
+
         break;
-      case 84:
-        if (snd.paused) {
-          snd.play();
+      case 77:
+        if (game.gameActive === true) {
+          if (bgm.paused) {
+            bgm.play();
+          } else {
+            bgm.pause();
+          }
         } else {
-          snd.pause();
+          if (menuBgm.paused) {
+            menuBgm.play();
+          } else {
+            menuBgm.pause();
+          }
         }
     }
   }
@@ -133,19 +165,29 @@ document.addEventListener('DOMContentLoaded', ()=> {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__line_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__center_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__player_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_line_circle_collision__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_line_circle_collision__);
+
 
 
 
 
 class Game {
-  constructor(ctx, gameCanvas, xDim, yDim) {
+  constructor(ctx, gameCanvas, xDim, yDim, bgm, hitSound) {
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
     this.xDim = xDim;
     this.yDim = yDim;
+    this.bgm = bgm;
+    this.hitSound = hitSound;
+
+    this.gameActive = false;
 
     this.lines = [];
     this.lines2 = [];
+    this.frames;
+    this.color = 'blue';
+
     this.center = new __WEBPACK_IMPORTED_MODULE_1__center_js__["a" /* default */](ctx, gameCanvas);
     this.player = new __WEBPACK_IMPORTED_MODULE_2__player_js__["a" /* default */](ctx, gameCanvas);
     this.difficultyModifier = 1;
@@ -165,39 +207,51 @@ class Game {
 
   begin() {
     const animateCallback = () => {
-      this.moveLines();
       this.render(this.ctx);
-      requestAnimationFrame(animateCallback);
+      this.frames = requestAnimationFrame(animateCallback);
     };
 
-    animateCallback();
+    if (this.gameActive === true) {
+      animateCallback();
+    } else {
+      cancelAnimationFrame(frames);
+    }
   };
 
+  end() {
+    this.color = 'red';
+    this.hitSound.play();
+    this.bgm.pause();
+    this.gameActive = false;
+    cancelAnimationFrame(this.frames);
+  }
+
   choosePattern(ctx) {
-    let allLines = [
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, 'red'),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, 'red'),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, 'red'),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 4, 'red'),
-                ];
-    let allDiagLines = [
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, 'red'),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, 'red'),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, 'red'),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, 'red'),
-                ];
-    return Math.floor(Math.random() * 3) === 1 ? allLines : allDiagLines;
+    // let allLines = [
+    //             new Line(ctx, this.gameCanvas, 1, this.color),
+    //             new Line(ctx, this.gameCanvas, 2, this.color),
+    //             new Line(ctx, this.gameCanvas, 3, this.color),
+    //             new Line(ctx, this.gameCanvas, 4, this.color),
+    //             ];
+    // let allDiagLines = [
+    //             new Line(ctx, this.gameCanvas, 5, this.color),
+    //             new Line(ctx, this.gameCanvas, 6, this.color),
+    //             new Line(ctx, this.gameCanvas, 7, this.color),
+    //             new Line(ctx, this.gameCanvas, 8, this.color),
+    //             ];
+    // return Math.floor(Math.random() * 3) === 1 ? allLines : allDiagLines;
+    return [new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, this.color)];
   }
 
   makePatterns(ctx) {
     let chosenLines = this.choosePattern(ctx);
     if (this.interval > 74) {
       let randNum = Math.floor(Math.random() * chosenLines.length);
-      if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
-        chosenLines.splice((randNum + Math.floor((Math.random() * 3) + 1)) % 4, 1);
-      }
-
-      chosenLines.splice(randNum, 1);
+      // if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
+      //   chosenLines.splice((randNum + Math.floor((Math.random() * 3) + 1)) % 4, 1);
+      // }
+      //
+      // chosenLines.splice(randNum, 1);
       this.lines = chosenLines;
       this.interval = 0;
     } else {
@@ -207,11 +261,11 @@ class Game {
     let chosenLines2 = this.choosePattern(ctx);
     if (this.interval2 > 74) {
       let randNum2 = Math.floor(Math.random() * chosenLines2.length);
-      if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
-        chosenLines2.splice((randNum2 + Math.floor((Math.random() * 3) + 1)) % 4, 1);
-      }
-
-      chosenLines2.splice(randNum2, 1);
+      // if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
+      //   chosenLines2.splice((randNum2 + Math.floor((Math.random() * 3) + 1)) % 4, 1);
+      // }
+      //
+      // chosenLines2.splice(randNum2, 1);
       if (chosenLines2 != chosenLines) this.lines2 = chosenLines2;
       this.interval2 = 0;
     } else {
@@ -221,27 +275,44 @@ class Game {
   }
 
   checkCollision() {
-    this.lines.forEach(line => {
-      if (line.x < this.player.ball.x + 8  && line.x + line.width  > this.player.ball.x &&
-        line.y < this.player.ball.y + 8 && line.y + line.height > this.player.ball.y) {
-
+    let circle = [this.player.ball.x, this.player.ball.y];
+    let radius = this.player.ball.radius;
+    this.lines.forEach((line) => {
+      let a = line.startPoint;
+      let b = line.endPoint;
+      let hit = __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default()(a, b, circle, radius);
+      if (hit === true) {
+        this.end();
+      }
+    });
+    this.lines2.forEach((line) => {
+      let a = line.startPoint;
+      let b = line.endPoint;
+      let hit = __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default()(a, b, circle, radius);
+      if (hit === true) {
+        this.end();
       }
     });
   }
 
   render(ctx) {
-    this.makePatterns(ctx);
+    if (this.gameActive === true) {
+      this.makePatterns(ctx);
 
-    this.checkCollision();
-
-    this.player.render(ctx);
-    this.center.render(ctx);
-    this.lines.forEach((line) => {
-      line.render(ctx);
-    });
-    this.lines2.forEach((line) => {
-      line.render(ctx);
-    });
+      this.checkCollision();
+      ctx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+      this.moveLines();
+      this.player.render(ctx);
+      this.center.render(ctx);
+      this.lines.forEach((line) => {
+        line.render(ctx);
+      });
+      // this.lines2.forEach((line) => {
+      //   line.render(ctx);
+      // });
+    } else {
+      ctx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+    }
   };
 }
 
@@ -260,30 +331,33 @@ class Line {
     this.color = color;
     this.x = 0;
     this.y = 0;
-    this.lineWidth = 500;
-    this.lineWidthDiag = 627;
+    this.halfWidth = this.gameCanvas.width / 2;
+    this.halfHeight = this.gameCanvas.height / 2;
+    this.fullWidth = this.gameCanvas.width;
+    this.fullHeight = this.gameCanvas.height;
+
+    this.lineWidth = 10;
     this.type = type;
     this.handleType(type);
     this.sizeScaler = 5;
+    this.sizeScaler = 0;
+    this.startPoint = [0, 0];
+    this.endPoint = [0, 0];
   }
 
   handleType(type) {
     if (type === 1) {
-      this.x = 0;
-      this.y = -14;
-      this.lineWidth = this.lineWidthDiag;
+      this.x = -200;
+      this.y = 0;
     } else if (type === 2) {
-      this.x = this.gameCanvas.height;
-      this.y = this.gameCanvas.width - 14;
-      this.lineWidth = this.lineWidthDiag;
+      this.x = this.gameCanvas.height + 200;
+      this.y = this.gameCanvas.width;
     } else if (type === 3) {
-      this.x = this.gameCanvas.width - 10;
-      this.y = -5;
-      this.lineWidth = this.lineWidthDiag;
+      this.x = (this.gameCanvas.width / 2);
+      this.y = -200;
     } else if (type === 4) {
-      this.x = 0;
-      this.y = this.gameCanvas.height - 15;
-      this.lineWidth = this.lineWidthDiag;
+      this.x = -200;
+      this.y = this.gameCanvas.height / 2;
     } else if (type === 5) {
       this.x = -8;
       this.y = (this.gameCanvas.height / 2) - 6;
@@ -313,20 +387,20 @@ class Line {
   closeIn() {
     if (this.type < 5) {
       if (this.type === 1) {
-        this.x = this.x + 3;
-        this.y = this.y + 3;
+        this.x = this.x + 5;
+        this.y = this.y + 5;
       } else if (this.type === 2) {
-        this.x = this.x - 3;
-        this.y = this.y - 3;
+        this.x = this.x - 5;
+        this.y = this.y - 5;
       } else if (this.type === 3) {
-        this.x = this.x - 3;
-        this.y = this.y + 3;
+        this.fullWidth = this.fullWidth - 5;
+        this.y = this.y + 5;
       } else if (this.type === 4) {
-        this.x = this.x + 3;
-        this.y = this.y - 3;
+        this.x = this.x + 5;
+        this.fullHeight = this.fullHeight - 5;
       }
 
-      this.sizeScaler = this.sizeScaler + .0677;
+      // this.sizeScaler = this.sizeScaler + .16;
     } else {
       if (this.type === 5) {
         this.x = this.x + 3;
@@ -342,7 +416,7 @@ class Line {
         this.y = this.y - 3;
       }
 
-      this.sizeScaler = this.sizeScaler + .0265;
+      // this.sizeScaler = this.sizeScaler + .0265;
     }
 
     this.lineWidth = this.lineWidth - this.sizeScaler;
@@ -352,17 +426,35 @@ class Line {
     ctx.beginPath();
     ctx.strokeStyle = this.color;
     ctx.lineWidth = this.lineWidth;
-    if (this.type === 1 || this.type === 2) {
+    if (this.type === 1) {
+      this.startPoint = [this.x, this.halfHeight];
+      ctx.moveTo(this.x, this.halfHeight);
+      this.endPoint = [this.halfWidth, this.y - 200];
+      ctx.lineTo(this.halfWidth, this.y - 200);
+    } else if (this.type === 2) {
+      this.startPoint = [this.x, this.halfHeight];
+      ctx.moveTo(this.x, this.halfHeight);
+      this.endPoint = [this.halfWidth, this.y + 200];
+      ctx.lineTo(this.halfWidth, this.y + 200);
+    } else if (this.type === 3) {
+      this.startPoint = [this.x, this.y];
       ctx.moveTo(this.x, this.y);
-      ctx.lineTo(this.x + 10, this.y + 10);
-    } else if (this.type === 3 || this.type === 4) {
-      ctx.moveTo(this.x + 20, this.y);
-      ctx.lineTo(this.x + 10, this.y + 10);
+      this.endPoint = [this.fullWidth + 200, this.halfHeight];
+      ctx.lineTo(this.fullWidth + 200, this.halfHeight);
+    } else if (this.type === 4) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.halfWidth, this.fullHeight + 200];
+      ctx.lineTo(this.halfWidth, this.fullHeight + 200);
     } else if (this.type === 5 || this.type === 6) {
+      this.startPoint = [this.x, this.y + 10];
       ctx.moveTo(this.x, this.y + 10);
+      this.endPoint = [this.x + 10, this.y + 10];
       ctx.lineTo(this.x + 10, this.y + 10);
     } else if (this.type === 7 || this.type === 8) {
+      this.startPoint = [this.x + 10, this.y];
       ctx.moveTo(this.x + 10, this.y);
+      this.endPoint = [this.x + 10, this.y + 10];
       ctx.lineTo(this.x + 10, this.y + 10);
     }
 
@@ -414,23 +506,23 @@ class Player {
     this.ball = { x: 0, y: 0, speed: 0 };
     this.ball.x = 0;
     this.ball.y = 0;
+    this.ball.radius = 8;
   }
 
   render(ctx) {
 
     if (window.rightPressed) {
-      this.ball.speed = .099;
+      this.ball.speed = .1;
     }
 
     if (window.leftPressed) {
-      this.ball.speed = -.099;
+      this.ball.speed = -.1;
     }
 
     if (!window.leftPressed && !window.rightPressed) {
       this.ball.speed = 0;
     }
 
-    ctx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
     ctx.strokeStyle = this.color;
 
     this.ball.x = this.circle.centerX + Math.cos(this.circle.angle) * this.circle.radius;
@@ -438,9 +530,9 @@ class Player {
 
     this.circle.angle += this.ball.speed;
 
-    ctx.fillStyle = 'darkblue';
+    ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.arc(this.ball.x, this.ball.y, 8, 0, Math.PI * 2, true);
+    ctx.arc(this.ball.x, this.ball.y, this.ball.radius, 0, Math.PI * 2, true);
     ctx.closePath();
     ctx.fill();
   }
@@ -448,6 +540,83 @@ class Player {
 
 /* harmony default export */ __webpack_exports__["a"] = (Player);
 
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var pointCircleCollide = __webpack_require__(6)
+
+var tmp = [0, 0]
+
+function lineCircleCollide(a, b, circle, radius, nearest) {
+    //check to see if start or end points lie within circle 
+    if (pointCircleCollide(a, circle, radius)) {
+        if (nearest) {
+            nearest[0] = a[0]
+            nearest[1] = a[1]
+        }
+        return true
+    } if (pointCircleCollide(b, circle, radius)) {
+        if (nearest) {
+            nearest[0] = b[0]
+            nearest[1] = b[1]
+        }
+        return true
+    }
+    
+    var x1 = a[0],
+        y1 = a[1],
+        x2 = b[0],
+        y2 = b[1],
+        cx = circle[0],
+        cy = circle[1]
+
+    //vector d
+    var dx = x2 - x1
+    var dy = y2 - y1
+    
+    //vector lc
+    var lcx = cx - x1
+    var lcy = cy - y1
+    
+    //project lc onto d, resulting in vector p
+    var dLen2 = dx * dx + dy * dy //len2 of d
+    var px = dx
+    var py = dy
+    if (dLen2 > 0) {
+        var dp = (lcx * dx + lcy * dy) / dLen2
+        px *= dp
+        py *= dp
+    }
+    
+    if (!nearest)
+        nearest = tmp
+    nearest[0] = x1 + px
+    nearest[1] = y1 + py
+    
+    //len2 of p
+    var pLen2 = px * px + py * py
+    
+    //check collision
+    return pointCircleCollide(nearest, circle, radius)
+            && pLen2 <= dLen2 && (px * dx + py * dy) >= 0
+}
+
+module.exports = lineCircleCollide
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+function pointCircleCollision(point, circle, r) {
+    if (r===0) return false
+    var dx = circle[0] - point[0]
+    var dy = circle[1] - point[1]
+    return dx * dx + dy * dy <= r * r
+}
+
+module.exports = pointCircleCollision
 
 /***/ })
 /******/ ]);
