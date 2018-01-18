@@ -227,31 +227,30 @@ class Game {
   }
 
   choosePattern(ctx) {
-    // let allLines = [
-    //             new Line(ctx, this.gameCanvas, 1, this.color),
-    //             new Line(ctx, this.gameCanvas, 2, this.color),
-    //             new Line(ctx, this.gameCanvas, 3, this.color),
-    //             new Line(ctx, this.gameCanvas, 4, this.color),
-    //             ];
-    // let allDiagLines = [
-    //             new Line(ctx, this.gameCanvas, 5, this.color),
-    //             new Line(ctx, this.gameCanvas, 6, this.color),
-    //             new Line(ctx, this.gameCanvas, 7, this.color),
-    //             new Line(ctx, this.gameCanvas, 8, this.color),
-    //             ];
-    // return Math.floor(Math.random() * 3) === 1 ? allLines : allDiagLines;
-    return [new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, this.color)];
+    let allDiagLines = [
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 4, this.color),
+                ];
+    let allLines = [
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, this.color),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color),
+                ];
+    return Math.floor(Math.random() * 3) === 1 ? allDiagLines : allLines;
   }
 
   makePatterns(ctx) {
     let chosenLines = this.choosePattern(ctx);
     if (this.interval > 74) {
       let randNum = Math.floor(Math.random() * chosenLines.length);
-      // if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
-      //   chosenLines.splice((randNum + Math.floor((Math.random() * 3) + 1)) % 4, 1);
-      // }
-      //
-      // chosenLines.splice(randNum, 1);
+      if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
+        chosenLines.splice((randNum + Math.floor((Math.random() * 3) + 1)) % 4, 1);
+      }
+
+      chosenLines.splice(randNum, 1);
       this.lines = chosenLines;
       this.interval = 0;
     } else {
@@ -261,12 +260,11 @@ class Game {
     let chosenLines2 = this.choosePattern(ctx);
     if (this.interval2 > 74) {
       let randNum2 = Math.floor(Math.random() * chosenLines2.length);
-      // if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
-      //   chosenLines2.splice((randNum2 + Math.floor((Math.random() * 3) + 1)) % 4, 1);
-      // }
-      //
-      // chosenLines2.splice(randNum2, 1);
-      if (chosenLines2 != chosenLines) this.lines2 = chosenLines2;
+      if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
+        chosenLines2.splice((randNum2 + Math.floor((Math.random() * 3) + 1)) % 4, 1);
+      }
+      chosenLines2.splice(randNum2, 1);
+      this.lines2 = chosenLines2;
       this.interval2 = 0;
     } else {
       this.interval2 += 1;
@@ -307,9 +305,9 @@ class Game {
       this.lines.forEach((line) => {
         line.render(ctx);
       });
-      // this.lines2.forEach((line) => {
-      //   line.render(ctx);
-      // });
+      this.lines2.forEach((line) => {
+        line.render(ctx);
+      });
     } else {
       ctx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
     }
@@ -359,16 +357,16 @@ class Line {
       this.x = -200;
       this.y = this.gameCanvas.height / 2;
     } else if (type === 5) {
-      this.x = -8;
-      this.y = (this.gameCanvas.height / 2) - 6;
+      this.x = 0;
+      this.y = 0;
     } else if (type === 6) {
-      this.x = this.gameCanvas.width - 8;
-      this.y = (this.gameCanvas.height / 2) - 6;
+      this.x = this.gameCanvas.width;
+      this.y = 0;
     } else if (type === 7) {
-      this.x = (this.gameCanvas.width / 2) - 10;
+      this.x = 0;
       this.y = 0;
     } else if (type === 8) {
-      this.x = (this.gameCanvas.width / 2) - 10;
+      this.x = 0;
       this.y = this.gameCanvas.height;
     }
 
@@ -404,16 +402,20 @@ class Line {
     } else {
       if (this.type === 5) {
         this.x = this.x + 3;
-        this.y = this.y;
+        this.y = this.y + 3;
+        this.fullHeight = this.fullHeight - 3;
       } else if (this.type === 6) {
         this.x = this.x - 3;
-        this.y = this.y;
-      } else if (this.type === 7) {
-        this.x = this.x;
         this.y = this.y + 3;
+        this.fullHeight = this.fullHeight - 3;
+      } else if (this.type === 7) {
+        this.x = this.x + 3;
+        this.y = this.y + 3;
+        this.fullWidth = this.fullWidth - 3;
       } else if (this.type === 8) {
-        this.x = this.x;
+        this.x = this.x + 3;
         this.y = this.y - 3;
+        this.fullWidth = this.fullWidth - 3;
       }
 
       // this.sizeScaler = this.sizeScaler + .0265;
@@ -446,16 +448,26 @@ class Line {
       ctx.moveTo(this.x, this.y);
       this.endPoint = [this.halfWidth, this.fullHeight + 200];
       ctx.lineTo(this.halfWidth, this.fullHeight + 200);
-    } else if (this.type === 5 || this.type === 6) {
-      this.startPoint = [this.x, this.y + 10];
-      ctx.moveTo(this.x, this.y + 10);
-      this.endPoint = [this.x + 10, this.y + 10];
-      ctx.lineTo(this.x + 10, this.y + 10);
-    } else if (this.type === 7 || this.type === 8) {
-      this.startPoint = [this.x + 10, this.y];
-      ctx.moveTo(this.x + 10, this.y);
-      this.endPoint = [this.x + 10, this.y + 10];
-      ctx.lineTo(this.x + 10, this.y + 10);
+    } else if (this.type === 5) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.x, this.fullHeight];
+      ctx.lineTo(this.x, this.fullHeight);
+    } else if (this.type === 6) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.x, this.fullHeight];
+      ctx.lineTo(this.x, this.fullHeight);
+    } else if (this.type === 7) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.fullWidth, this.y];
+      ctx.lineTo(this.fullWidth, this.y);
+    } else if (this.type === 8) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.fullWidth, this.y];
+      ctx.lineTo(this.fullWidth, this.y);
     }
 
     ctx.closePath();
