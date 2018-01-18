@@ -75,6 +75,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 window.leftPressed = false;
 window.rightPressed = false;
 
+let difficultyModifier = 1;
+let rotateSpeed = 98;
+let lineSpeed1 = 5;
+let lineSpeed2 = 3;
+let lineLifeTimer = 74;
+let ballSpeed = .1;
+
 const mainMenu = new Image();
 mainMenu.src = 'assets/images/MainMenu.png';
 
@@ -107,10 +114,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
     canvasContext,
     gameCanvas,
-    gameCanvas.width,
-    gameCanvas.height,
     bgm,
-    hitSound
+    hitSound,
+    lineSpeed1, //lineSpeeds
+    lineSpeed2,
+    difficultyModifier,
+    rotateSpeed,
+    lineLifeTimer,
+    ballSpeed
   );
 
   window.addEventListener('keydown', checkKeyPressed, false);
@@ -129,10 +140,14 @@ document.addEventListener('DOMContentLoaded', () => {
           game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
             canvasContext,
             gameCanvas,
-            gameCanvas.width,
-            gameCanvas.height,
             bgm,
-            hitSound
+            hitSound,
+            lineSpeed1, //lineSpeeds
+            lineSpeed2,
+            difficultyModifier,
+            rotateSpeed,
+            lineLifeTimer,
+            ballSpeed
           );
           game.gameActive = true;
           menuBgm.pause();
@@ -143,6 +158,39 @@ document.addEventListener('DOMContentLoaded', () => {
           menuBgm.pause();
           bgm.play();
           game.begin();
+        }
+
+        break;
+      case 49:
+        if (game.gameActive === false) {
+          difficultyModifier = 1;
+          rotateSpeed = 98;
+          lineSpeed1 = 5;
+          lineSpeed2 = 3;
+          lineLifeTimer = 74;
+          ballSpeed = .1;
+        }
+
+        break;
+      case 50:
+        if (game.gameActive === false) {
+          difficultyModifier = 2;
+          rotateSpeed = 70;
+          lineSpeed1 = 6;
+          lineSpeed2 = 4;
+          lineLifeTimer = 64;
+          ballSpeed = .14;
+        }
+
+        break;
+      case 51:
+        if (game.gameActive === false) {
+          difficultyModifier = 3;
+          rotateSpeed = 50;
+          lineSpeed1 = 6.8;
+          lineSpeed2 = 4.8;
+          lineLifeTimer = 54;
+          ballSpeed = .17;
         }
 
         break;
@@ -193,11 +241,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 class Game {
-  constructor(ctx, gameCanvas, xDim, yDim, bgm, hitSound) {
+  constructor(ctx, gameCanvas, bgm, hitSound, lineSpeed1, lineSpeed2, difficultyModifier, rotateSpeed, lineLifeTimer, ballSpeed) {
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
-    this.xDim = xDim;
-    this.yDim = yDim;
     this.bgm = bgm;
     this.hitSound = hitSound;
 
@@ -207,22 +253,26 @@ class Game {
     this.lines = [];
     this.lines2 = [];
     this.frames;
-    this.r = 250;
-    this.g = 150;
-    this.b = 50;
+
+    this.r = Math.floor(Math.random() * 250) + 6;
+    this.g = Math.floor(Math.random() * 250) + 6;
+    this.b = Math.floor(Math.random() * 250) + 6;
     this.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
 
     this.center = new __WEBPACK_IMPORTED_MODULE_1__center_js__["a" /* default */](ctx, gameCanvas);
-    this.player = new __WEBPACK_IMPORTED_MODULE_2__player_js__["a" /* default */](ctx, gameCanvas, this.color);
-    this.difficultyModifier = 1;
+    this.difficultyModifier = difficultyModifier;
 
     this.interval = 0;
-    this.interval2 = -37;
+    this.interval2 = -(lineLifeTimer / 2);
 
     this.rotateTimer = 130;
     this.rotateDir = 'left';
-    this.rotateSpeed = 90;
-
+    this.rotateSpeed = rotateSpeed;
+    this.lineSpeed1 = lineSpeed1;
+    this.lineSpeed2 = lineSpeed2;
+    this.lineLifeTimer = lineLifeTimer;
+    this.ballSpeed = ballSpeed;
+    this.player = new __WEBPACK_IMPORTED_MODULE_2__player_js__["a" /* default */](ctx, gameCanvas, this.color, this.ballSpeed);
 
     this.gameOverScreen = new Image();
     this.gameOverScreen.src = 'assets/images/GameOver.png';
@@ -264,23 +314,23 @@ class Game {
 
   choosePattern(ctx) {
     let allDiagLines = [
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 4, this.color),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color, this.lineSpeed1, this.lineSpeed2),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 4, this.color, this.lineSpeed1, this.lineSpeed2),
                 ];
     let allLines = [
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, this.color),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, this.color, this.lineSpeed1, this.lineSpeed2),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color, this.lineSpeed1, this.lineSpeed2),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color, this.lineSpeed1, this.lineSpeed2),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2),
                 ];
     return Math.floor(Math.random() * 3) === 1 ? allDiagLines : allLines;
   }
 
   makePatterns(ctx) {
     let chosenLines = this.choosePattern(ctx);
-    if (this.interval > 74) {
+    if (this.interval > this.lineLifeTimer) {
       let randNum = Math.floor(Math.random() * chosenLines.length);
       if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
         chosenLines.splice((randNum + Math.floor((Math.random() * 3) + 1)) % 4, 1);
@@ -294,7 +344,7 @@ class Game {
     }
 
     let chosenLines2 = this.choosePattern(ctx);
-    if (this.interval2 > 74) {
+    if (this.interval2 > this.lineLifeTimer) {
       let randNum2 = Math.floor(Math.random() * chosenLines2.length);
       if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
         chosenLines2.splice((randNum2 + Math.floor((Math.random() * 3) + 1)) % 4, 1);
@@ -350,9 +400,7 @@ class Game {
     this.b += Math.floor(Math.random() * 250) + 2;
     this.b = this.b % 256;
     if (this.b < 40) this.b = 40;
-
     this.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
-    this.player.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
   }
 
   render(ctx) {
@@ -395,7 +443,7 @@ class Game {
 
 "use strict";
 class Line {
-  constructor(ctx, gameCanvas, type, color) {
+  constructor(ctx, gameCanvas, type, color, lineSpeed1, lineSpeed2) {
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
     this.color = color;
@@ -405,6 +453,9 @@ class Line {
     this.halfHeight = this.gameCanvas.height / 2;
     this.fullWidth = this.gameCanvas.width;
     this.fullHeight = this.gameCanvas.height;
+
+    this.lineSpeed1 = lineSpeed1;
+    this.lineSpeed2 = lineSpeed2;
 
     this.lineWidth = 10;
     this.type = type;
@@ -455,36 +506,36 @@ class Line {
   closeIn() {
     if (this.type < 5) {
       if (this.type === 1) {
-        this.x = this.x + 5;
-        this.y = this.y + 5;
+        this.x = this.x + this.lineSpeed1;
+        this.y = this.y + this.lineSpeed1;
       } else if (this.type === 2) {
-        this.x = this.x - 5;
-        this.y = this.y - 5;
+        this.x = this.x - this.lineSpeed1;
+        this.y = this.y - this.lineSpeed1;
       } else if (this.type === 3) {
-        this.fullWidth = this.fullWidth - 5;
-        this.y = this.y + 5;
+        this.fullWidth = this.fullWidth - this.lineSpeed1;
+        this.y = this.y + this.lineSpeed1;
       } else if (this.type === 4) {
-        this.x = this.x + 5;
-        this.fullHeight = this.fullHeight - 5;
+        this.x = this.x + this.lineSpeed1;
+        this.fullHeight = this.fullHeight - this.lineSpeed1;
       }
 
     } else {
       if (this.type === 5) {
-        this.x = this.x + 3;
-        this.y = this.y + 3;
-        this.fullHeight = this.fullHeight - 3;
+        this.x = this.x + this.lineSpeed2;
+        this.y = this.y + this.lineSpeed2;
+        this.fullHeight = this.fullHeight - this.lineSpeed2;
       } else if (this.type === 6) {
-        this.x = this.x - 3;
-        this.y = this.y + 3;
-        this.fullHeight = this.fullHeight - 3;
+        this.x = this.x - this.lineSpeed2;
+        this.y = this.y + this.lineSpeed2;
+        this.fullHeight = this.fullHeight - this.lineSpeed2;
       } else if (this.type === 7) {
-        this.x = this.x + 3;
-        this.y = this.y + 3;
-        this.fullWidth = this.fullWidth - 3;
+        this.x = this.x + this.lineSpeed2;
+        this.y = this.y + this.lineSpeed2;
+        this.fullWidth = this.fullWidth - this.lineSpeed2;
       } else if (this.type === 8) {
-        this.x = this.x + 3;
-        this.y = this.y - 3;
-        this.fullWidth = this.fullWidth - 3;
+        this.x = this.x + this.lineSpeed2;
+        this.y = this.y - this.lineSpeed2;
+        this.fullWidth = this.fullWidth - this.lineSpeed2;
       }
 
     }
@@ -577,7 +628,7 @@ class Center {
 
 "use strict";
 class Player {
-  constructor(ctx, gameCanvas, color) {
+  constructor(ctx, gameCanvas, color, ballSpeed) {
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
     this.color = color;
@@ -591,16 +642,17 @@ class Player {
     this.ball.x = 0;
     this.ball.y = 0;
     this.ball.radius = 8;
+    this.ballSpeed = ballSpeed;
   }
 
   render(ctx) {
 
     if (window.rightPressed) {
-      this.ball.speed = .1;
+      this.ball.speed = this.ballSpeed;
     }
 
     if (window.leftPressed) {
-      this.ball.speed = -.1;
+      this.ball.speed = -(this.ballSpeed);
     }
 
     if (!window.leftPressed && !window.rightPressed) {
