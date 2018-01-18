@@ -151,7 +151,7 @@ class Game {
     this.difficultyModifier = 1;
 
     this.interval = 0;
-    this.interval2 = -40;
+    this.interval2 = -37;
   }
 
   moveLines() {
@@ -212,11 +212,12 @@ class Game {
       }
 
       chosenLines2.splice(randNum2, 1);
-      this.lines2 = chosenLines2;
+      if (chosenLines2 != chosenLines) this.lines2 = chosenLines2;
       this.interval2 = 0;
     } else {
       this.interval2 += 1;
     }
+
   }
 
   checkCollision() {
@@ -418,11 +419,11 @@ class Player {
   render(ctx) {
 
     if (window.rightPressed) {
-      this.ball.speed = .088;
+      this.ball.speed = .099;
     }
 
     if (window.leftPressed) {
-      this.ball.speed = -.088;
+      this.ball.speed = -.099;
     }
 
     if (!window.leftPressed && !window.rightPressed) {
