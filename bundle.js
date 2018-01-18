@@ -130,9 +130,9 @@ document.addEventListener('DOMContentLoaded', ()=> {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__line_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__center_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__player_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__line_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__center_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__player_js__ = __webpack_require__(4);
 
 
 
@@ -145,14 +145,20 @@ class Game {
     this.yDim = yDim;
 
     this.lines = [];
+    this.lines2 = [];
     this.center = new __WEBPACK_IMPORTED_MODULE_1__center_js__["a" /* default */](ctx, gameCanvas);
     this.player = new __WEBPACK_IMPORTED_MODULE_2__player_js__["a" /* default */](ctx, gameCanvas);
+    this.difficultyModifier = 1;
 
-    this.i = 0;
+    this.interval = 0;
+    this.interval2 = -40;
   }
 
   moveLines() {
     this.lines.forEach(line => {
+      line.closeIn();
+    });
+    this.lines2.forEach(line => {
       line.closeIn();
     });
   };
@@ -167,17 +173,72 @@ class Game {
     animateCallback();
   };
 
-  render(ctx) {
-    if (this.i > 75) {
-      this.lines = [new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, Math.floor((Math.random() * 8) + 1), 'red')];
-      this.i = 0;
+  choosePattern(ctx) {
+    let allLines = [
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, 'red'),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, 'red'),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, 'red'),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 4, 'red'),
+                ];
+    let allDiagLines = [
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, 'red'),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, 'red'),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, 'red'),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, 'red'),
+                ];
+    return Math.floor(Math.random() * 3) === 1 ? allLines : allDiagLines;
+  }
+
+  makePatterns(ctx) {
+    let chosenLines = this.choosePattern(ctx);
+    if (this.interval > 74) {
+      let randNum = Math.floor(Math.random() * chosenLines.length);
+      if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
+        chosenLines.splice((randNum + Math.floor((Math.random() * 3) + 1)) % 4, 1);
+      }
+
+      chosenLines.splice(randNum, 1);
+      this.lines = chosenLines;
+      this.interval = 0;
     } else {
-      this.i += 1;
+      this.interval += 1;
     }
+
+    let chosenLines2 = this.choosePattern(ctx);
+    if (this.interval2 > 74) {
+      let randNum2 = Math.floor(Math.random() * chosenLines2.length);
+      if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
+        chosenLines2.splice((randNum2 + Math.floor((Math.random() * 3) + 1)) % 4, 1);
+      }
+
+      chosenLines2.splice(randNum2, 1);
+      this.lines2 = chosenLines2;
+      this.interval2 = 0;
+    } else {
+      this.interval2 += 1;
+    }
+  }
+
+  checkCollision() {
+    this.lines.forEach(line => {
+      if (line.x < this.player.ball.x + 8  && line.x + line.width  > this.player.ball.x &&
+        line.y < this.player.ball.y + 8 && line.y + line.height > this.player.ball.y) {
+
+      }
+    });
+  }
+
+  render(ctx) {
+    this.makePatterns(ctx);
+
+    this.checkCollision();
 
     this.player.render(ctx);
     this.center.render(ctx);
     this.lines.forEach((line) => {
+      line.render(ctx);
+    });
+    this.lines2.forEach((line) => {
       line.render(ctx);
     });
   };
@@ -187,8 +248,7 @@ class Game {
 
 
 /***/ }),
-/* 2 */,
-/* 3 */
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -199,40 +259,46 @@ class Line {
     this.color = color;
     this.x = 0;
     this.y = 0;
-    this.lineWidth = 300;
+    this.lineWidth = 500;
+    this.lineWidthDiag = 627;
     this.type = type;
     this.handleType(type);
+    this.sizeScaler = 5;
   }
 
   handleType(type) {
     if (type === 1) {
       this.x = 0;
-      this.y = 0;
+      this.y = -14;
+      this.lineWidth = this.lineWidthDiag;
     } else if (type === 2) {
       this.x = this.gameCanvas.height;
-      this.y = this.gameCanvas.width;
+      this.y = this.gameCanvas.width - 14;
+      this.lineWidth = this.lineWidthDiag;
     } else if (type === 3) {
-      this.x = this.gameCanvas.width - 20;
-      this.y = 0;
+      this.x = this.gameCanvas.width - 10;
+      this.y = -5;
+      this.lineWidth = this.lineWidthDiag;
     } else if (type === 4) {
       this.x = 0;
-      this.y = this.gameCanvas.height - 20;
+      this.y = this.gameCanvas.height - 15;
+      this.lineWidth = this.lineWidthDiag;
     } else if (type === 5) {
-      this.x = 0;
-      this.y = (this.gameCanvas.height / 2) - 10;
+      this.x = -8;
+      this.y = (this.gameCanvas.height / 2) - 6;
     } else if (type === 6) {
-      this.x = this.gameCanvas.width;
-      this.y = (this.gameCanvas.height / 2) - 10;
+      this.x = this.gameCanvas.width - 8;
+      this.y = (this.gameCanvas.height / 2) - 6;
     } else if (type === 7) {
       this.x = (this.gameCanvas.width / 2) - 10;
       this.y = 0;
     } else if (type === 8) {
       this.x = (this.gameCanvas.width / 2) - 10;
-      this.y = this.gameCanvas.height
+      this.y = this.gameCanvas.height;
     }
 
   }
-  // 
+
   // randomColor() {
   //   const HEX_DIGITS = '0123456789ABCDEF';
   //   let color = '#';
@@ -244,32 +310,41 @@ class Line {
   // }
 
   closeIn() {
-    if (this.type === 1) {
-      this.x = this.x + 3;
-      this.y = this.y + 3;
-    } else if (this.type === 2) {
-      this.x = this.x - 3;
-      this.y = this.y - 3;
-    } else if (this.type === 3) {
-      this.x = this.x - 3;
-      this.y = this.y + 3;
-    } else if (this.type === 4) {
-      this.x = this.x + 3;
-      this.y = this.y - 3;
-    } else if (this.type === 5) {
-      this.x = this.x + 3;
-      this.y = this.y;
-    } else if (this.type === 6) {
-      this.x = this.x - 3;
-      this.y = this.y;
-    } else if (this.type === 7) {
-      this.x = this.x;
-      this.y = this.y + 3;
-    } else if (this.type === 8) {
-      this.x = this.x;
-      this.y = this.y - 3;
+    if (this.type < 5) {
+      if (this.type === 1) {
+        this.x = this.x + 3;
+        this.y = this.y + 3;
+      } else if (this.type === 2) {
+        this.x = this.x - 3;
+        this.y = this.y - 3;
+      } else if (this.type === 3) {
+        this.x = this.x - 3;
+        this.y = this.y + 3;
+      } else if (this.type === 4) {
+        this.x = this.x + 3;
+        this.y = this.y - 3;
+      }
+
+      this.sizeScaler = this.sizeScaler + .0677;
+    } else {
+      if (this.type === 5) {
+        this.x = this.x + 3;
+        this.y = this.y;
+      } else if (this.type === 6) {
+        this.x = this.x - 3;
+        this.y = this.y;
+      } else if (this.type === 7) {
+        this.x = this.x;
+        this.y = this.y + 3;
+      } else if (this.type === 8) {
+        this.x = this.x;
+        this.y = this.y - 3;
+      }
+
+      this.sizeScaler = this.sizeScaler + .0265;
     }
-    this.lineWidth = this.lineWidth - 3.2;
+
+    this.lineWidth = this.lineWidth - this.sizeScaler;
   }
 
   render(ctx) {
@@ -299,7 +374,7 @@ class Line {
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -314,7 +389,7 @@ class Center {
     let centerX = this.gameCanvas.width / 2;
     let centerY = this.gameCanvas.height / 2;
     ctx.beginPath();
-    ctx.arc(centerX, centerY, 42, 0, Math.PI * 2, false);
+    ctx.arc(centerX, centerY, 55, 0, Math.PI * 2, false);
     ctx.fillStyle = this.color;
     ctx.fill();
     ctx.closePath();
@@ -325,7 +400,7 @@ class Center {
 
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
