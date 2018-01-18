@@ -194,6 +194,7 @@ class Game {
 
     this.interval = 0;
     this.interval2 = -37;
+    this.rotateTimer = 200;
   }
 
   moveLines() {
@@ -206,6 +207,7 @@ class Game {
   };
 
   begin() {
+
     const animateCallback = () => {
       this.render(this.ctx);
       this.frames = requestAnimationFrame(animateCallback);
@@ -293,12 +295,28 @@ class Game {
     });
   }
 
+  rotate(ctx) {
+    let rotateDir = Math.floor(Math.random() * 3) === 1 ? 'left' : 'right';
+    let rotation = rotateDir === 'left' ? -60 : 60;
+    ctx.translate(this.gameCanvas.width / 2, this.gameCanvas.width / 2);
+    ctx.rotate(Math.PI / rotation);
+    ctx.translate(-this.gameCanvas.width / 2, -this.gameCanvas.width / 2);
+  }
+
   render(ctx) {
     if (this.gameActive === true) {
       this.makePatterns(ctx);
 
       this.checkCollision();
       ctx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+      if (this.rotateTimer < 1) {
+        this.rotate(ctx, flip);
+        this.rotateTimer = 200;
+      } else {
+        this.rotate(ctx);
+        this.rotateTimer -= 1;
+      }
+
       this.moveLines();
       this.player.render(ctx);
       this.center.render(ctx);
@@ -337,8 +355,6 @@ class Line {
     this.lineWidth = 10;
     this.type = type;
     this.handleType(type);
-    this.sizeScaler = 5;
-    this.sizeScaler = 0;
     this.startPoint = [0, 0];
     this.endPoint = [0, 0];
   }
@@ -398,7 +414,6 @@ class Line {
         this.fullHeight = this.fullHeight - 5;
       }
 
-      // this.sizeScaler = this.sizeScaler + .16;
     } else {
       if (this.type === 5) {
         this.x = this.x + 3;
@@ -418,10 +433,8 @@ class Line {
         this.fullWidth = this.fullWidth - 3;
       }
 
-      // this.sizeScaler = this.sizeScaler + .0265;
     }
 
-    this.lineWidth = this.lineWidth - this.sizeScaler;
   }
 
   render(ctx) {
