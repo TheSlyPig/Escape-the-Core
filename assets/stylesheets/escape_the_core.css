@@ -2,15 +2,34 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: Orbitron;
+  text-shadow: 2px 2px 1px rgba(150, 150, 150, 1);
+  background-color: black;
+  background-position: center;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 700px;
+}
+
+header {
+  font-size: 200%;
+  font-weight: bold;
+  display: block;
+  margin: 20px;
 }
 
 #game {
-  border: 1px solid black;
-  margin-top: auto;
+  /*border: 1px solid black;*/
+  background-color: black;
   height: 70vh;
   min-height: 500px;
   min-width: 500px;
   background-position: center;
   position: relative;
-  margin-top: 100px;
+  transform: scale(1.1);
 }

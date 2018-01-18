@@ -75,6 +75,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 window.leftPressed = false;
 window.rightPressed = false;
 
+const mainMenu = new Image();
+mainMenu.src = 'assets/images/MainMenu.png';
+
 const menuBgm = new Audio('./assets/audio/Mangetsu.mp3');
 menuBgm.addEventListener('ended', function () {
   this.currentTime = 0;
@@ -97,7 +100,11 @@ document.addEventListener('DOMContentLoaded', () => {
   gameCanvas.width = 500;
   const canvasContext = gameCanvas.getContext('2d');
 
-  const game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
+  mainMenu.onload = () => {
+    canvasContext.drawImage(mainMenu, 0, 0);
+  };
+
+  let game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
     canvasContext,
     gameCanvas,
     gameCanvas.width,
@@ -118,7 +125,20 @@ document.addEventListener('DOMContentLoaded', () => {
         window.rightPressed = true;
         break;
       case 32:
-        if (game.gameActive === false) {
+        if (game.gameOver === true) {
+          game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
+            canvasContext,
+            gameCanvas,
+            gameCanvas.width,
+            gameCanvas.height,
+            bgm,
+            hitSound
+          );
+          game.gameActive = true;
+          menuBgm.pause();
+          bgm.play();
+          game.begin();
+        } else if (game.gameActive === false) {
           game.gameActive = true;
           menuBgm.pause();
           bgm.play();
@@ -182,19 +202,30 @@ class Game {
     this.hitSound = hitSound;
 
     this.gameActive = false;
+    this.gameOver = false;
 
     this.lines = [];
     this.lines2 = [];
     this.frames;
-    this.color = 'blue';
+    this.r = 250;
+    this.g = 150;
+    this.b = 50;
+    this.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
 
     this.center = new __WEBPACK_IMPORTED_MODULE_1__center_js__["a" /* default */](ctx, gameCanvas);
-    this.player = new __WEBPACK_IMPORTED_MODULE_2__player_js__["a" /* default */](ctx, gameCanvas);
+    this.player = new __WEBPACK_IMPORTED_MODULE_2__player_js__["a" /* default */](ctx, gameCanvas, this.color);
     this.difficultyModifier = 1;
 
     this.interval = 0;
     this.interval2 = -37;
-    this.rotateTimer = 200;
+
+    this.rotateTimer = 130;
+    this.rotateDir = 'left';
+    this.rotateSpeed = 90;
+
+
+    this.gameOverScreen = new Image();
+    this.gameOverScreen.src = 'assets/images/GameOver.png';
   }
 
   moveLines() {
@@ -224,7 +255,10 @@ class Game {
     this.color = 'red';
     this.hitSound.play();
     this.bgm.pause();
+    this.bgm.currentTime = 0;
     this.gameActive = false;
+    this.gameOver = true;
+    this.ctx.resetTransform();
     cancelAnimationFrame(this.frames);
   }
 
@@ -265,6 +299,7 @@ class Game {
       if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
         chosenLines2.splice((randNum2 + Math.floor((Math.random() * 3) + 1)) % 4, 1);
       }
+
       chosenLines2.splice(randNum2, 1);
       this.lines2 = chosenLines2;
       this.interval2 = 0;
@@ -295,12 +330,29 @@ class Game {
     });
   }
 
-  rotate(ctx) {
-    let rotateDir = Math.floor(Math.random() * 3) === 1 ? 'left' : 'right';
-    let rotation = rotateDir === 'left' ? -60 : 60;
+  rotate(ctx, flip) {
+    if (flip === true) this.rotateDir = this.rotateDir === 'left' ? 'right' : 'left';
+    let rotation = this.rotateDir === 'left' ? -this.rotateSpeed : this.rotateSpeed;
     ctx.translate(this.gameCanvas.width / 2, this.gameCanvas.width / 2);
     ctx.rotate(Math.PI / rotation);
     ctx.translate(-this.gameCanvas.width / 2, -this.gameCanvas.width / 2);
+  }
+
+  setColor() {
+    this.r += Math.floor(Math.random() * 250) + 2;
+    this.r = this.r % 256;
+    if (this.r < 40) this.r = 40;
+
+    this.g += Math.floor(Math.random() * 250) + 2;
+    this.g = this.g % 256;
+    if (this.g < 40) this.g = 40;
+
+    this.b += Math.floor(Math.random() * 250) + 2;
+    this.b = this.b % 256;
+    if (this.b < 40) this.b = 40;
+
+    this.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
+    this.player.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
   }
 
   render(ctx) {
@@ -308,26 +360,28 @@ class Game {
       this.makePatterns(ctx);
 
       this.checkCollision();
-      ctx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+      ctx.clearRect(-700, -700, this.gameCanvas.width + 700, this.gameCanvas.height + 700);
       if (this.rotateTimer < 1) {
-        this.rotate(ctx, flip);
-        this.rotateTimer = 200;
+        this.rotate(ctx, true);
+        this.rotateTimer = Math.floor(Math.random() * 190) + 70;
       } else {
-        this.rotate(ctx);
-        this.rotateTimer -= 1;
+        this.rotate(ctx, false);
+        this.rotateTimer = this.rotateTimer - 1;
       }
+
+      this.setColor();
 
       this.moveLines();
       this.player.render(ctx);
-      this.center.render(ctx);
       this.lines.forEach((line) => {
         line.render(ctx);
       });
       this.lines2.forEach((line) => {
         line.render(ctx);
       });
+      this.center.render(ctx);
     } else {
-      ctx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+      this.ctx.drawImage(this.gameOverScreen, 0, 0);
     }
   };
 }
@@ -500,7 +554,7 @@ class Center {
   constructor(ctx, gameCanvas) {
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
-    this.color = 'blue';
+    this.color = 'darkgray';
   }
 
   render(ctx) {
@@ -523,11 +577,16 @@ class Center {
 
 "use strict";
 class Player {
-  constructor(ctx, gameCanvas) {
+  constructor(ctx, gameCanvas, color) {
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
-    this.color = 'cornflowerblue';
-    this.circle = { centerX: 250, centerY: 250, radius: 75, angle: 0 };
+    this.color = color;
+    this.circle = {
+      centerX: this.gameCanvas.width / 2,
+      centerY: this.gameCanvas.height / 2,
+      radius: 75,
+      angle: 0,
+    };
     this.ball = { x: 0, y: 0, speed: 0 };
     this.ball.x = 0;
     this.ball.y = 0;
