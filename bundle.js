@@ -137,6 +137,39 @@ function setBgm() {
 
 setBgm();
 
+const setDifficulty1 = function () {
+  window.difficultyLevel = 1;
+  difficultyModifier = 1;
+  setBgm();
+  rotateSpeed = 118;
+  lineSpeed1 = 4.1;
+  lineSpeed2 = 2.1;
+  lineLifeTimer = 108;
+  ballSpeed = .088;
+};
+
+const setDifficulty2 = function () {
+  window.difficultyLevel = 2;
+  difficultyModifier = 2;
+  setBgm();
+  rotateSpeed = 80;
+  lineSpeed1 = 5.25;
+  lineSpeed2 = 3.25;
+  lineLifeTimer = 74;
+  ballSpeed = .125;
+};
+
+const setDifficulty3 = function () {
+  window.difficultyLevel = 3;
+  difficultyModifier = 3;
+  setBgm();
+  rotateSpeed = 59;
+  lineSpeed1 = 6.2;
+  lineSpeed2 = 4.2;
+  lineLifeTimer = 65;
+  ballSpeed = .165;
+};
+
 const hitSound = new Audio('./assets/audio/hitSound.mp3');
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -232,34 +265,46 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case 37:
         window.leftPressed = true;
+        if (ui.shouldDrawMainMenu === true) {
+          if (window.difficultyLevel === 3) {
+            setDifficulty2();
+          } else if (window.difficultyLevel === 2) {
+            setDifficulty1();
+          }
+        }
+
         break;
       case 39:
         window.rightPressed = true;
+        if (ui.shouldDrawMainMenu === true) {
+          if (window.difficultyLevel === 1) {
+            if (ui.stage1Victory === true) {
+              setDifficulty2();
+            } else {
+              ui.stage3LockedDisplay = false;
+              ui.stage2LockedDisplay = true;
+            }
+          } else if (window.difficultyLevel === 2) {
+            if (ui.stage2Victory === true) {
+              setDifficulty3();
+            } else {
+              ui.stage2LockedDisplay = false;
+              ui.stage3LockedDisplay = true;
+            }
+          }
+        }
+
         break;
       case 49:
         if (ui.shouldDrawMainMenu === true) {
-          window.difficultyLevel = 1;
-          difficultyModifier = 1;
-          setBgm();
-          rotateSpeed = 118;
-          lineSpeed1 = 4.1;
-          lineSpeed2 = 2.1;
-          lineLifeTimer = 108;
-          ballSpeed = .088;
+          setDifficulty1();
         }
 
         break;
       case 50:
         if (ui.shouldDrawMainMenu === true) {
           if (ui.stage1Victory === true) {
-            window.difficultyLevel = 2;
-            difficultyModifier = 2;
-            setBgm();
-            rotateSpeed = 80;
-            lineSpeed1 = 5.25;
-            lineSpeed2 = 3.25;
-            lineLifeTimer = 74;
-            ballSpeed = .125;
+            setDifficulty2();
           } else {
             ui.stage3LockedDisplay = false;
             ui.stage2LockedDisplay = true;
@@ -270,14 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
       case 51:
         if (ui.shouldDrawMainMenu === true) {
           if (ui.stage2Victory === true) {
-            window.difficultyLevel = 3;
-            difficultyModifier = 3;
-            setBgm();
-            rotateSpeed = 59;
-            lineSpeed1 = 6.2;
-            lineSpeed2 = 4.2;
-            lineLifeTimer = 65;
-            ballSpeed = .165;
+            setDifficulty3();
           } else {
             ui.stage2LockedDisplay = false;
             ui.stage3LockedDisplay = true;
