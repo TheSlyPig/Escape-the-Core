@@ -76,11 +76,11 @@ window.leftPressed = false;
 window.rightPressed = false;
 
 let difficultyModifier = 1;
-let rotateSpeed = 98;
-let lineSpeed1 = 5;
-let lineSpeed2 = 3;
-let lineLifeTimer = 74;
-let ballSpeed = .1;
+let rotateSpeed = 118;
+let lineSpeed1 = 4.1;
+let lineSpeed2 = 2.1;
+let lineLifeTimer = 108;
+let ballSpeed = .088;
 
 const mainMenu = new Image();
 mainMenu.src = 'assets/images/MainMenu.png';
@@ -107,6 +107,10 @@ document.addEventListener('DOMContentLoaded', () => {
   gameCanvas.width = 500;
   const canvasContext = gameCanvas.getContext('2d');
 
+  const toolsCanvas = document.getElementById('tools');
+  toolsCanvas.height = 100;
+  toolsCanvas.width = 500;
+  const toolsCanvasContext = toolsCanvas.getContext('2d');
   mainMenu.onload = () => {
     canvasContext.drawImage(mainMenu, 0, 0);
   };
@@ -114,9 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
     canvasContext,
     gameCanvas,
+    toolsCanvas,
+    toolsCanvasContext,
     bgm,
     hitSound,
-    lineSpeed1, //lineSpeeds
+    lineSpeed1,
     lineSpeed2,
     difficultyModifier,
     rotateSpeed,
@@ -136,61 +142,56 @@ document.addEventListener('DOMContentLoaded', () => {
         window.rightPressed = true;
         break;
       case 32:
-        if (game.gameOver === true) {
-          game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
-            canvasContext,
-            gameCanvas,
-            bgm,
-            hitSound,
-            lineSpeed1, //lineSpeeds
-            lineSpeed2,
-            difficultyModifier,
-            rotateSpeed,
-            lineLifeTimer,
-            ballSpeed
-          );
-          game.gameActive = true;
-          menuBgm.pause();
-          bgm.play();
-          game.begin();
-        } else if (game.gameActive === false) {
-          game.gameActive = true;
-          menuBgm.pause();
-          bgm.play();
-          game.begin();
-        }
+        game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
+          canvasContext,
+          gameCanvas,
+          toolsCanvas,
+          toolsCanvasContext,
+          bgm,
+          hitSound,
+          lineSpeed1,
+          lineSpeed2,
+          difficultyModifier,
+          rotateSpeed,
+          lineLifeTimer,
+          ballSpeed
+        );
+        game.gameActive = true;
+        menuBgm.pause();
+        bgm.play();
+        game.begin();
 
         break;
       case 49:
         if (game.gameActive === false) {
           difficultyModifier = 1;
-          rotateSpeed = 98;
-          lineSpeed1 = 5;
-          lineSpeed2 = 3;
-          lineLifeTimer = 74;
-          ballSpeed = .1;
+          rotateSpeed = 118;
+          lineSpeed1 = 4.1;
+          lineSpeed2 = 2.1;
+          lineLifeTimer = 108;
+          ballSpeed = .088;
         }
 
         break;
       case 50:
         if (game.gameActive === false) {
           difficultyModifier = 2;
-          rotateSpeed = 70;
-          lineSpeed1 = 6;
-          lineSpeed2 = 4;
-          lineLifeTimer = 64;
-          ballSpeed = .14;
+          rotateSpeed = 75;
+          lineSpeed1 = 5.25;
+          lineSpeed2 = 3.25;
+          lineLifeTimer = 74;
+          ballSpeed = .125;
         }
 
         break;
       case 51:
         if (game.gameActive === false) {
           difficultyModifier = 3;
-          rotateSpeed = 50;
-          lineSpeed1 = 6.8;
-          lineSpeed2 = 4.8;
-          lineLifeTimer = 54;
-          ballSpeed = .17;
+          rotateSpeed = 55;
+          lineSpeed1 = 6.2;
+          lineSpeed2 = 4.2;
+          lineLifeTimer = 65;
+          ballSpeed = .165;
         }
 
         break;
@@ -233,17 +234,35 @@ document.addEventListener('DOMContentLoaded', () => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__line_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__center_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__player_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_line_circle_collision__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_line_circle_collision__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ui_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_line_circle_collision__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_line_circle_collision___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_line_circle_collision__);
+
 
 
 
 
 
 class Game {
-  constructor(ctx, gameCanvas, bgm, hitSound, lineSpeed1, lineSpeed2, difficultyModifier, rotateSpeed, lineLifeTimer, ballSpeed) {
+  constructor(
+    ctx,
+    gameCanvas,
+    toolsCanvas,
+    toolsCtx,
+    bgm,
+    hitSound,
+    lineSpeed1,
+    lineSpeed2,
+    difficultyModifier,
+    rotateSpeed,
+    lineLifeTimer,
+    ballSpeed
+  ) {
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
+
+    this.toolsCtx = toolsCtx;
+    this.toolsCanvas = toolsCanvas;
     this.bgm = bgm;
     this.hitSound = hitSound;
 
@@ -253,6 +272,8 @@ class Game {
     this.lines = [];
     this.lines2 = [];
     this.frames;
+
+    this.startTime;
 
     this.r = Math.floor(Math.random() * 250) + 6;
     this.g = Math.floor(Math.random() * 250) + 6;
@@ -272,7 +293,9 @@ class Game {
     this.lineSpeed2 = lineSpeed2;
     this.lineLifeTimer = lineLifeTimer;
     this.ballSpeed = ballSpeed;
+
     this.player = new __WEBPACK_IMPORTED_MODULE_2__player_js__["a" /* default */](ctx, gameCanvas, this.color, this.ballSpeed);
+    this.ui = new __WEBPACK_IMPORTED_MODULE_3__ui_js__["a" /* default */](this, this.toolsCtx, this.toolsCanvas);
 
     this.gameOverScreen = new Image();
     this.gameOverScreen.src = 'assets/images/GameOver.png';
@@ -288,7 +311,8 @@ class Game {
   };
 
   begin() {
-
+    this.startTime = new Date();
+    this.ui.render();
     const animateCallback = () => {
       this.render(this.ctx);
       this.frames = requestAnimationFrame(animateCallback);
@@ -299,6 +323,7 @@ class Game {
     } else {
       cancelAnimationFrame(frames);
     }
+
   };
 
   end() {
@@ -365,7 +390,7 @@ class Game {
     this.lines.forEach((line) => {
       let a = line.startPoint;
       let b = line.endPoint;
-      let hit = __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default()(a, b, circle, radius);
+      let hit = __WEBPACK_IMPORTED_MODULE_4_line_circle_collision___default()(a, b, circle, radius);
       if (hit === true) {
         this.end();
       }
@@ -373,7 +398,7 @@ class Game {
     this.lines2.forEach((line) => {
       let a = line.startPoint;
       let b = line.endPoint;
-      let hit = __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default()(a, b, circle, radius);
+      let hit = __WEBPACK_IMPORTED_MODULE_4_line_circle_collision___default()(a, b, circle, radius);
       if (hit === true) {
         this.end();
       }
@@ -409,6 +434,7 @@ class Game {
 
       this.checkCollision();
       ctx.clearRect(-700, -700, this.gameCanvas.width + 700, this.gameCanvas.height + 700);
+
       if (this.rotateTimer < 1) {
         this.rotate(ctx, true);
         this.rotateTimer = Math.floor(Math.random() * 190) + 70;
@@ -753,6 +779,61 @@ function pointCircleCollision(point, circle, r) {
 }
 
 module.exports = pointCircleCollision
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Ui {
+  constructor(game, toolsCtx, toolsCanvas) {
+    this.game = game;
+    this.toolsCtx = toolsCtx;
+    this.toolsCanvas = toolsCanvas;
+    this.score;
+  }
+
+  drawElapsedTime() {
+    if (this.game.gameActive === true) {
+      let elapsed = parseInt((new Date() - this.game.startTime));
+      let hundredths = (elapsed / 1000).toFixed(2);
+      if (hundredths.length < 2) hundredths = '0' + hundredths;
+
+      this.toolsCtx.save();
+      this.toolsCtx.beginPath();
+      this.toolsCtx.fillStyle = 'white';
+      this.toolsCtx.font = '50px Orbitron';
+
+      this.toolsCtx.globalAlpha = 0.50;
+      this.toolsCtx.fillText(hundredths, this.toolsCanvas.width - 310, 39);
+      this.toolsCtx.restore();
+      this.score = hundredths;
+    }
+  }
+
+  drawFinalScore() {
+    this.toolsCtx.save();
+    this.toolsCtx.beginPath();
+    this.toolsCtx.fillStyle = 'white';
+    this.toolsCtx.font = '50px Orbitron';
+    this.toolsCtx.fillText(this.score, this.toolsCanvas.width - 310, 39);
+    this.toolsCtx.restore();
+  }
+
+  render() {
+    const animateCallback = () => {
+      this.toolsCtx.clearRect(0, 0, this.toolsCanvas.width, this.toolsCanvas.height);
+      this.game.gameOver === false ? this.drawElapsedTime() : this.drawFinalScore();
+      this.frames = requestAnimationFrame(animateCallback);
+    };
+
+    animateCallback();
+
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Ui);
+
 
 /***/ })
 /******/ ]);
