@@ -410,6 +410,7 @@ class Game {
 
     this.gameActive = false;
     this.gameOver = false;
+    this.difficultyModifier = difficultyModifier;
 
     this.lines = [];
     this.lines2 = [];
@@ -417,6 +418,11 @@ class Game {
 
     this.specialLineCount = 0;
     this.specialFlag = false;
+    this.specialLineFrequency = () => (
+      Math.floor(Math.random() * 15 - (5 * (this.difficultyModifier - 1))) + 1
+    );
+
+    this.specialLineQuantity = this.difficultyModifier === 1 ? 9 : 11;
 
     this.startTime;
 
@@ -425,8 +431,7 @@ class Game {
     this.b = Math.floor(Math.random() * 250) + 6;
     this.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
 
-    this.center = new __WEBPACK_IMPORTED_MODULE_1__center_js__["a" /* default */](ctx, gameCanvas);
-    this.difficultyModifier = difficultyModifier;
+    this.center = new __WEBPACK_IMPORTED_MODULE_1__center_js__["a" /* default */](ctx, gameCanvas, this.difficultyModifier);
 
     this.interval = 0;
     this.interval2 = -(lineLifeTimer / 2);
@@ -488,8 +493,8 @@ class Game {
 
   choosePattern(ctx) {
     let specialLines;
-    if (Math.floor(Math.random() * 21 - (8 * (this.difficultyModifier - 1))) + 1 === 1) {
-      switch (Math.floor(Math.random() * 11) + 1) {
+    if (this.specialLineFrequency() === 1) {
+      switch (Math.floor(Math.random() * this.specialLineQuantity) + 1) {
         case 1:
           this.specialFlag = true;
           specialLines = [
@@ -939,10 +944,12 @@ class Line {
 
 "use strict";
 class Center {
-  constructor(ctx, gameCanvas) {
+  constructor(ctx, gameCanvas, difficultyModifier) {
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
-    this.color = 'darkgray';
+    if (difficultyModifier == 1) this.color = 'white';
+    if (difficultyModifier == 2) this.color = 'darkgray';
+    if (difficultyModifier == 3) this.color = 'black';
   }
 
   render(ctx) {
