@@ -25,17 +25,22 @@ header {
 
 #game {
   background-color: black;
-  height: 70vh;
+  margin-top: 40px;
+
   min-height: 500px;
   min-width: 500px;
   background-position: center;
   position: relative;
-  transform: scale(1.1);
+  transform: scale(1.3);
 }
 
 #tools {
+  margin-top: 60px;
+  transform: scale(1.3);
+  position: absolute;
+  top: 60px;
+  z-index: 3;
   font-family: Orbitron;
   text-shadow: 2px 2px 1px rgba(150, 150, 150, 1);
   font-size: 150%;
-  transform: scale(1.1);
 }

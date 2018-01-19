@@ -70,10 +70,13 @@
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ui_js__ = __webpack_require__(7);
+
 
 
 window.leftPressed = false;
 window.rightPressed = false;
+window.difficultyLevel = 1;
 
 let difficultyModifier = 1;
 let rotateSpeed = 118;
@@ -81,6 +84,8 @@ let lineSpeed1 = 4.1;
 let lineSpeed2 = 2.1;
 let lineLifeTimer = 108;
 let ballSpeed = .088;
+
+let bgmStartTimes = [0, 9.9, 29.7, 49.5, 89.07, 108.88];
 
 const mainMenu = new Image();
 mainMenu.src = 'assets/images/MainMenu.png';
@@ -95,7 +100,7 @@ menuBgm.play();
 
 const bgm = new Audio('./assets/audio/Xeleuiem.mp3');
 bgm.addEventListener('ended', function () {
-  this.currentTime = 0;
+  this.currentTime = 9.9;
   this.play();
 }, false);
 
@@ -108,19 +113,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const canvasContext = gameCanvas.getContext('2d');
 
   const toolsCanvas = document.getElementById('tools');
-  toolsCanvas.height = 100;
-  toolsCanvas.width = 500;
+  toolsCanvas.height = 616;
+  toolsCanvas.width = 616;
   const toolsCanvasContext = toolsCanvas.getContext('2d');
-  mainMenu.onload = () => {
-    canvasContext.drawImage(mainMenu, 0, 0);
-  };
+
+  let ui;
 
   let game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
     canvasContext,
     gameCanvas,
     toolsCanvas,
     toolsCanvasContext,
+    ui,
     bgm,
+    menuBgm,
+    bgmStartTimes,
     hitSound,
     lineSpeed1,
     lineSpeed2,
@@ -130,40 +137,73 @@ document.addEventListener('DOMContentLoaded', () => {
     ballSpeed
   );
 
+  mainMenu.onload = () => {
+    ui = new __WEBPACK_IMPORTED_MODULE_1__ui_js__["a" /* default */](game, toolsCanvasContext, toolsCanvas, true, mainMenu, bgm);
+    ui.render();
+  };
+
   window.addEventListener('keydown', checkKeyPressed, false);
   window.addEventListener('keyup', checkKeyLifted, false);
 
   function checkKeyPressed(event) {
     switch (event.keyCode) {
+      case 27:
+        if (game.gameActive === true || game.gameOver === true) {
+          game.gameActive = false;
+          cancelAnimationFrame(game.frames);
+          game.ctx.clearRect(-300, -300, gameCanvas.width + 300, gameCanvas.height + 300);
+          ui.toolsCtx.clearRect(-300, -300, toolsCanvas.width + 300, toolsCanvas.height + 300);
+          ui.shouldDrawMainMenu = true;
+          game.hitSound.pause();
+          game.hitSound.currentTime = 0;
+          menuBgm.play();
+          bgm.pause();
+          bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
+          game.gameOver = false;
+        }
+
+        break;
+      case 32:
+        if (game.gameActive === false) {
+          game.hitSound.pause();
+          game.hitSound.currentTime = 0;
+          game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
+            canvasContext,
+            gameCanvas,
+            toolsCanvas,
+            toolsCanvasContext,
+            ui,
+            bgm,
+            menuBgm,
+            bgmStartTimes,
+            hitSound,
+            lineSpeed1,
+            lineSpeed2,
+            difficultyModifier,
+            rotateSpeed,
+            lineLifeTimer,
+            ballSpeed
+          );
+          ui.game = game;
+          ui.shouldDrawMainMenu = false;
+          game.gameActive = true;
+          game.gameOver = false;
+          menuBgm.pause();
+          bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
+          bgm.play();
+          game.begin();
+        }
+
+        break;
       case 37:
         window.leftPressed = true;
         break;
       case 39:
         window.rightPressed = true;
         break;
-      case 32:
-        game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
-          canvasContext,
-          gameCanvas,
-          toolsCanvas,
-          toolsCanvasContext,
-          bgm,
-          hitSound,
-          lineSpeed1,
-          lineSpeed2,
-          difficultyModifier,
-          rotateSpeed,
-          lineLifeTimer,
-          ballSpeed
-        );
-        game.gameActive = true;
-        menuBgm.pause();
-        bgm.play();
-        game.begin();
-
-        break;
       case 49:
-        if (game.gameActive === false) {
+        if (ui.shouldDrawMainMenu === true) {
+          window.difficultyLevel = 1;
           difficultyModifier = 1;
           rotateSpeed = 118;
           lineSpeed1 = 4.1;
@@ -174,7 +214,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         break;
       case 50:
-        if (game.gameActive === false) {
+        if (ui.shouldDrawMainMenu === true) {
+          window.difficultyLevel = 2;
           difficultyModifier = 2;
           rotateSpeed = 75;
           lineSpeed1 = 5.25;
@@ -185,7 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         break;
       case 51:
-        if (game.gameActive === false) {
+        if (ui.shouldDrawMainMenu === true) {
+          window.difficultyLevel = 3;
           difficultyModifier = 3;
           rotateSpeed = 55;
           lineSpeed1 = 6.2;
@@ -234,10 +276,8 @@ document.addEventListener('DOMContentLoaded', () => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__line_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__center_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__player_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ui_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_line_circle_collision__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_line_circle_collision___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_line_circle_collision__);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_line_circle_collision__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_line_circle_collision__);
 
 
 
@@ -249,7 +289,10 @@ class Game {
     gameCanvas,
     toolsCanvas,
     toolsCtx,
+    ui,
     bgm,
+    menuBgm,
+    bgmStartTimes,
     hitSound,
     lineSpeed1,
     lineSpeed2,
@@ -263,8 +306,13 @@ class Game {
 
     this.toolsCtx = toolsCtx;
     this.toolsCanvas = toolsCanvas;
+    this.ui = ui;
+
     this.bgm = bgm;
+    this.menuBgm = menuBgm;
+    this.bgmStartTimes = bgmStartTimes;
     this.hitSound = hitSound;
+    this.hitSound.volume = 0.7;
 
     this.gameActive = false;
     this.gameOver = false;
@@ -295,8 +343,6 @@ class Game {
     this.ballSpeed = ballSpeed;
 
     this.player = new __WEBPACK_IMPORTED_MODULE_2__player_js__["a" /* default */](ctx, gameCanvas, this.color, this.ballSpeed);
-    this.ui = new __WEBPACK_IMPORTED_MODULE_3__ui_js__["a" /* default */](this, this.toolsCtx, this.toolsCanvas);
-
     this.gameOverScreen = new Image();
     this.gameOverScreen.src = 'assets/images/GameOver.png';
   }
@@ -330,10 +376,10 @@ class Game {
     this.color = 'red';
     this.hitSound.play();
     this.bgm.pause();
-    this.bgm.currentTime = 0;
+    this.bgm.currentTime = this.bgmStartTimes[Math.floor(Math.random() * this.bgmStartTimes.length)];
+    this.menuBgm.play();
     this.gameActive = false;
     this.gameOver = true;
-    this.ctx.resetTransform();
     cancelAnimationFrame(this.frames);
   }
 
@@ -390,7 +436,7 @@ class Game {
     this.lines.forEach((line) => {
       let a = line.startPoint;
       let b = line.endPoint;
-      let hit = __WEBPACK_IMPORTED_MODULE_4_line_circle_collision___default()(a, b, circle, radius);
+      let hit = __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default()(a, b, circle, radius);
       if (hit === true) {
         this.end();
       }
@@ -398,7 +444,7 @@ class Game {
     this.lines2.forEach((line) => {
       let a = line.startPoint;
       let b = line.endPoint;
-      let hit = __WEBPACK_IMPORTED_MODULE_4_line_circle_collision___default()(a, b, circle, radius);
+      let hit = __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default()(a, b, circle, radius);
       if (hit === true) {
         this.end();
       }
@@ -454,8 +500,12 @@ class Game {
         line.render(ctx);
       });
       this.center.render(ctx);
-    } else {
-      this.ctx.drawImage(this.gameOverScreen, 0, 0);
+    } else if (this.gameOver === true) {
+      this.toolsCtx.drawImage(
+        this.gameOverScreen,
+        this.toolsCanvas.width / 2 - this.gameOverScreen.width / 2,
+        this.toolsCanvas.height / 2 - this.gameOverScreen.height / 2
+      );
     }
   };
 }
@@ -786,11 +836,17 @@ module.exports = pointCircleCollision
 
 "use strict";
 class Ui {
-  constructor(game, toolsCtx, toolsCanvas) {
+  constructor(game, toolsCtx, toolsCanvas, shouldDrawMainMenu, mainMenu, bgm) {
     this.game = game;
     this.toolsCtx = toolsCtx;
     this.toolsCanvas = toolsCanvas;
     this.score;
+    this.highScore1 = 0;
+    this.highScore2 = 0;
+    this.highScore3 = 0;
+    this.shouldDrawMainMenu = shouldDrawMainMenu;
+    this.mainMenu = mainMenu;
+    this.bgm = bgm;
   }
 
   drawElapsedTime() {
@@ -805,25 +861,125 @@ class Ui {
       this.toolsCtx.font = '50px Orbitron';
 
       this.toolsCtx.globalAlpha = 0.50;
-      this.toolsCtx.fillText(hundredths, this.toolsCanvas.width - 310, 39);
+      this.toolsCtx.fillText(hundredths, this.toolsCanvas.width - 365, 39);
       this.toolsCtx.restore();
       this.score = hundredths;
     }
   }
 
   drawFinalScore() {
+
+    if (window.difficultyLevel === 1) {
+      if (this.score > this.highScore1) {
+        this.highScore1 = this.score;
+      }
+    } else if (window.difficultyLevel === 2) {
+      if (this.score > this.highScore2) {
+        this.highScore2 = this.score;
+      }
+    } else if (window.difficultyLevel === 3) {
+      if (this.score > this.highScore3) {
+        this.highScore3 = this.score;
+      }
+    }
+
     this.toolsCtx.save();
     this.toolsCtx.beginPath();
     this.toolsCtx.fillStyle = 'white';
     this.toolsCtx.font = '50px Orbitron';
-    this.toolsCtx.fillText(this.score, this.toolsCanvas.width - 310, 39);
+    this.toolsCtx.fillText(this.score, this.toolsCanvas.width - 365, 39);
     this.toolsCtx.restore();
+  }
+
+  drawHighScore() {
+    if (window.difficultyLevel === 1) {
+      if (this.highScore1) {
+        this.toolsCtx.save();
+        this.toolsCtx.beginPath();
+        this.toolsCtx.fillStyle = 'white';
+        this.toolsCtx.font = '26px Orbitron';
+        this.toolsCtx.globalAlpha = 0.70;
+        this.toolsCtx.fillText('Best: ' + this.highScore1, this.toolsCanvas.width - 585, 30);
+        this.toolsCtx.restore();
+      }
+    } else if (window.difficultyLevel === 2) {
+      if (this.highScore2) {
+        this.toolsCtx.save();
+        this.toolsCtx.beginPath();
+        this.toolsCtx.fillStyle = 'white';
+        this.toolsCtx.font = '26px Orbitron';
+        this.toolsCtx.globalAlpha = 0.70;
+        this.toolsCtx.fillText('Best: ' + this.highScore2, this.toolsCanvas.width - 585, 30);
+        this.toolsCtx.restore();
+      }
+    } else if (window.difficultyLevel === 3) {
+      if (this.highScore3) {
+        this.toolsCtx.save();
+        this.toolsCtx.beginPath();
+        this.toolsCtx.fillStyle = 'white';
+        this.toolsCtx.font = '26px Orbitron';
+        this.toolsCtx.globalAlpha = 0.70;
+        this.toolsCtx.fillText('Best: ' + this.highScore3, this.toolsCanvas.width - 585, 30);
+        this.toolsCtx.restore();
+      }
+    }
+  }
+
+  drawMainMenu() {
+    this.toolsCtx.drawImage(this.mainMenu,
+      this.toolsCanvas.width / 2 - this.mainMenu.width / 2,
+      this.toolsCanvas.height / 2 - this.mainMenu.height / 2
+    );
+    this.drawDifficulty();
+  }
+
+  drawDifficulty() {
+    this.toolsCtx.beginPath();
+    this.toolsCtx.strokeStyle = 'blue';
+    this.toolsCtx.lineWidth = 6;
+    if (window.difficultyLevel === 1) {
+      this.toolsCtx.moveTo(10, this.toolsCanvas.height - 14);
+      this.toolsCtx.lineTo(75, this.toolsCanvas.height - 14);
+      this.toolsCtx.moveTo(10, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(75, this.toolsCanvas.height - 65);
+      this.toolsCtx.moveTo(13, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(13, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(72, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(72, this.toolsCanvas.height - 15);
+    } else if (window.difficultyLevel === 2) {
+      this.toolsCtx.moveTo(85, this.toolsCanvas.height - 14);
+      this.toolsCtx.lineTo(150, this.toolsCanvas.height - 14);
+      this.toolsCtx.moveTo(85, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(150, this.toolsCanvas.height - 65);
+      this.toolsCtx.moveTo(88, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(88, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(147, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(147, this.toolsCanvas.height - 15);
+    } else if (window.difficultyLevel === 3) {
+      this.toolsCtx.moveTo(161, this.toolsCanvas.height - 14);
+      this.toolsCtx.lineTo(227, this.toolsCanvas.height - 14);
+      this.toolsCtx.moveTo(161, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(227, this.toolsCanvas.height - 65);
+      this.toolsCtx.moveTo(164, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(164, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(224, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(224, this.toolsCanvas.height - 15);
+    }
+
+    this.toolsCtx.closePath();
+    this.toolsCtx.stroke();
   }
 
   render() {
     const animateCallback = () => {
       this.toolsCtx.clearRect(0, 0, this.toolsCanvas.width, this.toolsCanvas.height);
+      this.shouldDrawMainMenu === true ? this.drawMainMenu() : null;
       this.game.gameOver === false ? this.drawElapsedTime() : this.drawFinalScore();
+      if (this.highScore1 > 0 || this.highScore2 > 0 || this.highScore3 > 0) this.drawHighScore();
+
+      // this.toolsCtx.fillStyle = 'white';
+      // this.toolsCtx.fillText(this.bgm.currentTime, 185, 400);
+
       this.frames = requestAnimationFrame(animateCallback);
     };
 
