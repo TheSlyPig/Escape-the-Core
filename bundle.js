@@ -85,7 +85,9 @@ let lineSpeed2 = 2.1;
 let lineLifeTimer = 108;
 let ballSpeed = .088;
 
-let bgmStartTimes = [0, 9.9, 29.7, 49.5, 89.07, 108.88];
+let bgmStartTimes1 = [0, 30.23, 50.177, 75.77, 126.03];
+let bgmStartTimes2 = [0, 32.34, 56.29, 77.65];
+let bgmStartTimes3 = [0, 9.9, 29.7, 49.5, 89.07, 108.88];
 
 const mainMenu = new Image();
 mainMenu.src = 'assets/images/MainMenu.png';
@@ -98,11 +100,41 @@ menuBgm.addEventListener('ended', function () {
 
 menuBgm.play();
 
-const bgm = new Audio('./assets/audio/Xeleuiem.mp3');
-bgm.addEventListener('ended', function () {
+const bgm1 = new Audio('./assets/audio/CODABuildingTheme.mp3');
+bgm1.addEventListener('ended', function () {
+  this.currentTime = 0;
+  this.play();
+}, false);
+
+const bgm2 = new Audio('./assets/audio/BattleTheme1.mp3');
+bgm2.addEventListener('ended', function () {
+  this.currentTime = 3.08;
+  this.play();
+}, false);
+
+const bgm3 = new Audio('./assets/audio/Xeleuiem.mp3');
+bgm3.addEventListener('ended', function () {
   this.currentTime = 9.9;
   this.play();
 }, false);
+
+let bgm;
+let bgmStartTimes;
+
+function setBgm() {
+  if (window.difficultyLevel === 1) {
+    bgm = bgm1;
+    bgmStartTimes = bgmStartTimes1;
+  } else if (window.difficultyLevel === 2) {
+    bgm = bgm2;
+    bgmStartTimes = bgmStartTimes2;
+  } else {
+    bgm = bgm3;
+    bgmStartTimes = bgmStartTimes3;
+  }
+}
+
+setBgm();
 
 const hitSound = new Audio('./assets/audio/hitSound.mp3');
 
@@ -164,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         break;
       case 32:
+        setBgm();
         if (game.gameActive === false) {
           game.hitSound.pause();
           game.hitSound.currentTime = 0;
@@ -185,6 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ballSpeed
           );
           ui.game = game;
+          ui.bgm = bgm;
           ui.shouldDrawMainMenu = false;
           game.gameActive = true;
           game.gameOver = false;
@@ -205,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ui.shouldDrawMainMenu === true) {
           window.difficultyLevel = 1;
           difficultyModifier = 1;
+          setBgm();
           rotateSpeed = 118;
           lineSpeed1 = 4.1;
           lineSpeed2 = 2.1;
@@ -217,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ui.shouldDrawMainMenu === true) {
           window.difficultyLevel = 2;
           difficultyModifier = 2;
+          setBgm();
           rotateSpeed = 75;
           lineSpeed1 = 5.25;
           lineSpeed2 = 3.25;
@@ -229,6 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ui.shouldDrawMainMenu === true) {
           window.difficultyLevel = 3;
           difficultyModifier = 3;
+          setBgm();
           rotateSpeed = 55;
           lineSpeed1 = 6.2;
           lineSpeed2 = 4.2;
@@ -378,6 +415,7 @@ class Game {
     this.bgm.pause();
     this.bgm.currentTime = this.bgmStartTimes[Math.floor(Math.random() * this.bgmStartTimes.length)];
     this.menuBgm.play();
+    this.ui.drawFinalScore();
     this.gameActive = false;
     this.gameOver = true;
     cancelAnimationFrame(this.frames);
@@ -870,15 +908,15 @@ class Ui {
   drawFinalScore() {
 
     if (window.difficultyLevel === 1) {
-      if (this.score > this.highScore1) {
+      if (parseInt(this.score) > parseInt(this.highScore1)) {
         this.highScore1 = this.score;
       }
     } else if (window.difficultyLevel === 2) {
-      if (this.score > this.highScore2) {
+      if (parseInt(this.score) > parseInt(this.highScore2)) {
         this.highScore2 = this.score;
       }
     } else if (window.difficultyLevel === 3) {
-      if (this.score > this.highScore3) {
+      if (parseInt(this.score) > parseInt(this.highScore3)) {
         this.highScore3 = this.score;
       }
     }
@@ -977,8 +1015,8 @@ class Ui {
       this.game.gameOver === false ? this.drawElapsedTime() : this.drawFinalScore();
       if (this.highScore1 > 0 || this.highScore2 > 0 || this.highScore3 > 0) this.drawHighScore();
 
-      // this.toolsCtx.fillStyle = 'white';
-      // this.toolsCtx.fillText(this.bgm.currentTime, 185, 400);
+      this.toolsCtx.fillStyle = 'white';
+      this.toolsCtx.fillText(this.bgm.currentTime, 185, 400);
 
       this.frames = requestAnimationFrame(animateCallback);
     };
