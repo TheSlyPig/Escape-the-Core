@@ -288,14 +288,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (game.gameActive === true) {
           if (bgm.paused) {
             bgm.play();
+            ui.muteButtonDisplay = false;
           } else {
             bgm.pause();
+            ui.muteButtonDisplay = true;
           }
         } else {
           if (menuBgm.paused) {
             menuBgm.play();
+            ui.muteButtonDisplay = false;
           } else {
             menuBgm.pause();
+            ui.muteButtonDisplay = true;
           }
         }
     }
@@ -916,6 +920,7 @@ class Ui {
     this.bgm = bgm;
 
     this.stage2LockedDisplay = false;
+    this.muteButtonDisplay = false;
 
     this.stage1Victory = false;
     this.stage2Victory = false;
@@ -1019,6 +1024,22 @@ class Ui {
     this.drawDifficulty();
   }
 
+  drawMuteButton() {
+    this.toolsCtx.beginPath();
+    this.toolsCtx.strokeStyle = 'red';
+    this.toolsCtx.lineWidth = 4;
+    this.toolsCtx.moveTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 27);
+    this.toolsCtx.lineTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 43);
+    this.toolsCtx.moveTo(this.toolsCanvas.width - 183, this.toolsCanvas.height - 43);
+    this.toolsCtx.lineTo(this.toolsCanvas.width - 156, this.toolsCanvas.height - 43);
+    this.toolsCtx.moveTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 43);
+    this.toolsCtx.lineTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 27);
+    this.toolsCtx.moveTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 43);
+    this.toolsCtx.lineTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 27);
+    this.toolsCtx.closePath();
+    this.toolsCtx.stroke();
+  }
+
   drawDifficulty() {
     this.toolsCtx.beginPath();
     this.toolsCtx.lineWidth = 6;
@@ -1113,6 +1134,10 @@ class Ui {
       if (this.stage3LockedDisplay === true) {
         this.stage3Locked();
         setTimeout(() => (this.stage3LockedDisplay = false), 1500);
+      }
+
+      if (this.muteButtonDisplay === true) {
+        this.drawMuteButton();
       }
 
       this.frames = requestAnimationFrame(animateCallback);
