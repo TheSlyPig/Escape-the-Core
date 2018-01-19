@@ -250,27 +250,37 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case 50:
         if (ui.shouldDrawMainMenu === true) {
-          window.difficultyLevel = 2;
-          difficultyModifier = 2;
-          setBgm();
-          rotateSpeed = 75;
-          lineSpeed1 = 5.25;
-          lineSpeed2 = 3.25;
-          lineLifeTimer = 74;
-          ballSpeed = .125;
+          if (ui.stage1Victory === true) {
+            window.difficultyLevel = 2;
+            difficultyModifier = 2;
+            setBgm();
+            rotateSpeed = 75;
+            lineSpeed1 = 5.25;
+            lineSpeed2 = 3.25;
+            lineLifeTimer = 74;
+            ballSpeed = .125;
+          } else {
+            ui.stage3LockedDisplay = false;
+            ui.stage2LockedDisplay = true;
+          }
         }
 
         break;
       case 51:
         if (ui.shouldDrawMainMenu === true) {
-          window.difficultyLevel = 3;
-          difficultyModifier = 3;
-          setBgm();
-          rotateSpeed = 55;
-          lineSpeed1 = 6.2;
-          lineSpeed2 = 4.2;
-          lineLifeTimer = 65;
-          ballSpeed = .165;
+          if (ui.stage2Victory === true) {
+            window.difficultyLevel = 3;
+            difficultyModifier = 3;
+            setBgm();
+            rotateSpeed = 55;
+            lineSpeed1 = 6.2;
+            lineSpeed2 = 4.2;
+            lineLifeTimer = 65;
+            ballSpeed = .165;
+          } else {
+            ui.stage2LockedDisplay = false;
+            ui.stage3LockedDisplay = true;
+          }
         }
 
         break;
@@ -380,8 +390,13 @@ class Game {
     this.ballSpeed = ballSpeed;
 
     this.player = new __WEBPACK_IMPORTED_MODULE_2__player_js__["a" /* default */](ctx, gameCanvas, this.color, this.ballSpeed);
+
     this.gameOverScreen = new Image();
     this.gameOverScreen.src = 'assets/images/GameOver.png';
+    this.stageCompleteScreen = new Image();
+    this.stageCompleteScreen.src = 'assets/images/StageComplete.png';
+    this.gameCompleteScreen = new Image();
+    this.gameCompleteScreen.src = 'assets/images/GameComplete.png';
   }
 
   moveLines() {
@@ -539,11 +554,25 @@ class Game {
       });
       this.center.render(ctx);
     } else if (this.gameOver === true) {
-      this.toolsCtx.drawImage(
-        this.gameOverScreen,
-        this.toolsCanvas.width / 2 - this.gameOverScreen.width / 2,
-        this.toolsCanvas.height / 2 - this.gameOverScreen.height / 2
-      );
+      if (this.ui.score >= 60.0 && window.difficultyLevel === 3) {
+        this.toolsCtx.drawImage(
+          this.gameCompleteScreen,
+          this.toolsCanvas.width / 2 - this.gameCompleteScreen.width / 2,
+          this.toolsCanvas.height / 2 - this.gameCompleteScreen.height / 2
+        );
+      } else if (this.ui.score >= 60.0) {
+        this.toolsCtx.drawImage(
+          this.stageCompleteScreen,
+          this.toolsCanvas.width / 2 - this.stageCompleteScreen.width / 2,
+          this.toolsCanvas.height / 2 - this.stageCompleteScreen.height / 2
+        );
+      } else {
+        this.toolsCtx.drawImage(
+          this.gameOverScreen,
+          this.toolsCanvas.width / 2 - this.gameOverScreen.width / 2,
+          this.toolsCanvas.height / 2 - this.gameOverScreen.height / 2
+        );
+      }
     }
   };
 }
@@ -885,6 +914,12 @@ class Ui {
     this.shouldDrawMainMenu = shouldDrawMainMenu;
     this.mainMenu = mainMenu;
     this.bgm = bgm;
+
+    this.stage2LockedDisplay = false;
+
+    this.stage1Victory = false;
+    this.stage2Victory = false;
+    this.stage3Victory = false;
   }
 
   drawElapsedTime() {
@@ -892,10 +927,11 @@ class Ui {
       let elapsed = parseInt((new Date() - this.game.startTime));
       let hundredths = (elapsed / 1000).toFixed(2);
       if (hundredths.length < 2) hundredths = '0' + hundredths;
-
       this.toolsCtx.save();
       this.toolsCtx.beginPath();
       this.toolsCtx.fillStyle = 'white';
+      if (parseInt(hundredths) >= 60.0) this.toolsCtx.fillStyle = 'lightgreen';
+
       this.toolsCtx.font = '50px Orbitron';
 
       this.toolsCtx.globalAlpha = 0.50;
@@ -924,6 +960,18 @@ class Ui {
     this.toolsCtx.save();
     this.toolsCtx.beginPath();
     this.toolsCtx.fillStyle = 'white';
+
+    if (parseInt(this.score) >= 60.0) {
+      this.toolsCtx.fillStyle = 'lightgreen';
+      if (window.difficultyLevel === 1) {
+        this.stage1Victory = true;
+      } else if (window.difficultyLevel === 2) {
+        this.stage2Victory = true;
+      } else if (window.difficultyLevel === 3) {
+        this.stage3Victory = true;
+      }
+    }
+
     this.toolsCtx.font = '50px Orbitron';
     this.toolsCtx.fillText(this.score, this.toolsCanvas.width - 365, 39);
     this.toolsCtx.restore();
@@ -973,11 +1021,11 @@ class Ui {
 
   drawDifficulty() {
     this.toolsCtx.beginPath();
-    this.toolsCtx.strokeStyle = 'blue';
     this.toolsCtx.lineWidth = 6;
     if (window.difficultyLevel === 1) {
-      this.toolsCtx.moveTo(10, this.toolsCanvas.height - 14);
-      this.toolsCtx.lineTo(75, this.toolsCanvas.height - 14);
+      this.toolsCtx.strokeStyle = this.stage1Victory ? 'green' : 'blue';
+      this.toolsCtx.moveTo(10, this.toolsCanvas.height - 15);
+      this.toolsCtx.lineTo(75, this.toolsCanvas.height - 15);
       this.toolsCtx.moveTo(10, this.toolsCanvas.height - 65);
       this.toolsCtx.lineTo(75, this.toolsCanvas.height - 65);
       this.toolsCtx.moveTo(13, this.toolsCanvas.height - 65);
@@ -985,6 +1033,7 @@ class Ui {
       this.toolsCtx.moveTo(72, this.toolsCanvas.height - 65);
       this.toolsCtx.lineTo(72, this.toolsCanvas.height - 15);
     } else if (window.difficultyLevel === 2) {
+      this.toolsCtx.strokeStyle = this.stage2Victory ? 'green' : 'blue';
       this.toolsCtx.moveTo(85, this.toolsCanvas.height - 14);
       this.toolsCtx.lineTo(150, this.toolsCanvas.height - 14);
       this.toolsCtx.moveTo(85, this.toolsCanvas.height - 65);
@@ -994,18 +1043,59 @@ class Ui {
       this.toolsCtx.moveTo(147, this.toolsCanvas.height - 65);
       this.toolsCtx.lineTo(147, this.toolsCanvas.height - 15);
     } else if (window.difficultyLevel === 3) {
-      this.toolsCtx.moveTo(161, this.toolsCanvas.height - 14);
-      this.toolsCtx.lineTo(227, this.toolsCanvas.height - 14);
-      this.toolsCtx.moveTo(161, this.toolsCanvas.height - 65);
+      this.toolsCtx.strokeStyle = this.stage3Victory ? 'green' : 'blue';
+      this.toolsCtx.moveTo(162, this.toolsCanvas.height - 15);
+      this.toolsCtx.lineTo(227, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(162, this.toolsCanvas.height - 65);
       this.toolsCtx.lineTo(227, this.toolsCanvas.height - 65);
-      this.toolsCtx.moveTo(164, this.toolsCanvas.height - 65);
-      this.toolsCtx.lineTo(164, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(165, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(165, this.toolsCanvas.height - 15);
       this.toolsCtx.moveTo(224, this.toolsCanvas.height - 65);
       this.toolsCtx.lineTo(224, this.toolsCanvas.height - 15);
     }
 
     this.toolsCtx.closePath();
     this.toolsCtx.stroke();
+  }
+
+  stage2Locked() {
+    this.toolsCtx.save();
+    this.toolsCtx.beginPath();
+    this.toolsCtx.fillStyle = 'red';
+    this.toolsCtx.font = '26px Orbitron';
+    this.toolsCtx.fillText('Unlocked by completing Stage 1', 78, this.toolsCanvas.height - 230);
+    this.toolsCtx.strokeStyle = 'red';
+    this.toolsCtx.moveTo(85, this.toolsCanvas.height - 15);
+    this.toolsCtx.lineTo(150, this.toolsCanvas.height - 15);
+    this.toolsCtx.moveTo(85, this.toolsCanvas.height - 65);
+    this.toolsCtx.lineTo(150, this.toolsCanvas.height - 65);
+    this.toolsCtx.moveTo(88, this.toolsCanvas.height - 65);
+    this.toolsCtx.lineTo(88, this.toolsCanvas.height - 15);
+    this.toolsCtx.moveTo(147, this.toolsCanvas.height - 65);
+    this.toolsCtx.lineTo(147, this.toolsCanvas.height - 15);
+    this.toolsCtx.closePath();
+    this.toolsCtx.stroke();
+    this.toolsCtx.restore();
+  }
+
+  stage3Locked() {
+    this.toolsCtx.save();
+    this.toolsCtx.beginPath();
+    this.toolsCtx.fillStyle = 'red';
+    this.toolsCtx.font = '26px Orbitron';
+    this.toolsCtx.fillText('Unlocked by completing Stage 2', 78, this.toolsCanvas.height - 230);
+    this.toolsCtx.strokeStyle = 'red';
+    this.toolsCtx.moveTo(162, this.toolsCanvas.height - 15);
+    this.toolsCtx.lineTo(227, this.toolsCanvas.height - 15);
+    this.toolsCtx.moveTo(162, this.toolsCanvas.height - 65);
+    this.toolsCtx.lineTo(227, this.toolsCanvas.height - 65);
+    this.toolsCtx.moveTo(165, this.toolsCanvas.height - 65);
+    this.toolsCtx.lineTo(165, this.toolsCanvas.height - 15);
+    this.toolsCtx.moveTo(224, this.toolsCanvas.height - 65);
+    this.toolsCtx.lineTo(224, this.toolsCanvas.height - 15);
+    this.toolsCtx.closePath();
+    this.toolsCtx.stroke();
+    this.toolsCtx.restore();
   }
 
   render() {
@@ -1015,8 +1105,15 @@ class Ui {
       this.game.gameOver === false ? this.drawElapsedTime() : this.drawFinalScore();
       if (this.highScore1 > 0 || this.highScore2 > 0 || this.highScore3 > 0) this.drawHighScore();
 
-      this.toolsCtx.fillStyle = 'white';
-      this.toolsCtx.fillText(this.bgm.currentTime, 185, 400);
+      if (this.stage2LockedDisplay === true) {
+        this.stage2Locked();
+        setTimeout(() => (this.stage2LockedDisplay = false), 1500);
+      }
+
+      if (this.stage3LockedDisplay === true) {
+        this.stage3Locked();
+        setTimeout(() => (this.stage3LockedDisplay = false), 1500);
+      }
 
       this.frames = requestAnimationFrame(animateCallback);
     };
