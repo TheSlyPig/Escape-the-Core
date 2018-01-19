@@ -77,6 +77,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 window.leftPressed = false;
 window.rightPressed = false;
 window.difficultyLevel = 1;
+window.muted = false;
 
 let difficultyModifier = 1;
 let rotateSpeed = 118;
@@ -188,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ui.shouldDrawMainMenu = true;
           game.hitSound.pause();
           game.hitSound.currentTime = 0;
-          menuBgm.play();
+          if (!window.muted) menuBgm.play();
           bgm.pause();
           bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
           game.gameOver = false;
@@ -224,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
           game.gameOver = false;
           menuBgm.pause();
           bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
-          bgm.play();
+          if (!window.muted) bgm.play();
           game.begin();
         }
 
@@ -286,18 +287,22 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case 77:
         if (game.gameActive === true) {
-          if (bgm.paused) {
+          if (window.muted) {
+            window.muted = false;
             bgm.play();
             ui.muteButtonDisplay = false;
           } else {
+            window.muted = true;
             bgm.pause();
             ui.muteButtonDisplay = true;
           }
         } else {
-          if (menuBgm.paused) {
+          if (window.muted) {
+            window.muted = false;
             menuBgm.play();
             ui.muteButtonDisplay = false;
           } else {
+            window.muted = true;
             menuBgm.pause();
             ui.muteButtonDisplay = true;
           }
@@ -430,10 +435,10 @@ class Game {
 
   end() {
     this.color = 'red';
-    this.hitSound.play();
+    if (!window.muted) this.hitSound.play();
     this.bgm.pause();
     this.bgm.currentTime = this.bgmStartTimes[Math.floor(Math.random() * this.bgmStartTimes.length)];
-    this.menuBgm.play();
+    if (!window.muted) this.menuBgm.play();
     this.ui.drawFinalScore();
     this.gameActive = false;
     this.gameOver = true;
@@ -534,6 +539,14 @@ class Game {
   render(ctx) {
     if (this.gameActive === true) {
       this.makePatterns(ctx);
+
+      if (this.ui.score > 60.0) {
+        if (this.rotateSpeed > 60) this.rotateSpeed -= .05;
+        this.lineSpeed1 += .001;
+        if (this.player.ballSpeed < .17) this.player.ballSpeed += .00005;
+        this.lineSpeed2 += .001;
+        this.lineLifeTimer -= .02145;
+      }
 
       this.checkCollision();
       ctx.clearRect(-700, -700, this.gameCanvas.width + 700, this.gameCanvas.height + 700);
