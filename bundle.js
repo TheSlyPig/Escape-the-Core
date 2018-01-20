@@ -94,29 +94,32 @@ const mainMenu = new Image();
 mainMenu.src = 'assets/images/MainMenu.png';
 
 const menuBgm = new Audio('./assets/audio/Mangetsu.mp3');
-menuBgm.addEventListener('ended', function () {
-  this.currentTime = 0;
-  this.play();
-}, false);
+menuBgm.loop = true;
+
+const beginAudio = new Audio('./assets/audio/Begin.mp3');
+const gameOverAudio = new Audio('./assets/audio/GameOver.mp3');
 
 menuBgm.play();
 
 const bgm1 = new Audio('./assets/audio/CODABuildingTheme.mp3');
-bgm1.addEventListener('ended', function () {
-  this.currentTime = 0;
-  this.play();
-}, false);
+bgm1.loop = true;
 
 const bgm2 = new Audio('./assets/audio/BattleTheme1.mp3');
-bgm2.addEventListener('ended', function () {
-  this.currentTime = 3.08;
-  this.play();
+bgm2.addEventListener('timeupdate', function () {
+  var buffer = .412;
+  if (this.currentTime > this.duration - buffer) {
+    this.currentTime = 2.98;
+    this.play();
+  }
 }, false);
 
 const bgm3 = new Audio('./assets/audio/Xeleuiem.mp3');
-bgm3.addEventListener('ended', function () {
-  this.currentTime = 9.9;
-  this.play();
+bgm3.addEventListener('timeupdate', function () {
+  var buffer = .252;
+  if (this.currentTime > this.duration - buffer) {
+    this.currentTime = 9.9;
+    this.play();
+  }
 }, false);
 
 let bgm;
@@ -193,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ui,
     bgm,
     menuBgm,
+    gameOverAudio,
     bgmStartTimes,
     hitSound,
     lineSpeed1,
@@ -231,6 +235,10 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case 32:
         setBgm();
+        beginAudio.pause();
+        gameOverAudio.pause();
+        beginAudio.currentTime = 0;
+        beginAudio.play();
         if (game.gameActive === false) {
           game.hitSound.pause();
           game.hitSound.currentTime = 0;
@@ -242,6 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ui,
             bgm,
             menuBgm,
+            gameOverAudio,
             bgmStartTimes,
             hitSound,
             lineSpeed1,
@@ -386,6 +395,7 @@ class Game {
     ui,
     bgm,
     menuBgm,
+    gameOverAudio,
     bgmStartTimes,
     hitSound,
     lineSpeed1,
@@ -407,6 +417,7 @@ class Game {
     this.bgmStartTimes = bgmStartTimes;
     this.hitSound = hitSound;
     this.hitSound.volume = 0.7;
+    this.gameOverAudio = gameOverAudio;
 
     this.gameActive = false;
     this.gameOver = false;
@@ -431,7 +442,7 @@ class Game {
     this.b = Math.floor(Math.random() * 250) + 6;
     this.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
 
-    this.center = new __WEBPACK_IMPORTED_MODULE_1__center_js__["a" /* default */](ctx, gameCanvas, this.difficultyModifier);
+    this.center = new __WEBPACK_IMPORTED_MODULE_1__center_js__["a" /* default */](ctx, gameCanvas, this.difficultyModifier, 49);
 
     this.interval = 0;
     this.interval2 = -(lineLifeTimer / 2);
@@ -482,6 +493,9 @@ class Game {
   end() {
     this.color = 'red';
     if (!window.muted) this.hitSound.play();
+    this.gameOverAudio.pause();
+    this.gameOverAudio.currentTime = 0;
+    this.gameOverAudio.play();
     this.bgm.pause();
     this.bgm.currentTime = this.bgmStartTimes[Math.floor(Math.random() * this.bgmStartTimes.length)];
     if (!window.muted) this.menuBgm.play();
@@ -702,6 +716,10 @@ class Game {
 
       this.setColor();
 
+      if (parseInt(this.ui.score) > 30 && window.difficultyLevel === 3) {
+        this.center.color = 'black';
+      }
+
       this.moveLines();
       this.player.render(ctx);
       this.lines.forEach((line) => {
@@ -712,13 +730,13 @@ class Game {
       });
       this.center.render(ctx);
     } else if (this.gameOver === true) {
-      if (this.ui.score >= 60.0 && window.difficultyLevel === 3) {
+      if (parseInt(this.ui.score) >= 60.0 && window.difficultyLevel === 3) {
         this.toolsCtx.drawImage(
           this.gameCompleteScreen,
           this.toolsCanvas.width / 2 - this.gameCompleteScreen.width / 2,
           this.toolsCanvas.height / 2 - this.gameCompleteScreen.height / 2
         );
-      } else if (this.ui.score >= 60.0) {
+      } else if (parseInt(this.ui.score) >= 60.0) {
         this.toolsCtx.drawImage(
           this.stageCompleteScreen,
           this.toolsCanvas.width / 2 - this.stageCompleteScreen.width / 2,
@@ -944,19 +962,20 @@ class Line {
 
 "use strict";
 class Center {
-  constructor(ctx, gameCanvas, difficultyModifier) {
+  constructor(ctx, gameCanvas, difficultyModifier, radius) {
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
-    if (difficultyModifier == 1) this.color = 'white';
-    if (difficultyModifier == 2) this.color = 'darkgray';
-    if (difficultyModifier == 3) this.color = 'black';
+    this.radius = radius;
+    if (difficultyModifier == 1) this.color = '#7C7C7C';
+    if (difficultyModifier == 2) this.color = '#303030';
+    if (difficultyModifier == 3) this.color = '#131313';
   }
 
   render(ctx) {
     let centerX = this.gameCanvas.width / 2;
     let centerY = this.gameCanvas.height / 2;
     ctx.beginPath();
-    ctx.arc(centerX, centerY, 55, 0, Math.PI * 2, false);
+    ctx.arc(centerX, centerY, this.radius, 0, Math.PI * 2, false);
     ctx.fillStyle = this.color;
     ctx.fill();
     ctx.closePath();
