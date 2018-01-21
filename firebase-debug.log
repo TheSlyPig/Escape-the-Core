@@ -1,0 +1,87 @@
+[debug] [2018-01-21T13:46:18.942Z] ----------------------------------------------------------------------
+[debug] [2018-01-21T13:46:18.946Z] Command:       /Users/mac/.nvm/versions/node/v6.10.1/bin/node /Users/mac/.nvm/versions/node/v6.10.1/bin/firebase serve
+[debug] [2018-01-21T13:46:18.947Z] CLI Version:   3.17.3
+[debug] [2018-01-21T13:46:18.947Z] Platform:      darwin
+[debug] [2018-01-21T13:46:18.947Z] Node Version:  v6.10.1
+[debug] [2018-01-21T13:46:18.947Z] Time:          Sun Jan 21 2018 08:46:18 GMT-0500 (EST)
+[debug] [2018-01-21T13:46:18.947Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-01-21T13:46:18.963Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-01-21T13:46:18.963Z] > authorizing via signed-in user
+[debug] [2018-01-21T13:46:18.966Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-01-21T13:46:18.966Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/dSAvFPjQSpV1SyfSJSBYpSUkhEpY3chRf5dHk-9LolE',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Sun Jan 21 2018 08:46:18 GMT-0500 (EST)
+[debug] [2018-01-21T13:46:19.154Z] <<< HTTP RESPONSE 200
+[debug] [2018-01-21T13:46:19.159Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/escape-the-core  
+  
+ Sun Jan 21 2018 08:46:19 GMT-0500 (EST)
+[debug] [2018-01-21T13:46:19.523Z] <<< HTTP RESPONSE 200
+[debug] [2018-01-21T13:46:19.525Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/escape-the-core/tokens  
+  
+ Sun Jan 21 2018 08:46:19 GMT-0500 (EST)
+[debug] [2018-01-21T13:46:19.897Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/mac/Desktop/Escape-the-Core'...
+[info] 
+[debug] [2018-01-21T13:46:19.901Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/escape-the-core  
+  
+ Sun Jan 21 2018 08:46:19 GMT-0500 (EST)
+[debug] [2018-01-21T13:46:20.398Z] <<< HTTP RESPONSE 200
+[debug] [2018-01-21T13:46:20.398Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/855395305407/clients/_:getWebAppConfig  
+  
+ Sun Jan 21 2018 08:46:20 GMT-0500 (EST)
+[debug] [2018-01-21T13:46:21.214Z] <<< HTTP RESPONSE 200
+[debug] [2018-01-21T13:46:21.238Z] TypeError: Cannot read property 'public' of undefined
+    at Server.<anonymous> (/Users/mac/.nvm/versions/node/v6.10.1/lib/node_modules/firebase-tools/lib/serve/hosting.js:34:17)
+    at Server.g (events.js:291:16)
+    at emitNone (events.js:86:13)
+    at Server.emit (events.js:185:7)
+    at emitListeningNT (net.js:1288:10)
+    at _combinedTickCallback (internal/process/next_tick.js:77:11)
+    at process._tickDomainCallback (internal/process/next_tick.js:128:9)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2018-01-21T13:47:07.020Z] ----------------------------------------------------------------------
+[debug] [2018-01-21T13:47:07.024Z] Command:       /Users/mac/.nvm/versions/node/v6.10.1/bin/node /Users/mac/.nvm/versions/node/v6.10.1/bin/firebase serve
+[debug] [2018-01-21T13:47:07.024Z] CLI Version:   3.17.3
+[debug] [2018-01-21T13:47:07.024Z] Platform:      darwin
+[debug] [2018-01-21T13:47:07.024Z] Node Version:  v6.10.1
+[debug] [2018-01-21T13:47:07.025Z] Time:          Sun Jan 21 2018 08:47:07 GMT-0500 (EST)
+[debug] [2018-01-21T13:47:07.025Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-01-21T13:47:07.040Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-01-21T13:47:07.040Z] > authorizing via signed-in user
+[debug] [2018-01-21T13:47:07.044Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/escape-the-core  
+  
+ Sun Jan 21 2018 08:47:07 GMT-0500 (EST)
+[debug] [2018-01-21T13:47:07.429Z] <<< HTTP RESPONSE 200
+[debug] [2018-01-21T13:47:07.430Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/escape-the-core/tokens  
+  
+ Sun Jan 21 2018 08:47:07 GMT-0500 (EST)
+[debug] [2018-01-21T13:47:07.810Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/mac/Desktop/Escape-the-Core'...
+[info] 
+[debug] [2018-01-21T13:47:07.814Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/escape-the-core  
+  
+ Sun Jan 21 2018 08:47:07 GMT-0500 (EST)
+[debug] [2018-01-21T13:47:08.113Z] <<< HTTP RESPONSE 200
+[debug] [2018-01-21T13:47:08.114Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/855395305407/clients/_:getWebAppConfig  
+  
+ Sun Jan 21 2018 08:47:08 GMT-0500 (EST)
+[debug] [2018-01-21T13:47:08.829Z] <<< HTTP RESPONSE 200
+[debug] [2018-01-21T13:47:08.850Z] TypeError: Cannot read property 'public' of undefined
+    at Server.<anonymous> (/Users/mac/.nvm/versions/node/v6.10.1/lib/node_modules/firebase-tools/lib/serve/hosting.js:34:17)
+    at Server.g (events.js:291:16)
+    at emitNone (events.js:86:13)
+    at Server.emit (events.js:185:7)
+    at emitListeningNT (net.js:1288:10)
+    at _combinedTickCallback (internal/process/next_tick.js:77:11)
+    at process._tickDomainCallback (internal/process/next_tick.js:128:9)
+[error] 
+[error] Error: An unexpected error has occurred.
