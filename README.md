@@ -17,7 +17,8 @@ Inspired by Terry Cavanagh's Hexagon - https://terrycavanaghgames.com/hexagon/
 8. The player wins if they survive for 60 seconds, but may keep playing until they die.
 9. The game gets noticeably harder after 60 seconds.
 10. Multiple levels of increasing difficulty, that are unlocked by beating the previous level.
+11. Google Firebase integration for global high score tracking.
 
 ## Technologies, Libraries, APIs
 
-This project uses vanilla JS, HTML5, and CSS, along with the Canvas library.
+This project uses vanilla JS, HTML5, and CSS, along with the Canvas library and Google Firebase.
