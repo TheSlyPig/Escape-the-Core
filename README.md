@@ -2,7 +2,7 @@
 
 A fast-paced psuedo-rhythm game where the player must find the gaps in the enclosing shapes to escape the core.
 
-Inspired by Terry Cavanagh's Hexagon - https://terrycavanaghgames.com/hexagon/
+Play now! - http://kegan-cunningham.me/Escape-the-Core
 
 ![Escape-the-Core](assets/images/EscapeTheCore.gif)
 
@@ -22,3 +22,6 @@ Inspired by Terry Cavanagh's Hexagon - https://terrycavanaghgames.com/hexagon/
 ## Technologies, Libraries, APIs
 
 This project uses vanilla JS, HTML5, and CSS, along with the Canvas library and Google Firebase.
+
+
+Inspired by Terry Cavanagh's Hexagon - https://terrycavanaghgames.com/hexagon/
