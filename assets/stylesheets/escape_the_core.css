@@ -200,3 +200,41 @@ a:hover {
     display: none;
   }
 }
+
+@media only screen and (max-height: 610px) {
+  #game {
+    transform: scale(.8);
+      margin-top: -120px !important;
+  }
+  #tools {
+    transform: scale(.8);
+      margin-top: -120px !important;
+  }
+}
+
+@media only screen and (max-height: 610px) {
+  #game {
+    transform: scale(.8);
+      margin-top: -120px !important;
+  }
+  #tools {
+    transform: scale(.8);
+      margin-top: -120px !important;
+  }
+}
+
+@media only screen and (max-width: 468px) {
+  body {
+    transform: scale(.8);
+  }
+  #game {
+    margin-top: -170px !important;
+  }
+  #tools {
+    margin-top: -170px !important;
+  }
+
+  main {
+    max-height: 400px;
+  }
+}
