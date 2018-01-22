@@ -15286,8 +15286,8 @@ class Ui {
     this.stage2LockedDisplay = false;
     this.muteButtonDisplay = false;
 
-    this.stage1Victory = true;
-    this.stage2Victory = true;
+    this.stage1Victory = false;
+    this.stage2Victory = false;
     this.stage3Victory = false;
   }
 
