@@ -11,7 +11,7 @@ body {
 
 footer {
   position: absolute;
-  bottom: 3px;
+  bottom: 0px;
   min-height: 30px;
   width: 900px;
   color: white;
@@ -35,7 +35,7 @@ header {
   top: 3px;
   min-height: 30px;
   max-height: 69px;
-  width: 630px;
+  width: 606px;
   color: white;
   font-size: 180%;
   border-bottom: 1px solid white;
@@ -44,6 +44,7 @@ header {
   z-index: 8;
   background-color: black;
   padding: 5px;
+  transform: scale(1);
 }
 
 .icon {
@@ -66,14 +67,14 @@ header {
 
 .white-img {
   opacity: 1;
-  height: 55px;
-  width: 55px;
+  height: 35px;
+  width: 35px;
   pointer-events: none;
 }
 
 img {
-  height: 55px;
-  width: 55px;
+  height: 35px;
+  width: 35px;
 }
 
 .white-img:hover {
@@ -102,24 +103,25 @@ a:hover {
 
 #game {
   background-color: black;
-  margin-top: 20px;
   min-height: 500px;
   min-width: 500px;
   background-position: center;
   position: relative;
-  transform: scale(1);
+  transform: scaleX()(1);
   z-index: 6;
+  margin-top: 5px;
 }
 
 #tools {
-  margin-top: 0px;
-  transform: scale(1);
+  transform: scaleX(1);
   position: absolute;
   top: 60px;
   z-index: 7;
   font-family: Orbitron;
   text-shadow: 2px 2px 1px rgba(150, 150, 150, 1);
   font-size: 150%;
+  border: 1px solid white;
+  margin-top: 5px;
 }
 
 .back-arrow {
@@ -156,7 +158,45 @@ a:hover {
 .scores {
   position: absolute;
   top: 100px;
-  left: 50px;
-  z-index: 7;
+  left: 20px;
+  z-index: 3;
   color: white;
+  background-color: black;
+}
+
+@media only screen and (max-width: 890px) {
+  .scores {
+    display: none;
+  }
+}
+
+@media only screen and (max-height: 665px) {
+  header {
+    display: none;
+  }
+
+  #game {
+    margin-top: -57px !important;
+  }
+
+  #tools {
+    margin-top: -57px !important;
+  }
+}
+
+@media only screen and (max-height: 715px) {
+  footer {
+    position: absolute;
+    right: 5px;
+    top: 100px;
+    max-width: 127px;
+    max-height: 200px;
+    border-bottom: 1px solid white;
+  }
+}
+
+@media only screen and (max-width: 887px) {
+  footer {
+    display: none;
+  }
 }

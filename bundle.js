@@ -15354,7 +15354,7 @@ class Ui {
         this.toolsCtx.fillStyle = 'white';
         this.toolsCtx.font = '26px Orbitron';
         this.toolsCtx.globalAlpha = 0.70;
-        this.toolsCtx.fillText('Best: ' + this.highScore1, this.toolsCanvas.width - 585, 40);
+        this.toolsCtx.fillText('Best: ' + this.highScore1, this.toolsCanvas.width - 610, 24);
         this.toolsCtx.restore();
       }
     } else if (window.difficultyLevel === 2) {
@@ -15364,7 +15364,7 @@ class Ui {
         this.toolsCtx.fillStyle = 'white';
         this.toolsCtx.font = '26px Orbitron';
         this.toolsCtx.globalAlpha = 0.70;
-        this.toolsCtx.fillText('Best: ' + this.highScore2, this.toolsCanvas.width - 585, 40);
+        this.toolsCtx.fillText('Best: ' + this.highScore2, this.toolsCanvas.width - 610, 24);
         this.toolsCtx.restore();
       }
     } else if (window.difficultyLevel === 3) {
@@ -15374,7 +15374,7 @@ class Ui {
         this.toolsCtx.fillStyle = 'white';
         this.toolsCtx.font = '26px Orbitron';
         this.toolsCtx.globalAlpha = 0.70;
-        this.toolsCtx.fillText('Best: ' + this.highScore3, this.toolsCanvas.width - 585, 40);
+        this.toolsCtx.fillText('Best: ' + this.highScore3, this.toolsCanvas.width - 610, 24);
         this.toolsCtx.restore();
       }
     }
