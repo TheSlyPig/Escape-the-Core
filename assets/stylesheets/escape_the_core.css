@@ -24,9 +24,6 @@ footer {
   z-index: 5;
   background-color: black;
   padding: 5px;
-  /*background-image: url('../images/Space.png');
-  background-position: center;
-  background-size: cover;*/
 }
 
 header {
@@ -44,12 +41,9 @@ header {
   border-bottom: 1px solid white;
   border-left: 1px solid white;
   border-right: 1px solid white;
-  z-index: 5;
+  z-index: 8;
   background-color: black;
   padding: 5px;
-  /*background-image: url('../images/Space.png');
-  background-position: center;
-  background-size: cover;*/
 }
 
 .icon {
@@ -114,6 +108,7 @@ a:hover {
   background-position: center;
   position: relative;
   transform: scale(1);
+  z-index: 6;
 }
 
 #tools {
@@ -121,7 +116,7 @@ a:hover {
   transform: scale(1);
   position: absolute;
   top: 60px;
-  z-index: 3;
+  z-index: 7;
   font-family: Orbitron;
   text-shadow: 2px 2px 1px rgba(150, 150, 150, 1);
   font-size: 150%;

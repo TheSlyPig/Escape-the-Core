@@ -60,1401 +60,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 79);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ui_js__ = __webpack_require__(7);
-
-
-
-window.leftPressed = false;
-window.rightPressed = false;
-window.difficultyLevel = 1;
-window.muted = false;
-
-let difficultyModifier = 1;
-let rotateSpeed = 118;
-let lineSpeed1 = 4.1;
-let lineSpeed2 = 2.1;
-let lineLifeTimer = 108;
-let ballSpeed = .088;
-
-let bgmStartTimes1 = [0, 30.23, 50.177, 75.77, 126.03];
-let bgmStartTimes2 = [0, 32.34, 56.29, 77.65];
-let bgmStartTimes3 = [0, 9.9, 29.7, 49.5, 89.07, 108.88];
-
-const mainMenu = new Image();
-mainMenu.src = 'assets/images/MainMenu.png';
-
-const menuBgm = new Audio('./assets/audio/Mangetsu.mp3');
-menuBgm.loop = true;
-
-const beginAudio = new Audio('./assets/audio/Begin.mp3');
-const gameOverAudio = new Audio('./assets/audio/GameOver.mp3');
-
-menuBgm.play();
-
-const bgm1 = new Audio('./assets/audio/CODABuildingTheme.mp3');
-bgm1.loop = true;
-
-const bgm2 = new Audio('./assets/audio/BattleTheme1.mp3');
-bgm2.addEventListener('timeupdate', function () {
-  var buffer = .412;
-  if (this.currentTime > this.duration - buffer) {
-    this.currentTime = 2.98;
-    this.play();
-  }
-}, false);
-
-const bgm3 = new Audio('./assets/audio/Xeleuiem.mp3');
-bgm3.addEventListener('timeupdate', function () {
-  var buffer = .252;
-  if (this.currentTime > this.duration - buffer) {
-    this.currentTime = 9.9;
-    this.play();
-  }
-}, false);
-
-let bgm;
-let bgmStartTimes;
-
-function setBgm() {
-  if (window.difficultyLevel === 1) {
-    bgm = bgm1;
-    bgmStartTimes = bgmStartTimes1;
-  } else if (window.difficultyLevel === 2) {
-    bgm = bgm2;
-    bgmStartTimes = bgmStartTimes2;
-  } else {
-    bgm = bgm3;
-    bgmStartTimes = bgmStartTimes3;
-  }
-}
-
-setBgm();
-
-const hitSound = new Audio('./assets/audio/hitSound.mp3');
-
-document.addEventListener('DOMContentLoaded', () => {
-  const gameCanvas = document.getElementById('game');
-  gameCanvas.height = 500;
-  gameCanvas.width = 500;
-  const canvasContext = gameCanvas.getContext('2d');
-
-  const toolsCanvas = document.getElementById('tools');
-  toolsCanvas.height = 616;
-  toolsCanvas.width = 616;
-  const toolsCanvasContext = toolsCanvas.getContext('2d');
-
-  let ui;
-
-  let game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
-    canvasContext,
-    gameCanvas,
-    toolsCanvas,
-    toolsCanvasContext,
-    ui,
-    bgm,
-    menuBgm,
-    gameOverAudio,
-    bgmStartTimes,
-    hitSound,
-    lineSpeed1,
-    lineSpeed2,
-    difficultyModifier,
-    rotateSpeed,
-    lineLifeTimer,
-    ballSpeed
-  );
-
-  mainMenu.onload = () => {
-    ui = new __WEBPACK_IMPORTED_MODULE_1__ui_js__["a" /* default */](game, toolsCanvasContext, toolsCanvas, true, mainMenu, bgm);
-    ui.render();
-    ui.displayHighScores();
-  };
-
-  const setDifficulty1 = function () {
-    window.difficultyLevel = 1;
-    difficultyModifier = 1;
-    setBgm();
-    rotateSpeed = 118;
-    lineSpeed1 = 4.1;
-    lineSpeed2 = 2.1;
-    lineLifeTimer = 108;
-    ballSpeed = .088;
-    ui.displayHighScores();
-  };
-
-  const setDifficulty2 = function () {
-    window.difficultyLevel = 2;
-    difficultyModifier = 2;
-    setBgm();
-    rotateSpeed = 80;
-    lineSpeed1 = 5.25;
-    lineSpeed2 = 3.25;
-    lineLifeTimer = 74;
-    ballSpeed = .125;
-    ui.displayHighScores();
-  };
-
-  const setDifficulty3 = function () {
-    window.difficultyLevel = 3;
-    difficultyModifier = 3;
-    setBgm();
-    rotateSpeed = 59;
-    lineSpeed1 = 6.2;
-    lineSpeed2 = 4.2;
-    lineLifeTimer = 65;
-    ballSpeed = .173;
-    ui.displayHighScores();
-  };
-
-  window.addEventListener('keydown', checkKeyPressed, false);
-  window.addEventListener('keyup', checkKeyLifted, false);
-
-  function checkKeyPressed(event) {
-    switch (event.keyCode) {
-      case 27:
-        if (game.gameActive === true || game.gameOver === true) {
-          game.gameActive = false;
-          cancelAnimationFrame(game.frames);
-          game.ctx.clearRect(-300, -300, gameCanvas.width + 300, gameCanvas.height + 300);
-          ui.toolsCtx.clearRect(-300, -300, toolsCanvas.width + 300, toolsCanvas.height + 300);
-          ui.shouldDrawMainMenu = true;
-          game.hitSound.pause();
-          game.hitSound.currentTime = 0;
-          if (!window.muted) menuBgm.play();
-          bgm.pause();
-          bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
-          game.gameOver = false;
-        }
-
-        break;
-      case 32:
-        setBgm();
-        beginAudio.pause();
-        gameOverAudio.pause();
-        beginAudio.currentTime = 0;
-        if (!window.muted) beginAudio.play();
-        if (game.gameActive === false) {
-          game.hitSound.pause();
-          game.hitSound.currentTime = 0;
-          game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
-            canvasContext,
-            gameCanvas,
-            toolsCanvas,
-            toolsCanvasContext,
-            ui,
-            bgm,
-            menuBgm,
-            gameOverAudio,
-            bgmStartTimes,
-            hitSound,
-            lineSpeed1,
-            lineSpeed2,
-            difficultyModifier,
-            rotateSpeed,
-            lineLifeTimer,
-            ballSpeed
-          );
-          ui.game = game;
-          ui.bgm = bgm;
-          ui.shouldDrawMainMenu = false;
-          game.gameActive = true;
-          game.gameOver = false;
-          menuBgm.pause();
-          bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
-          if (!window.muted) bgm.play();
-          game.begin();
-        }
-
-        break;
-      case 37:
-        window.leftPressed = true;
-        if (ui.shouldDrawMainMenu === true) {
-          if (window.difficultyLevel === 3) {
-            setDifficulty2();
-          } else if (window.difficultyLevel === 2) {
-            setDifficulty1();
-          }
-        }
-
-        break;
-      case 39:
-        window.rightPressed = true;
-        if (ui.shouldDrawMainMenu === true) {
-          if (window.difficultyLevel === 1) {
-            if (ui.stage1Victory === true) {
-              setDifficulty2();
-            } else {
-              ui.stage3LockedDisplay = false;
-              ui.stage2LockedDisplay = true;
-            }
-          } else if (window.difficultyLevel === 2) {
-            if (ui.stage2Victory === true) {
-              setDifficulty3();
-            } else {
-              ui.stage2LockedDisplay = false;
-              ui.stage3LockedDisplay = true;
-            }
-          }
-        }
-
-        break;
-      case 49:
-        if (ui.shouldDrawMainMenu === true) {
-          setDifficulty1();
-        }
-
-        break;
-      case 50:
-        if (ui.shouldDrawMainMenu === true) {
-          if (ui.stage1Victory === true) {
-            setDifficulty2();
-          } else {
-            ui.stage3LockedDisplay = false;
-            ui.stage2LockedDisplay = true;
-          }
-        }
-
-        break;
-      case 51:
-        if (ui.shouldDrawMainMenu === true) {
-          if (ui.stage2Victory === true) {
-            setDifficulty3();
-          } else {
-            ui.stage2LockedDisplay = false;
-            ui.stage3LockedDisplay = true;
-          }
-        }
-
-        break;
-      case 77:
-        if (game.gameActive === true) {
-          if (window.muted) {
-            window.muted = false;
-            bgm.play();
-            ui.muteButtonDisplay = false;
-          } else {
-            window.muted = true;
-            bgm.pause();
-            ui.muteButtonDisplay = true;
-          }
-        } else {
-          if (window.muted) {
-            window.muted = false;
-            menuBgm.play();
-            ui.muteButtonDisplay = false;
-          } else {
-            window.muted = true;
-            menuBgm.pause();
-            ui.muteButtonDisplay = true;
-          }
-        }
-    }
-  }
-
-  function checkKeyLifted(event) {
-    switch (event.keyCode) {
-      case 37:
-        window.leftPressed = false;
-        break;
-      case 39:
-        window.rightPressed = false;
-        break;
-    }
-  }
-
-});
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__line_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__center_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__player_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_line_circle_collision__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_line_circle_collision__);
-
-
-
-
-
-class Game {
-  constructor(
-    ctx,
-    gameCanvas,
-    toolsCanvas,
-    toolsCtx,
-    ui,
-    bgm,
-    menuBgm,
-    gameOverAudio,
-    bgmStartTimes,
-    hitSound,
-    lineSpeed1,
-    lineSpeed2,
-    difficultyModifier,
-    rotateSpeed,
-    lineLifeTimer,
-    ballSpeed
-  ) {
-    this.ctx = ctx;
-    this.gameCanvas = gameCanvas;
-    this.lineWidth = 10;
-
-    this.toolsCtx = toolsCtx;
-    this.toolsCanvas = toolsCanvas;
-    this.ui = ui;
-
-    this.bgm = bgm;
-    this.menuBgm = menuBgm;
-    this.bgmStartTimes = bgmStartTimes;
-    this.hitSound = hitSound;
-    this.hitSound.volume = 0.7;
-    this.gameOverAudio = gameOverAudio;
-
-    this.gameActive = false;
-    this.gameOver = false;
-    this.difficultyModifier = difficultyModifier;
-
-    this.lines = [];
-    this.lines2 = [];
-    this.frames;
-
-    this.specialLineCount = 0;
-    this.specialFlag = false;
-    this.specialLineFrequency = () => (
-      Math.floor(Math.random() * 15 - (5 * (this.difficultyModifier - 1))) + 1
-    );
-
-    this.specialLineQuantity = this.difficultyModifier === 1 ? 9 : 11;
-
-    this.startTime;
-
-    this.r = Math.floor(Math.random() * 250) + 6;
-    this.g = Math.floor(Math.random() * 250) + 6;
-    this.b = Math.floor(Math.random() * 250) + 6;
-    this.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
-
-    this.center = new __WEBPACK_IMPORTED_MODULE_1__center_js__["a" /* default */](ctx, gameCanvas, this.difficultyModifier, 49);
-
-    this.interval = 0;
-    this.interval2 = -(lineLifeTimer / 2);
-
-    this.rotateTimer = 130;
-    this.rotateDir = 'left';
-    this.rotateSpeed = rotateSpeed;
-    this.lineSpeed1 = lineSpeed1;
-    this.lineSpeed2 = lineSpeed2;
-    this.lineLifeTimer = lineLifeTimer;
-    this.ballSpeed = ballSpeed;
-
-    this.player = new __WEBPACK_IMPORTED_MODULE_2__player_js__["a" /* default */](ctx, gameCanvas, this.color, this.ballSpeed);
-
-    this.gameOverScreen = new Image();
-    this.gameOverScreen.src = 'assets/images/GameOver.png';
-    this.stageCompleteScreen = new Image();
-    this.stageCompleteScreen.src = 'assets/images/StageComplete.png';
-    this.gameCompleteScreen = new Image();
-    this.gameCompleteScreen.src = 'assets/images/GameComplete.png';
-  }
-
-  moveLines() {
-    this.lines.forEach(line => {
-      line.closeIn();
-    });
-    this.lines2.forEach(line => {
-      line.closeIn();
-    });
-  };
-
-  begin() {
-    this.startTime = new Date();
-    this.ui.render();
-    const animateCallback = () => {
-      this.render(this.ctx);
-      this.frames = requestAnimationFrame(animateCallback);
-    };
-
-    if (this.gameActive === true) {
-      animateCallback();
-    } else {
-      cancelAnimationFrame(frames);
-    }
-
-  };
-
-  end() {
-    this.color = 'red';
-    if (!window.muted) this.hitSound.play();
-    this.gameOverAudio.pause();
-    this.gameOverAudio.currentTime = 0;
-    if (!window.muted) this.gameOverAudio.play();
-    this.bgm.pause();
-    this.bgm.currentTime = this.bgmStartTimes[Math.floor(Math.random() * this.bgmStartTimes.length)];
-    if (!window.muted) this.menuBgm.play();
-    this.ui.drawFinalScore();
-    this.ui.sendHighScores();
-    this.gameActive = false;
-    this.gameOver = true;
-    cancelAnimationFrame(this.frames);
-  }
-
-  choosePattern(ctx) {
-    let specialLines;
-    if (this.specialLineFrequency() === 1) {
-      switch (Math.floor(Math.random() * this.specialLineQuantity) + 1) {
-        case 1:
-          this.specialFlag = true;
-          specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-          ];
-          break;
-        case 2:
-          this.specialFlag = true;
-          specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-          ];
-          break;
-        case 3:
-          this.specialFlag = true;
-          specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-          ];
-          break;
-        case 4:
-          this.specialFlag = true;
-          specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-          ];
-          break;
-        case 5:
-          this.specialFlag = true;
-          specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-          ];
-          break;
-        case 6:
-          this.specialFlag = true;
-          specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 9, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
-          ];
-          break;
-        case 7:
-          this.specialFlag = true;
-          specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 10, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
-          ];
-          break;
-        case 8:
-          this.specialFlag = true;
-          specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 11, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
-          ];
-          break;
-        case 9:
-          this.specialFlag = true;
-          specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 12, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
-          ];
-          break;
-        case 10:
-          this.specialFlag = true;
-          specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 10, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 11, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
-          ];
-          break;
-        case 11:
-          this.specialFlag = true;
-          specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 9, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 12, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
-          ];
-          break;
-      }
-    }
-
-    if (specialLines) return specialLines;
-
-    let allDiagLines = [
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 4, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                ];
-    let allLines = [
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                ];
-    return Math.floor(Math.random() * 3) === 1 ? allDiagLines : allLines;
-  }
-
-  makePatterns(ctx) {
-    this.specialFlag = false;
-    let chosenLines = this.choosePattern(ctx);
-    if (this.interval > this.lineLifeTimer) {
-      let randNum = Math.floor(Math.random() * chosenLines.length);
-      if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
-        if (this.specialFlag === false) chosenLines.splice((randNum + Math.floor((Math.random() * 3) + 1)) % 4, 1);
-      }
-
-      if (this.specialFlag === false) chosenLines.splice(randNum, 1);
-      this.specialFlag = false;
-      this.lines = chosenLines;
-      this.interval = 0;
-    } else {
-      this.interval += 1;
-    }
-
-    this.specialFlag = false;
-    let chosenLines2 = this.choosePattern(ctx);
-    if (this.interval2 > this.lineLifeTimer) {
-      let randNum2 = Math.floor(Math.random() * chosenLines2.length);
-      if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
-        if (this.specialFlag === false) chosenLines2.splice((randNum2 + Math.floor((Math.random() * 3) + 1)) % 4, 1);
-      }
-
-      if (this.specialFlag === false) chosenLines2.splice(randNum2, 1);
-      this.specialFlag = false;
-      this.lines2 = chosenLines2;
-      this.interval2 = 0;
-    } else {
-      this.interval2 += 1;
-    }
-  }
-
-  checkCollision() {
-    let circle = [this.player.ball.x, this.player.ball.y];
-    let radius = this.player.ball.radius;
-    this.lines.forEach((line) => {
-      let a = line.startPoint;
-      let b = line.endPoint;
-      let hit = __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default()(a, b, circle, radius);
-      if (hit === true) {
-        this.end();
-      }
-    });
-    this.lines2.forEach((line) => {
-      let a = line.startPoint;
-      let b = line.endPoint;
-      let hit = __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default()(a, b, circle, radius);
-      if (hit === true) {
-        this.end();
-      }
-    });
-  }
-
-  rotate(ctx, flip) {
-    if (flip === true) this.rotateDir = this.rotateDir === 'left' ? 'right' : 'left';
-    let rotation = this.rotateDir === 'left' ? -this.rotateSpeed : this.rotateSpeed;
-    ctx.translate(this.gameCanvas.width / 2, this.gameCanvas.width / 2);
-    ctx.rotate(Math.PI / rotation);
-    ctx.translate(-this.gameCanvas.width / 2, -this.gameCanvas.width / 2);
-  }
-
-  setColor() {
-    this.r += Math.floor(Math.random() * 250) + 2;
-    this.r = this.r % 256;
-    if (this.r < 40) this.r = 40;
-
-    this.g += Math.floor(Math.random() * 250) + 2;
-    this.g = this.g % 256;
-    if (this.g < 40) this.g = 40;
-
-    this.b += Math.floor(Math.random() * 250) + 2;
-    this.b = this.b % 256;
-    if (this.b < 40) this.b = 40;
-    this.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
-  }
-
-  pulseCenter() {
-    if (window.difficultyLevel === 1) {
-      if (this.center.radius < 40) {
-        this.center.radius += 20;
-      } else {
-        this.center.radius -= .4068;
-      }
-    }
-
-    if (window.difficultyLevel === 2) {
-      if (this.center.radius < 40) {
-        this.center.radius += 20;
-      } else {
-        this.center.radius -= .513;
-      }
-    }
-
-    if (window.difficultyLevel === 3) {
-      if (this.center.radius < 47) {
-        this.center.radius += 18;
-      } else {
-        this.center.radius -= .499;
-      }
-    }
-  }
-
-  doEvilThingsToThirdStage() {
-    if (parseInt(this.ui.score) > 10 && window.difficultyLevel === 3) {
-      this.center.color = 'black';
-      if (parseInt(this.ui.score) > 20 && parseInt(this.ui.score) < 30) {
-        this.color = 'white';
-      }
-      if (parseInt(this.ui.score) > 30) {
-        this.rotateSpeed = 0;
-      }
-      if (parseInt(this.ui.score) > 35) {
-        this.rotateSpeed = 59;
-      }
-      if (parseInt(this.ui.score) > 40) {
-        this.rotateSpeed = 0;
-        this.lineWidth = 13;
-      }
-      if (parseInt(this.ui.score) > 45) {
-        this.rotateSpeed = 59;
-      }
-      if (parseInt(this.ui.score) > 50 && parseInt(this.ui.score.charAt(3)) % 2 !== 0) {
-        this.lineWidth = 1;
-        this.player.color = 'black';
-      }
-      if (parseInt(this.ui.score) > 50 && parseInt(this.ui.score.charAt(3)) % 2 === 0) {
-        this.lineWidth = 1;
-        this.player.color = 'white';
-      }
-    }
-  }
-
-  render(ctx) {
-    if (this.gameActive === true) {
-      this.makePatterns(ctx);
-
-      if (this.ui.score > 60.0) {
-        if (this.rotateSpeed > 60) this.rotateSpeed -= .05;
-        this.lineSpeed1 += .001;
-        if (this.player.ballSpeed < .17) this.player.ballSpeed += .00005;
-        this.lineSpeed2 += .001;
-        this.lineLifeTimer -= .02;
-      }
-
-      this.checkCollision();
-      ctx.clearRect(-700, -700, this.gameCanvas.width + 700, this.gameCanvas.height + 700);
-
-      if (this.rotateTimer < 1) {
-        this.rotate(ctx, true);
-        this.rotateTimer = Math.floor(Math.random() * 190) + 70;
-      } else {
-        this.rotate(ctx, false);
-        this.rotateTimer = this.rotateTimer - 1;
-      }
-
-      this.setColor();
-
-      this.doEvilThingsToThirdStage();
-
-      this.pulseCenter();
-
-      this.moveLines();
-      this.player.render(ctx);
-      this.lines.forEach((line) => {
-        line.render(ctx);
-      });
-      this.lines2.forEach((line) => {
-        line.render(ctx);
-      });
-      this.center.render(ctx);
-    } else if (this.gameOver === true) {
-      if (parseInt(this.ui.score) >= 60.0 && window.difficultyLevel === 3) {
-        this.toolsCtx.drawImage(
-          this.gameCompleteScreen,
-          this.toolsCanvas.width / 2 - this.gameCompleteScreen.width / 2,
-          this.toolsCanvas.height / 2 - this.gameCompleteScreen.height / 2
-        );
-      } else if (parseInt(this.ui.score) >= 60.0) {
-        this.toolsCtx.drawImage(
-          this.stageCompleteScreen,
-          this.toolsCanvas.width / 2 - this.stageCompleteScreen.width / 2,
-          this.toolsCanvas.height / 2 - this.stageCompleteScreen.height / 2
-        );
-      } else {
-        this.toolsCtx.drawImage(
-          this.gameOverScreen,
-          this.toolsCanvas.width / 2 - this.gameOverScreen.width / 2,
-          this.toolsCanvas.height / 2 - this.gameOverScreen.height / 2
-        );
-      }
-    }
-  };
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Game);
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class Line {
-  constructor(ctx, gameCanvas, type, color, lineSpeed1, lineSpeed2, lineWidth, game) {
-    this.ctx = ctx;
-    this.gameCanvas = gameCanvas;
-    this.game = game;
-    this.color = color;
-    this.x = 0;
-    this.y = 0;
-    this.halfWidth = this.gameCanvas.width / 2;
-    this.halfHeight = this.gameCanvas.height / 2;
-    this.fullWidth = this.gameCanvas.width;
-    this.fullHeight = this.gameCanvas.height;
-
-    this.lineSpeed1 = lineSpeed1;
-    this.lineSpeed2 = lineSpeed2;
-
-    this.lineWidth = lineWidth;
-    this.type = type;
-    this.handleType(type);
-    this.startPoint = [0, 0];
-    this.endPoint = [0, 0];
-  }
-
-  handleType(type) {
-    if (type === 1) {
-      this.x = -200;
-      this.y = 0;
-    } else if (type === 2) {
-      this.x = this.gameCanvas.height + 200;
-      this.y = this.gameCanvas.width;
-    } else if (type === 3) {
-      this.x = (this.gameCanvas.width / 2);
-      this.y = -200;
-    } else if (type === 4) {
-      this.x = -200;
-      this.y = this.gameCanvas.height / 2;
-    } else if (type === 5) {
-      this.x = 0;
-      this.y = 0;
-    } else if (type === 6) {
-      this.x = this.gameCanvas.width;
-      this.y = 0;
-    } else if (type === 7) {
-      this.x = 0;
-      this.y = 0;
-    } else if (type === 8) {
-      this.x = 0;
-      this.y = this.gameCanvas.height;
-    } else if (type === 9) {
-      this.x = 0;
-      this.y = this.gameCanvas.height;
-    } else if (type === 10) {
-      this.x = -200;
-      this.y = this.gameCanvas.height / 2;
-    } else if (type === 11) {
-      this.x = (this.gameCanvas.width / 2);
-      this.y = -200;
-    } else if (type === 12) {
-      this.x = 0;
-      this.y = 0;
-    }
-
-  }
-
-  closeIn() {
-    if (this.type < 5) {
-      if (this.type === 1) {
-        this.x = this.x + this.lineSpeed1;
-        this.y = this.y + this.lineSpeed1;
-      } else if (this.type === 2) {
-        this.x = this.x - this.lineSpeed1;
-        this.y = this.y - this.lineSpeed1;
-      } else if (this.type === 3) {
-        this.fullWidth = this.fullWidth - this.lineSpeed1;
-        this.y = this.y + this.lineSpeed1;
-      } else if (this.type === 4) {
-        this.x = this.x + this.lineSpeed1;
-        this.fullHeight = this.fullHeight - this.lineSpeed1;
-      }
-
-    } else {
-      if (this.type === 5) {
-        this.x = this.x + this.lineSpeed2;
-        this.y = this.y + this.lineSpeed2;
-        this.fullHeight = this.fullHeight - this.lineSpeed2;
-      } else if (this.type === 6) {
-        this.x = this.x - this.lineSpeed2;
-        this.y = this.y + this.lineSpeed2;
-        this.fullHeight = this.fullHeight - this.lineSpeed2;
-      } else if (this.type === 7) {
-        this.x = this.x + this.lineSpeed2;
-        this.y = this.y + this.lineSpeed2;
-        this.fullWidth = this.fullWidth - this.lineSpeed2;
-      } else if (this.type === 8) {
-        this.x = this.x + this.lineSpeed2;
-        this.y = this.y - this.lineSpeed2;
-        this.fullWidth = this.fullWidth - this.lineSpeed2;
-      } else if (this.type === 9) {
-        this.x = this.x + this.lineSpeed2 + 2;
-        this.y = this.y - this.lineSpeed2 - 2;
-        this.fullWidth = this.fullWidth - this.lineSpeed2 - 2;
-      } else if (this.type === 10) {
-        this.x = this.x + this.lineSpeed1 + 2;
-        this.fullHeight = this.fullHeight - this.lineSpeed1 - 2;
-      } else if (this.type === 11) {
-        this.fullWidth = this.fullWidth - this.lineSpeed1 - 2;
-        this.y = this.y + this.lineSpeed1 + 2;
-      } else if (this.type === 12) {
-        this.x = this.x + this.lineSpeed2 + 2;
-        this.y = this.y + this.lineSpeed2 + 2;
-        this.fullWidth = this.fullWidth - this.lineSpeed2 - 2;
-      }
-
-    }
-
-  }
-
-  render(ctx) {
-    ctx.beginPath();
-    ctx.strokeStyle = this.color;
-    ctx.lineWidth = this.lineWidth;
-    if (this.type === 1) {
-      this.startPoint = [this.x, this.halfHeight];
-      ctx.moveTo(this.x, this.halfHeight);
-      this.endPoint = [this.halfWidth, this.y - 200];
-      ctx.lineTo(this.halfWidth, this.y - 200);
-    } else if (this.type === 2) {
-      this.startPoint = [this.x, this.halfHeight];
-      ctx.moveTo(this.x, this.halfHeight);
-      this.endPoint = [this.halfWidth, this.y + 200];
-      ctx.lineTo(this.halfWidth, this.y + 200);
-    } else if (this.type === 3) {
-      this.startPoint = [this.x, this.y];
-      ctx.moveTo(this.x, this.y);
-      this.endPoint = [this.fullWidth + 200, this.halfHeight];
-      ctx.lineTo(this.fullWidth + 200, this.halfHeight);
-    } else if (this.type === 4) {
-      this.startPoint = [this.x, this.y];
-      ctx.moveTo(this.x, this.y);
-      this.endPoint = [this.halfWidth, this.fullHeight + 200];
-      ctx.lineTo(this.halfWidth, this.fullHeight + 200);
-    } else if (this.type === 5) {
-      this.startPoint = [this.x, this.y];
-      ctx.moveTo(this.x, this.y);
-      this.endPoint = [this.x, this.fullHeight];
-      ctx.lineTo(this.x, this.fullHeight);
-    } else if (this.type === 6) {
-      this.startPoint = [this.x, this.y];
-      ctx.moveTo(this.x, this.y);
-      this.endPoint = [this.x, this.fullHeight];
-      ctx.lineTo(this.x, this.fullHeight);
-    } else if (this.type === 7) {
-      this.startPoint = [this.x, this.y];
-      ctx.moveTo(this.x, this.y);
-      this.endPoint = [this.fullWidth, this.y];
-      ctx.lineTo(this.fullWidth, this.y);
-    } else if (this.type === 8) {
-      this.startPoint = [this.x, this.y];
-      ctx.moveTo(this.x, this.y);
-      this.endPoint = [this.fullWidth, this.y];
-      ctx.lineTo(this.fullWidth, this.y);
-    } else if (this.type === 9) {
-      this.startPoint = [this.x, this.y];
-      ctx.moveTo(this.x, this.y);
-      this.endPoint = [this.fullWidth, this.y];
-      ctx.lineTo(this.fullWidth, this.y);
-      this.color = this.game.color;
-    } else if (this.type === 10) {
-      this.startPoint = [this.x, this.y];
-      ctx.moveTo(this.x, this.y);
-      this.endPoint = [this.halfWidth, this.fullHeight + 200];
-      ctx.lineTo(this.halfWidth, this.fullHeight + 200);
-      this.color = this.game.color;
-    } else if (this.type === 11) {
-      this.startPoint = [this.x, this.y];
-      ctx.moveTo(this.x, this.y);
-      this.endPoint = [this.fullWidth + 200, this.halfHeight];
-      ctx.lineTo(this.fullWidth + 200, this.halfHeight);
-      this.color = this.game.color;
-    } else if (this.type === 12) {
-      this.startPoint = [this.x, this.y];
-      ctx.moveTo(this.x, this.y);
-      this.endPoint = [this.fullWidth, this.y];
-      ctx.lineTo(this.fullWidth, this.y);
-      this.color = this.game.color;
-    }
-
-    ctx.closePath();
-    ctx.stroke();
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Line);
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class Center {
-  constructor(ctx, gameCanvas, difficultyModifier, radius) {
-    this.ctx = ctx;
-    this.gameCanvas = gameCanvas;
-    this.radius = radius;
-    if (difficultyModifier == 1) this.color = '#7C7C7C';
-    if (difficultyModifier == 2) this.color = '#303030';
-    if (difficultyModifier == 3) this.color = '#131313';
-  }
-
-  render(ctx) {
-    let centerX = this.gameCanvas.width / 2;
-    let centerY = this.gameCanvas.height / 2;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, this.radius, 0, Math.PI * 2, false);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.closePath();
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Center);
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class Player {
-  constructor(ctx, gameCanvas, color, ballSpeed) {
-    this.ctx = ctx;
-    this.gameCanvas = gameCanvas;
-    this.color = color;
-    this.circle = {
-      centerX: this.gameCanvas.width / 2,
-      centerY: this.gameCanvas.height / 2,
-      radius: 75,
-      angle: 0,
-    };
-    this.ball = { x: 0, y: 0, speed: 0 };
-    this.ball.x = 0;
-    this.ball.y = 0;
-    this.ball.radius = 8;
-    this.ballSpeed = ballSpeed;
-  }
-
-  render(ctx) {
-
-    if (window.rightPressed) {
-      this.ball.speed = this.ballSpeed;
-    }
-
-    if (window.leftPressed) {
-      this.ball.speed = -(this.ballSpeed);
-    }
-
-    if (!window.leftPressed && !window.rightPressed) {
-      this.ball.speed = 0;
-    }
-
-    ctx.strokeStyle = this.color;
-
-    this.ball.x = this.circle.centerX + Math.cos(this.circle.angle) * this.circle.radius;
-    this.ball.y = this.circle.centerY + Math.sin(this.circle.angle) * this.circle.radius;
-
-    this.circle.angle += this.ball.speed;
-
-    ctx.fillStyle = this.color;
-    ctx.beginPath();
-    ctx.arc(this.ball.x, this.ball.y, this.ball.radius, 0, Math.PI * 2, true);
-    ctx.closePath();
-    ctx.fill();
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Player);
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var pointCircleCollide = __webpack_require__(6)
-
-var tmp = [0, 0]
-
-function lineCircleCollide(a, b, circle, radius, nearest) {
-    //check to see if start or end points lie within circle 
-    if (pointCircleCollide(a, circle, radius)) {
-        if (nearest) {
-            nearest[0] = a[0]
-            nearest[1] = a[1]
-        }
-        return true
-    } if (pointCircleCollide(b, circle, radius)) {
-        if (nearest) {
-            nearest[0] = b[0]
-            nearest[1] = b[1]
-        }
-        return true
-    }
-    
-    var x1 = a[0],
-        y1 = a[1],
-        x2 = b[0],
-        y2 = b[1],
-        cx = circle[0],
-        cy = circle[1]
-
-    //vector d
-    var dx = x2 - x1
-    var dy = y2 - y1
-    
-    //vector lc
-    var lcx = cx - x1
-    var lcy = cy - y1
-    
-    //project lc onto d, resulting in vector p
-    var dLen2 = dx * dx + dy * dy //len2 of d
-    var px = dx
-    var py = dy
-    if (dLen2 > 0) {
-        var dp = (lcx * dx + lcy * dy) / dLen2
-        px *= dp
-        py *= dp
-    }
-    
-    if (!nearest)
-        nearest = tmp
-    nearest[0] = x1 + px
-    nearest[1] = y1 + py
-    
-    //len2 of p
-    var pLen2 = px * px + py * py
-    
-    //check collision
-    return pointCircleCollide(nearest, circle, radius)
-            && pLen2 <= dLen2 && (px * dx + py * dy) >= 0
-}
-
-module.exports = lineCircleCollide
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-function pointCircleCollision(point, circle, r) {
-    if (r===0) return false
-    var dx = circle[0] - point[0]
-    var dy = circle[1] - point[1]
-    return dx * dx + dy * dy <= r * r
-}
-
-module.exports = pointCircleCollision
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__db_js__ = __webpack_require__(169);
-
-
-class Ui {
-  constructor(game, toolsCtx, toolsCanvas, shouldDrawMainMenu, mainMenu, bgm) {
-
-    this.game = game;
-    this.toolsCtx = toolsCtx;
-    this.toolsCanvas = toolsCanvas;
-    this.score;
-    this.highScore1 = 0;
-    this.highScore2 = 0;
-    this.highScore3 = 0;
-    this.shouldDrawMainMenu = shouldDrawMainMenu;
-    this.mainMenu = mainMenu;
-    this.bgm = bgm;
-
-    this.stage2LockedDisplay = false;
-    this.muteButtonDisplay = false;
-
-    this.stage1Victory = false;
-    this.stage2Victory = false;
-    this.stage3Victory = false;
-  }
-
-  drawElapsedTime() {
-    if (this.game.gameActive === true) {
-      let elapsed = parseInt((new Date() - this.game.startTime));
-      let hundredths = (elapsed / 1000).toFixed(2);
-      if (hundredths.length < 2) hundredths = '0' + hundredths;
-      this.toolsCtx.save();
-      this.toolsCtx.beginPath();
-      this.toolsCtx.fillStyle = 'white';
-      if (parseInt(hundredths) >= 60.0) this.toolsCtx.fillStyle = 'lightgreen';
-
-      this.toolsCtx.font = '50px Orbitron';
-
-      this.toolsCtx.globalAlpha = 0.50;
-      this.toolsCtx.fillText(hundredths, this.toolsCanvas.width - 365, 60);
-      this.toolsCtx.restore();
-      this.score = hundredths;
-    }
-  }
-
-  drawFinalScore() {
-
-    if (window.difficultyLevel === 1) {
-      if (parseInt(this.score) > parseInt(this.highScore1)) {
-        this.highScore1 = this.score;
-      }
-    } else if (window.difficultyLevel === 2) {
-      if (parseInt(this.score) > parseInt(this.highScore2)) {
-        this.highScore2 = this.score;
-      }
-    } else if (window.difficultyLevel === 3) {
-      if (parseInt(this.score) > parseInt(this.highScore3)) {
-        this.highScore3 = this.score;
-      }
-    }
-
-    this.toolsCtx.save();
-    this.toolsCtx.beginPath();
-    this.toolsCtx.fillStyle = 'white';
-
-    if (parseInt(this.score) >= 60.0) {
-      this.toolsCtx.fillStyle = 'lightgreen';
-      if (window.difficultyLevel === 1) {
-        this.stage1Victory = true;
-      } else if (window.difficultyLevel === 2) {
-        this.stage2Victory = true;
-      } else if (window.difficultyLevel === 3) {
-        this.stage3Victory = true;
-      }
-    }
-
-    this.toolsCtx.font = '50px Orbitron';
-    this.toolsCtx.fillText(this.score, this.toolsCanvas.width - 365, 60);
-    this.toolsCtx.restore();
-  }
-
-  drawHighScore() {
-    if (window.difficultyLevel === 1) {
-      if (this.highScore1) {
-        this.toolsCtx.save();
-        this.toolsCtx.beginPath();
-        this.toolsCtx.fillStyle = 'white';
-        this.toolsCtx.font = '26px Orbitron';
-        this.toolsCtx.globalAlpha = 0.70;
-        this.toolsCtx.fillText('Best: ' + this.highScore1, this.toolsCanvas.width - 585, 40);
-        this.toolsCtx.restore();
-      }
-    } else if (window.difficultyLevel === 2) {
-      if (this.highScore2) {
-        this.toolsCtx.save();
-        this.toolsCtx.beginPath();
-        this.toolsCtx.fillStyle = 'white';
-        this.toolsCtx.font = '26px Orbitron';
-        this.toolsCtx.globalAlpha = 0.70;
-        this.toolsCtx.fillText('Best: ' + this.highScore2, this.toolsCanvas.width - 585, 40);
-        this.toolsCtx.restore();
-      }
-    } else if (window.difficultyLevel === 3) {
-      if (this.highScore3) {
-        this.toolsCtx.save();
-        this.toolsCtx.beginPath();
-        this.toolsCtx.fillStyle = 'white';
-        this.toolsCtx.font = '26px Orbitron';
-        this.toolsCtx.globalAlpha = 0.70;
-        this.toolsCtx.fillText('Best: ' + this.highScore3, this.toolsCanvas.width - 585, 40);
-        this.toolsCtx.restore();
-      }
-    }
-  }
-
-  drawMainMenu() {
-    this.toolsCtx.drawImage(this.mainMenu,
-      this.toolsCanvas.width / 2 - this.mainMenu.width / 2,
-      this.toolsCanvas.height / 2 - this.mainMenu.height / 2
-    );
-    this.drawDifficulty();
-  }
-
-  drawMuteButton() {
-    this.toolsCtx.beginPath();
-    this.toolsCtx.strokeStyle = 'red';
-    this.toolsCtx.lineWidth = 4;
-    this.toolsCtx.moveTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 27);
-    this.toolsCtx.lineTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 43);
-    this.toolsCtx.moveTo(this.toolsCanvas.width - 183, this.toolsCanvas.height - 43);
-    this.toolsCtx.lineTo(this.toolsCanvas.width - 156, this.toolsCanvas.height - 43);
-    this.toolsCtx.moveTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 43);
-    this.toolsCtx.lineTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 27);
-    this.toolsCtx.moveTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 43);
-    this.toolsCtx.lineTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 27);
-    this.toolsCtx.closePath();
-    this.toolsCtx.stroke();
-  }
-
-  drawDifficulty() {
-    this.toolsCtx.beginPath();
-    this.toolsCtx.lineWidth = 6;
-    if (window.difficultyLevel === 1) {
-      this.toolsCtx.strokeStyle = this.stage1Victory ? 'green' : 'blue';
-      this.toolsCtx.moveTo(10, this.toolsCanvas.height - 15);
-      this.toolsCtx.lineTo(75, this.toolsCanvas.height - 15);
-      this.toolsCtx.moveTo(10, this.toolsCanvas.height - 65);
-      this.toolsCtx.lineTo(75, this.toolsCanvas.height - 65);
-      this.toolsCtx.moveTo(13, this.toolsCanvas.height - 65);
-      this.toolsCtx.lineTo(13, this.toolsCanvas.height - 15);
-      this.toolsCtx.moveTo(72, this.toolsCanvas.height - 65);
-      this.toolsCtx.lineTo(72, this.toolsCanvas.height - 15);
-    } else if (window.difficultyLevel === 2) {
-      this.toolsCtx.strokeStyle = this.stage2Victory ? 'green' : 'blue';
-      this.toolsCtx.moveTo(85, this.toolsCanvas.height - 14);
-      this.toolsCtx.lineTo(150, this.toolsCanvas.height - 14);
-      this.toolsCtx.moveTo(85, this.toolsCanvas.height - 65);
-      this.toolsCtx.lineTo(150, this.toolsCanvas.height - 65);
-      this.toolsCtx.moveTo(88, this.toolsCanvas.height - 65);
-      this.toolsCtx.lineTo(88, this.toolsCanvas.height - 15);
-      this.toolsCtx.moveTo(147, this.toolsCanvas.height - 65);
-      this.toolsCtx.lineTo(147, this.toolsCanvas.height - 15);
-    } else if (window.difficultyLevel === 3) {
-      this.toolsCtx.strokeStyle = this.stage3Victory ? 'green' : 'blue';
-      this.toolsCtx.moveTo(162, this.toolsCanvas.height - 15);
-      this.toolsCtx.lineTo(227, this.toolsCanvas.height - 15);
-      this.toolsCtx.moveTo(162, this.toolsCanvas.height - 65);
-      this.toolsCtx.lineTo(227, this.toolsCanvas.height - 65);
-      this.toolsCtx.moveTo(165, this.toolsCanvas.height - 65);
-      this.toolsCtx.lineTo(165, this.toolsCanvas.height - 15);
-      this.toolsCtx.moveTo(224, this.toolsCanvas.height - 65);
-      this.toolsCtx.lineTo(224, this.toolsCanvas.height - 15);
-    }
-
-    this.toolsCtx.closePath();
-    this.toolsCtx.stroke();
-  }
-
-  stage2Locked() {
-    this.toolsCtx.save();
-    this.toolsCtx.beginPath();
-    this.toolsCtx.fillStyle = 'red';
-    this.toolsCtx.font = '26px Orbitron';
-    this.toolsCtx.fillText('Unlocked by completing Stage 1', 78, this.toolsCanvas.height - 230);
-    this.toolsCtx.strokeStyle = 'red';
-    this.toolsCtx.moveTo(85, this.toolsCanvas.height - 15);
-    this.toolsCtx.lineTo(150, this.toolsCanvas.height - 15);
-    this.toolsCtx.moveTo(85, this.toolsCanvas.height - 65);
-    this.toolsCtx.lineTo(150, this.toolsCanvas.height - 65);
-    this.toolsCtx.moveTo(88, this.toolsCanvas.height - 65);
-    this.toolsCtx.lineTo(88, this.toolsCanvas.height - 15);
-    this.toolsCtx.moveTo(147, this.toolsCanvas.height - 65);
-    this.toolsCtx.lineTo(147, this.toolsCanvas.height - 15);
-    this.toolsCtx.closePath();
-    this.toolsCtx.stroke();
-    this.toolsCtx.restore();
-  }
-
-  stage3Locked() {
-    this.toolsCtx.save();
-    this.toolsCtx.beginPath();
-    this.toolsCtx.fillStyle = 'red';
-    this.toolsCtx.font = '26px Orbitron';
-    this.toolsCtx.fillText('Unlocked by completing Stage 2', 78, this.toolsCanvas.height - 230);
-    this.toolsCtx.strokeStyle = 'red';
-    this.toolsCtx.moveTo(162, this.toolsCanvas.height - 15);
-    this.toolsCtx.lineTo(227, this.toolsCanvas.height - 15);
-    this.toolsCtx.moveTo(162, this.toolsCanvas.height - 65);
-    this.toolsCtx.lineTo(227, this.toolsCanvas.height - 65);
-    this.toolsCtx.moveTo(165, this.toolsCanvas.height - 65);
-    this.toolsCtx.lineTo(165, this.toolsCanvas.height - 15);
-    this.toolsCtx.moveTo(224, this.toolsCanvas.height - 65);
-    this.toolsCtx.lineTo(224, this.toolsCanvas.height - 15);
-    this.toolsCtx.closePath();
-    this.toolsCtx.stroke();
-    this.toolsCtx.restore();
-  }
-
-
-  sendHighScores() {
-    let newScore = [{ stage: window.difficultyLevel, score: this.score, invscore: -(this.score)}];
-    __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
-    this.displayHighScores();
-  }
-
-  displayHighScores() {
-    document.getElementById('scores').innerHTML = '';
-    __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').orderByChild('0/invscore').limitToFirst(10).on('child_added', (data) => {
-      let childScoreHolder = data.val();
-      if (childScoreHolder != undefined) {
-        let childScore = childScoreHolder[0];
-        if (window.difficultyLevel == childScore.stage) {
-          document.getElementById('scores').innerHTML += 'Stage ' + childScore.stage + ': ' + childScore.score + '<br/>';
-        }
-      }
-    })
-  }
-
-  render() {
-    const animateCallback = () => {
-      this.toolsCtx.clearRect(0, 0, this.toolsCanvas.width, this.toolsCanvas.height);
-      this.shouldDrawMainMenu === true ? this.drawMainMenu() : null;
-      this.game.gameOver === false ? this.drawElapsedTime() : this.drawFinalScore();
-      if (this.highScore1 > 0 || this.highScore2 > 0 || this.highScore3 > 0) this.drawHighScore();
-
-      if (this.stage2LockedDisplay === true) {
-        this.stage2Locked();
-        setTimeout(() => (this.stage2LockedDisplay = false), 1500);
-      }
-
-      if (this.stage3LockedDisplay === true) {
-        this.stage3Locked();
-        setTimeout(() => (this.stage3LockedDisplay = false), 1500);
-      }
-
-      if (this.muteButtonDisplay === true) {
-        this.drawMuteButton();
-      }
-
-      this.frames = requestAnimationFrame(animateCallback);
-    };
-
-    animateCallback();
-
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Ui);
-
-
-/***/ }),
-/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1478,27 +88,27 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(49));
-__export(__webpack_require__(50));
-__export(__webpack_require__(37));
-__export(__webpack_require__(97));
+__export(__webpack_require__(41));
+__export(__webpack_require__(42));
+__export(__webpack_require__(29));
 __export(__webpack_require__(98));
 __export(__webpack_require__(99));
 __export(__webpack_require__(100));
-__export(__webpack_require__(51));
 __export(__webpack_require__(101));
-__export(__webpack_require__(52));
+__export(__webpack_require__(43));
 __export(__webpack_require__(102));
+__export(__webpack_require__(44));
 __export(__webpack_require__(103));
-__export(__webpack_require__(105));
+__export(__webpack_require__(104));
 __export(__webpack_require__(106));
 __export(__webpack_require__(107));
+__export(__webpack_require__(108));
 
 //# sourceMappingURL=index.js.map
 
 
 /***/ }),
-/* 9 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1519,14 +129,14 @@ __export(__webpack_require__(107));
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(8);
-var util_3 = __webpack_require__(8);
-var util_4 = __webpack_require__(8);
-var util_5 = __webpack_require__(8);
-var util_6 = __webpack_require__(8);
-var storage_1 = __webpack_require__(26);
-var util_7 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(0);
+var util_3 = __webpack_require__(0);
+var util_4 = __webpack_require__(0);
+var util_5 = __webpack_require__(0);
+var util_6 = __webpack_require__(0);
+var storage_1 = __webpack_require__(18);
+var util_7 = __webpack_require__(0);
 /**
  * Returns a locally-unique ID (generated by just incrementing up from 0 each time its called).
  * @type {function(): number} Generated ID.
@@ -2136,7 +746,7 @@ exports.setTimeoutNonBlocking = function (fn, time) {
 
 
 /***/ }),
-/* 10 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2157,8 +767,8 @@ exports.setTimeoutNonBlocking = function (fn, time) {
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(9);
-var util_2 = __webpack_require__(8);
+var util_1 = __webpack_require__(1);
+var util_2 = __webpack_require__(0);
 /**
  * An immutable object representing a parsed path.  It's immutable so that you
  * can pass them around to other functions without worrying about them changing
@@ -2469,7 +1079,7 @@ exports.ValidationPath = ValidationPath;
 
 
 /***/ }),
-/* 11 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2500,10 +1110,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Index_1 = __webpack_require__(28);
-var util_1 = __webpack_require__(9);
-var Node_1 = __webpack_require__(13);
-var LeafNode_1 = __webpack_require__(29);
+var Index_1 = __webpack_require__(20);
+var util_1 = __webpack_require__(1);
+var Node_1 = __webpack_require__(5);
+var LeafNode_1 = __webpack_require__(21);
 var nodeFromJSON;
 var MAX_NODE;
 function setNodeFromJSON(val) {
@@ -2586,7 +1196,7 @@ exports.PRIORITY_INDEX = new PriorityIndex();
 
 
 /***/ }),
-/* 12 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2617,16 +1227,16 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(9);
-var SortedMap_1 = __webpack_require__(30);
-var Node_1 = __webpack_require__(13);
-var snap_1 = __webpack_require__(58);
-var PriorityIndex_1 = __webpack_require__(11);
-var KeyIndex_1 = __webpack_require__(22);
-var IndexMap_1 = __webpack_require__(60);
-var LeafNode_1 = __webpack_require__(29);
-var comparators_1 = __webpack_require__(62);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(1);
+var SortedMap_1 = __webpack_require__(22);
+var Node_1 = __webpack_require__(5);
+var snap_1 = __webpack_require__(50);
+var PriorityIndex_1 = __webpack_require__(3);
+var KeyIndex_1 = __webpack_require__(14);
+var IndexMap_1 = __webpack_require__(52);
+var LeafNode_1 = __webpack_require__(21);
+var comparators_1 = __webpack_require__(54);
 // TODO: For memory savings, don't store priorityNode_ if it's empty.
 var EMPTY_NODE;
 /**
@@ -3097,7 +1707,7 @@ PriorityIndex_1.setMaxNode(exports.MAX_NODE);
 
 
 /***/ }),
-/* 13 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3147,7 +1757,7 @@ exports.NamedNode = NamedNode;
 
 
 /***/ }),
-/* 14 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3214,7 +1824,7 @@ function isNativeBlobDefined() {
 
 
 /***/ }),
-/* 15 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3245,7 +1855,7 @@ function isNativeBlobDefined() {
 /* harmony export (immutable) */ __webpack_exports__["j"] = invalidRootOperation;
 /* harmony export (immutable) */ __webpack_exports__["i"] = invalidFormat;
 /* harmony export (immutable) */ __webpack_exports__["e"] = internalError;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(26);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -3464,13 +2074,13 @@ function internalError(message) {
 
 
 /***/ }),
-/* 16 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "firebase", function() { return firebase; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_firebaseApp__ = __webpack_require__(96);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_firebaseApp__ = __webpack_require__(97);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -3495,7 +2105,7 @@ var firebase = Object(__WEBPACK_IMPORTED_MODULE_0__src_firebaseApp__["a" /* crea
 
 
 /***/ }),
-/* 17 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3516,11 +2126,11 @@ var firebase = Object(__WEBPACK_IMPORTED_MODULE_0__src_firebaseApp__["a" /* crea
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var Path_1 = __webpack_require__(10);
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(9);
-var util_3 = __webpack_require__(8);
-var util_4 = __webpack_require__(8);
+var Path_1 = __webpack_require__(2);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(1);
+var util_3 = __webpack_require__(0);
+var util_4 = __webpack_require__(0);
 /**
  * True for invalid Firebase keys
  * @type {RegExp}
@@ -3883,7 +2493,7 @@ exports.validateObjectContainsKey = function (fnName, argumentNumber, obj, key, 
 
 
 /***/ }),
-/* 18 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3904,7 +2514,7 @@ exports.validateObjectContainsKey = function (fnName, argumentNumber, obj, key, 
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
 /**
  *
  * @enum
@@ -3962,7 +2572,7 @@ exports.OperationSource = OperationSource;
 
 
 /***/ }),
-/* 19 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4010,7 +2620,7 @@ function reject(error) {
 
 
 /***/ }),
-/* 20 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4107,7 +2717,7 @@ exports.Change = Change;
 
 
 /***/ }),
-/* 21 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4157,7 +2767,7 @@ function clone(obj) {
 
 
 /***/ }),
-/* 22 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4188,10 +2798,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Index_1 = __webpack_require__(28);
-var Node_1 = __webpack_require__(13);
-var util_1 = __webpack_require__(9);
-var util_2 = __webpack_require__(8);
+var Index_1 = __webpack_require__(20);
+var Node_1 = __webpack_require__(5);
+var util_1 = __webpack_require__(1);
+var util_2 = __webpack_require__(0);
 var __EMPTY_NODE;
 var KeyIndex = /** @class */ (function (_super) {
     __extends(KeyIndex, _super);
@@ -4267,7 +2877,7 @@ exports.KEY_INDEX = new KeyIndex();
 
 
 /***/ }),
-/* 23 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4288,15 +2898,15 @@ exports.KEY_INDEX = new KeyIndex();
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var ChildrenNode_1 = __webpack_require__(12);
-var LeafNode_1 = __webpack_require__(29);
-var Node_1 = __webpack_require__(13);
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(8);
-var childSet_1 = __webpack_require__(61);
-var comparators_1 = __webpack_require__(62);
-var IndexMap_1 = __webpack_require__(60);
-var PriorityIndex_1 = __webpack_require__(11);
+var ChildrenNode_1 = __webpack_require__(4);
+var LeafNode_1 = __webpack_require__(21);
+var Node_1 = __webpack_require__(5);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(0);
+var childSet_1 = __webpack_require__(53);
+var comparators_1 = __webpack_require__(54);
+var IndexMap_1 = __webpack_require__(52);
+var PriorityIndex_1 = __webpack_require__(3);
 var USE_HINZE = true;
 /**
  * Constructs a snapshot node representing the passed JSON and returns it.
@@ -4375,7 +2985,7 @@ PriorityIndex_1.setNodeFromJSON(nodeFromJSON);
 
 
 /***/ }),
-/* 24 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4388,7 +2998,7 @@ PriorityIndex_1.setNodeFromJSON(nodeFromJSON);
 /* unused harmony export base64Bytes_ */
 /* unused harmony export dataURLBytes_ */
 /* unused harmony export dataURLContentType_ */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error__ = __webpack_require__(7);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -4589,7 +3199,7 @@ function endsWith(s, end) {
 
 
 /***/ }),
-/* 25 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4661,7 +3271,7 @@ function taskStateFromInternalTaskState(state) {
 
 
 /***/ }),
-/* 26 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4682,8 +3292,8 @@ function taskStateFromInternalTaskState(state) {
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var DOMStorageWrapper_1 = __webpack_require__(112);
-var MemoryStorage_1 = __webpack_require__(113);
+var DOMStorageWrapper_1 = __webpack_require__(113);
+var MemoryStorage_1 = __webpack_require__(114);
 /**
  * Helper to create a DOMStorageWrapper or else fall back to MemoryStorage.
  * TODO: Once MemoryStorage and DOMStorageWrapper have a shared interface this method annotation should change
@@ -4720,7 +3330,7 @@ exports.SessionStorage = createStoragefor('sessionStorage');
 
 
 /***/ }),
-/* 27 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4755,7 +3365,7 @@ exports.LONG_POLLING = 'long_polling';
 
 
 /***/ }),
-/* 28 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4776,8 +3386,8 @@ exports.LONG_POLLING = 'long_polling';
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var Node_1 = __webpack_require__(13);
-var util_1 = __webpack_require__(9);
+var Node_1 = __webpack_require__(5);
+var util_1 = __webpack_require__(1);
 /**
  *
  * @constructor
@@ -4820,7 +3430,7 @@ exports.Index = Index;
 
 
 /***/ }),
-/* 29 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4841,9 +3451,9 @@ exports.Index = Index;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(9);
-var snap_1 = __webpack_require__(58);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(1);
+var snap_1 = __webpack_require__(50);
 var __childrenNodeConstructor;
 /**
  * LeafNode is a class for storing leaf nodes in a DataSnapshot.  It
@@ -5094,7 +3704,7 @@ exports.LeafNode = LeafNode;
 
 
 /***/ }),
-/* 30 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5759,7 +4369,7 @@ exports.SortedMap = SortedMap;
 
 
 /***/ }),
-/* 31 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5780,23 +4390,23 @@ exports.SortedMap = SortedMap;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var ServerValues_1 = __webpack_require__(64);
-var nodeFromJSON_1 = __webpack_require__(23);
-var Path_1 = __webpack_require__(10);
-var SparseSnapshotTree_1 = __webpack_require__(65);
-var SyncTree_1 = __webpack_require__(118);
-var SnapshotHolder_1 = __webpack_require__(129);
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(9);
-var util_3 = __webpack_require__(8);
-var AuthTokenProvider_1 = __webpack_require__(130);
-var StatsManager_1 = __webpack_require__(42);
-var StatsReporter_1 = __webpack_require__(132);
-var StatsListener_1 = __webpack_require__(70);
-var EventQueue_1 = __webpack_require__(133);
-var PersistentConnection_1 = __webpack_require__(71);
-var ReadonlyRestClient_1 = __webpack_require__(138);
-var Database_1 = __webpack_require__(53);
+var ServerValues_1 = __webpack_require__(56);
+var nodeFromJSON_1 = __webpack_require__(15);
+var Path_1 = __webpack_require__(2);
+var SparseSnapshotTree_1 = __webpack_require__(57);
+var SyncTree_1 = __webpack_require__(119);
+var SnapshotHolder_1 = __webpack_require__(130);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(1);
+var util_3 = __webpack_require__(0);
+var AuthTokenProvider_1 = __webpack_require__(131);
+var StatsManager_1 = __webpack_require__(34);
+var StatsReporter_1 = __webpack_require__(133);
+var StatsListener_1 = __webpack_require__(62);
+var EventQueue_1 = __webpack_require__(134);
+var PersistentConnection_1 = __webpack_require__(63);
+var ReadonlyRestClient_1 = __webpack_require__(139);
+var Database_1 = __webpack_require__(45);
 var INTERRUPT_REASON = 'repo_interrupt';
 /**
  * A connection to a single data repository.
@@ -6294,7 +4904,7 @@ exports.Repo = Repo;
 
 
 /***/ }),
-/* 32 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6378,7 +4988,7 @@ exports.CacheNode = CacheNode;
 
 
 /***/ }),
-/* 33 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6495,7 +5105,7 @@ var _a;
 
 
 /***/ }),
-/* 34 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6569,12 +5179,12 @@ var minSafeInteger = -9007199254740991;
 
 
 /***/ }),
-/* 35 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Location; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error__ = __webpack_require__(7);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -6689,7 +5299,7 @@ var Location = /** @class */ (function () {
 
 
 /***/ }),
-/* 36 */
+/* 28 */
 /***/ (function(module, exports) {
 
 var g;
@@ -6716,7 +5326,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 37 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6759,7 +5369,7 @@ exports.CONSTANTS = {
 
 
 /***/ }),
-/* 38 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6790,18 +5400,18 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var onDisconnect_1 = __webpack_require__(56);
-var TransactionResult_1 = __webpack_require__(114);
-var util_1 = __webpack_require__(9);
-var NextPushId_1 = __webpack_require__(115);
-var Query_1 = __webpack_require__(57);
-var Repo_1 = __webpack_require__(31);
-var Path_1 = __webpack_require__(10);
-var QueryParams_1 = __webpack_require__(139);
-var validation_1 = __webpack_require__(17);
-var util_2 = __webpack_require__(8);
-var util_3 = __webpack_require__(8);
-var SyncPoint_1 = __webpack_require__(68);
+var onDisconnect_1 = __webpack_require__(48);
+var TransactionResult_1 = __webpack_require__(115);
+var util_1 = __webpack_require__(1);
+var NextPushId_1 = __webpack_require__(116);
+var Query_1 = __webpack_require__(49);
+var Repo_1 = __webpack_require__(23);
+var Path_1 = __webpack_require__(2);
+var QueryParams_1 = __webpack_require__(140);
+var validation_1 = __webpack_require__(9);
+var util_2 = __webpack_require__(0);
+var util_3 = __webpack_require__(0);
+var SyncPoint_1 = __webpack_require__(60);
 var Reference = /** @class */ (function (_super) {
     __extends(Reference, _super);
     /**
@@ -7074,7 +5684,7 @@ SyncPoint_1.SyncPoint.__referenceConstructor = Reference;
 
 
 /***/ }),
-/* 39 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7095,10 +5705,10 @@ SyncPoint_1.SyncPoint.__referenceConstructor = Reference;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var validation_1 = __webpack_require__(17);
-var Path_1 = __webpack_require__(10);
-var PriorityIndex_1 = __webpack_require__(11);
+var util_1 = __webpack_require__(0);
+var validation_1 = __webpack_require__(9);
+var Path_1 = __webpack_require__(2);
+var PriorityIndex_1 = __webpack_require__(3);
 /**
  * Class representing a firebase data snapshot.  It wraps a SnapshotNode and
  * surfaces the public methods (val, forEach, etc.) we want to expose.
@@ -7254,7 +5864,7 @@ exports.DataSnapshot = DataSnapshot;
 
 
 /***/ }),
-/* 40 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7275,10 +5885,10 @@ exports.DataSnapshot = DataSnapshot;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var SortedMap_1 = __webpack_require__(30);
-var Path_1 = __webpack_require__(10);
-var util_1 = __webpack_require__(9);
-var util_2 = __webpack_require__(8);
+var SortedMap_1 = __webpack_require__(22);
+var Path_1 = __webpack_require__(2);
+var util_1 = __webpack_require__(1);
+var util_2 = __webpack_require__(0);
 var emptyChildrenSingleton;
 /**
  * Singleton empty children collection.
@@ -7618,7 +6228,7 @@ exports.ImmutableTree = ImmutableTree;
 
 
 /***/ }),
-/* 41 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7639,10 +6249,10 @@ exports.ImmutableTree = ImmutableTree;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var Change_1 = __webpack_require__(20);
-var ChildrenNode_1 = __webpack_require__(12);
-var PriorityIndex_1 = __webpack_require__(11);
+var util_1 = __webpack_require__(0);
+var Change_1 = __webpack_require__(12);
+var ChildrenNode_1 = __webpack_require__(4);
+var PriorityIndex_1 = __webpack_require__(3);
 /**
  * Doesn't really filter nodes but applies an index to the node and keeps track of any changes
  *
@@ -7758,7 +6368,7 @@ exports.IndexedFilter = IndexedFilter;
 
 
 /***/ }),
-/* 42 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7779,7 +6389,7 @@ exports.IndexedFilter = IndexedFilter;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var StatsCollection_1 = __webpack_require__(131);
+var StatsCollection_1 = __webpack_require__(132);
 var StatsManager = /** @class */ (function () {
     function StatsManager() {
     }
@@ -7807,7 +6417,7 @@ exports.StatsManager = StatsManager;
 
 
 /***/ }),
-/* 43 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7828,12 +6438,12 @@ exports.StatsManager = StatsManager;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var Repo_1 = __webpack_require__(31);
-var util_2 = __webpack_require__(9);
-var parser_1 = __webpack_require__(54);
-var validation_1 = __webpack_require__(17);
-__webpack_require__(141);
+var util_1 = __webpack_require__(0);
+var Repo_1 = __webpack_require__(23);
+var util_2 = __webpack_require__(1);
+var parser_1 = __webpack_require__(46);
+var validation_1 = __webpack_require__(9);
+__webpack_require__(142);
 /** @const {string} */
 var DATABASE_URL_OPTION = 'databaseURL';
 var _staticInstance;
@@ -7947,7 +6557,7 @@ exports.RepoManager = RepoManager;
 
 
 /***/ }),
-/* 44 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7960,9 +6570,9 @@ exports.RepoManager = RepoManager;
 /* harmony export (immutable) */ __webpack_exports__["c"] = nonNegativeNumberSpec;
 /* harmony export (immutable) */ __webpack_exports__["a"] = looseObjectSpec;
 /* harmony export (immutable) */ __webpack_exports__["d"] = nullFunctionSpec;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__metadata__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__metadata__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type__ = __webpack_require__(6);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -8101,7 +6711,7 @@ function nullFunctionSpec(opt_optional) {
 
 
 /***/ }),
-/* 45 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8114,11 +6724,11 @@ function nullFunctionSpec(opt_optional) {
 /* harmony export (immutable) */ __webpack_exports__["a"] = fromResourceString;
 /* harmony export (immutable) */ __webpack_exports__["d"] = toResourceString;
 /* harmony export (immutable) */ __webpack_exports__["c"] = metadataValidator;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__json__ = __webpack_require__(156);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__location__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__path__ = __webpack_require__(84);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__url__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__json__ = __webpack_require__(157);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__location__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__path__ = __webpack_require__(76);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__url__ = __webpack_require__(38);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -8297,7 +6907,7 @@ function metadataValidator(p) {
 
 
 /***/ }),
-/* 46 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8305,8 +6915,8 @@ function metadataValidator(p) {
 /* harmony export (immutable) */ __webpack_exports__["a"] = makeDownloadUrl;
 /* harmony export (immutable) */ __webpack_exports__["d"] = makeUploadUrl;
 /* harmony export (immutable) */ __webpack_exports__["c"] = makeQueryString;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__object__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__object__ = __webpack_require__(13);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -8352,7 +6962,7 @@ function makeQueryString(params) {
 
 
 /***/ }),
-/* 47 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8404,7 +7014,7 @@ function remove(array, elem) {
 
 
 /***/ }),
-/* 48 */
+/* 40 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -8594,7 +7204,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 49 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8615,7 +7225,7 @@ process.umask = function() { return 0; };
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var constants_1 = __webpack_require__(37);
+var constants_1 = __webpack_require__(29);
 /**
  * Throws an error if the provided assertion is falsy
  * @param {*} assertion The assertion to be tested for falsiness
@@ -8642,7 +7252,7 @@ exports.assertionError = function (message) {
 
 
 /***/ }),
-/* 50 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8960,7 +7570,7 @@ exports.base64Decode = function (str) {
 
 
 /***/ }),
-/* 51 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9005,7 +7615,7 @@ exports.stringify = stringify;
 
 
 /***/ }),
-/* 52 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9147,7 +7757,7 @@ exports.every = function (obj, fn) {
 
 
 /***/ }),
-/* 53 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9168,14 +7778,14 @@ exports.every = function (obj, fn) {
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(9);
-var parser_1 = __webpack_require__(54);
-var Path_1 = __webpack_require__(10);
-var Reference_1 = __webpack_require__(38);
-var Repo_1 = __webpack_require__(31);
-var RepoManager_1 = __webpack_require__(43);
-var util_2 = __webpack_require__(8);
-var validation_1 = __webpack_require__(17);
+var util_1 = __webpack_require__(1);
+var parser_1 = __webpack_require__(46);
+var Path_1 = __webpack_require__(2);
+var Reference_1 = __webpack_require__(30);
+var Repo_1 = __webpack_require__(23);
+var RepoManager_1 = __webpack_require__(35);
+var util_2 = __webpack_require__(0);
+var validation_1 = __webpack_require__(9);
 /**
  * Class representing a firebase database.
  * @implements {FirebaseService}
@@ -9287,7 +7897,7 @@ exports.DatabaseInternals = DatabaseInternals;
 
 
 /***/ }),
-/* 54 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9308,9 +7918,9 @@ exports.DatabaseInternals = DatabaseInternals;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var Path_1 = __webpack_require__(10);
-var RepoInfo_1 = __webpack_require__(55);
-var util_1 = __webpack_require__(9);
+var Path_1 = __webpack_require__(2);
+var RepoInfo_1 = __webpack_require__(47);
+var util_1 = __webpack_require__(1);
 /**
  * @param {!string} pathString
  * @return {string}
@@ -9411,7 +8021,7 @@ exports.parseURL = function (dataURL) {
 
 
 /***/ }),
-/* 55 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9432,10 +8042,10 @@ exports.parseURL = function (dataURL) {
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(8);
-var storage_1 = __webpack_require__(26);
-var Constants_1 = __webpack_require__(27);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(0);
+var storage_1 = __webpack_require__(18);
+var Constants_1 = __webpack_require__(19);
 /**
  * A class that holds metadata about a Repo object
  *
@@ -9529,7 +8139,7 @@ exports.RepoInfo = RepoInfo;
 
 
 /***/ }),
-/* 56 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9550,10 +8160,10 @@ exports.RepoInfo = RepoInfo;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var validation_1 = __webpack_require__(17);
-var util_2 = __webpack_require__(9);
-var util_3 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
+var validation_1 = __webpack_require__(9);
+var util_2 = __webpack_require__(1);
+var util_3 = __webpack_require__(0);
 /**
  * @constructor
  */
@@ -9650,7 +8260,7 @@ exports.OnDisconnect = OnDisconnect;
 
 
 /***/ }),
-/* 57 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9671,17 +8281,17 @@ exports.OnDisconnect = OnDisconnect;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var KeyIndex_1 = __webpack_require__(22);
-var PriorityIndex_1 = __webpack_require__(11);
-var ValueIndex_1 = __webpack_require__(59);
-var PathIndex_1 = __webpack_require__(63);
-var util_2 = __webpack_require__(9);
-var Path_1 = __webpack_require__(10);
-var validation_1 = __webpack_require__(17);
-var util_3 = __webpack_require__(8);
-var EventRegistration_1 = __webpack_require__(116);
-var util_4 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
+var KeyIndex_1 = __webpack_require__(14);
+var PriorityIndex_1 = __webpack_require__(3);
+var ValueIndex_1 = __webpack_require__(51);
+var PathIndex_1 = __webpack_require__(55);
+var util_2 = __webpack_require__(1);
+var Path_1 = __webpack_require__(2);
+var validation_1 = __webpack_require__(9);
+var util_3 = __webpack_require__(0);
+var EventRegistration_1 = __webpack_require__(117);
+var util_4 = __webpack_require__(0);
 var __referenceConstructor;
 /**
  * A Query represents a filter to be applied to a firebase location.  This object purely represents the
@@ -10163,7 +8773,7 @@ exports.Query = Query;
 
 
 /***/ }),
-/* 58 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10184,9 +8794,9 @@ exports.Query = Query;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(9);
-var util_3 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(1);
+var util_3 = __webpack_require__(0);
 var MAX_NODE;
 function setMaxNode(val) {
     MAX_NODE = val;
@@ -10225,7 +8835,7 @@ exports.validatePriorityNode = function (priorityNode) {
 
 
 /***/ }),
-/* 59 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10256,10 +8866,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Index_1 = __webpack_require__(28);
-var Node_1 = __webpack_require__(13);
-var util_1 = __webpack_require__(9);
-var nodeFromJSON_1 = __webpack_require__(23);
+var Index_1 = __webpack_require__(20);
+var Node_1 = __webpack_require__(5);
+var util_1 = __webpack_require__(1);
+var nodeFromJSON_1 = __webpack_require__(15);
 /**
  * @constructor
  * @extends {Index}
@@ -10330,7 +8940,7 @@ exports.VALUE_INDEX = new ValueIndex();
 
 
 /***/ }),
-/* 60 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10351,12 +8961,12 @@ exports.VALUE_INDEX = new ValueIndex();
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var childSet_1 = __webpack_require__(61);
-var util_2 = __webpack_require__(8);
-var Node_1 = __webpack_require__(13);
-var PriorityIndex_1 = __webpack_require__(11);
-var KeyIndex_1 = __webpack_require__(22);
+var util_1 = __webpack_require__(0);
+var childSet_1 = __webpack_require__(53);
+var util_2 = __webpack_require__(0);
+var Node_1 = __webpack_require__(5);
+var PriorityIndex_1 = __webpack_require__(3);
+var KeyIndex_1 = __webpack_require__(14);
 var _defaultIndexMap;
 var fallbackObject = {};
 /**
@@ -10518,7 +9128,7 @@ exports.IndexMap = IndexMap;
 
 
 /***/ }),
-/* 61 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10539,8 +9149,8 @@ exports.IndexMap = IndexMap;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var SortedMap_1 = __webpack_require__(30);
-var SortedMap_2 = __webpack_require__(30);
+var SortedMap_1 = __webpack_require__(22);
+var SortedMap_2 = __webpack_require__(22);
 var LOG_2 = Math.log(2);
 /**
  * @constructor
@@ -10655,7 +9265,7 @@ exports.buildChildSet = function (childList, cmp, keyFn, mapSortFn) {
 
 
 /***/ }),
-/* 62 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10676,7 +9286,7 @@ exports.buildChildSet = function (childList, cmp, keyFn, mapSortFn) {
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(9);
+var util_1 = __webpack_require__(1);
 function NAME_ONLY_COMPARATOR(left, right) {
     return util_1.nameCompare(left.name, right.name);
 }
@@ -10690,7 +9300,7 @@ exports.NAME_COMPARATOR = NAME_COMPARATOR;
 
 
 /***/ }),
-/* 63 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10721,12 +9331,12 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(9);
-var Index_1 = __webpack_require__(28);
-var ChildrenNode_1 = __webpack_require__(12);
-var Node_1 = __webpack_require__(13);
-var nodeFromJSON_1 = __webpack_require__(23);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(1);
+var Index_1 = __webpack_require__(20);
+var ChildrenNode_1 = __webpack_require__(4);
+var Node_1 = __webpack_require__(5);
+var nodeFromJSON_1 = __webpack_require__(15);
 /**
  * @param {!Path} indexPath
  * @constructor
@@ -10797,7 +9407,7 @@ exports.PathIndex = PathIndex;
 
 
 /***/ }),
-/* 64 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10818,12 +9428,12 @@ exports.PathIndex = PathIndex;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var Path_1 = __webpack_require__(10);
-var SparseSnapshotTree_1 = __webpack_require__(65);
-var LeafNode_1 = __webpack_require__(29);
-var nodeFromJSON_1 = __webpack_require__(23);
-var PriorityIndex_1 = __webpack_require__(11);
+var util_1 = __webpack_require__(0);
+var Path_1 = __webpack_require__(2);
+var SparseSnapshotTree_1 = __webpack_require__(57);
+var LeafNode_1 = __webpack_require__(21);
+var nodeFromJSON_1 = __webpack_require__(15);
+var PriorityIndex_1 = __webpack_require__(3);
 /**
  * Generate placeholders for deferred values.
  * @param {?Object} values
@@ -10907,7 +9517,7 @@ exports.resolveDeferredValueSnapshot = function (node, serverValues) {
 
 
 /***/ }),
-/* 65 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10928,9 +9538,9 @@ exports.resolveDeferredValueSnapshot = function (node, serverValues) {
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var Path_1 = __webpack_require__(10);
-var PriorityIndex_1 = __webpack_require__(11);
-var CountedSet_1 = __webpack_require__(66);
+var Path_1 = __webpack_require__(2);
+var PriorityIndex_1 = __webpack_require__(3);
+var CountedSet_1 = __webpack_require__(58);
 /**
  * Helper class to store a sparse set of snapshots.
  *
@@ -11090,7 +9700,7 @@ exports.SparseSnapshotTree = SparseSnapshotTree;
 
 
 /***/ }),
-/* 66 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11111,7 +9721,7 @@ exports.SparseSnapshotTree = SparseSnapshotTree;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
 /**
  * Implements a set with a count of elements.
  *
@@ -11193,7 +9803,7 @@ exports.CountedSet = CountedSet;
 
 
 /***/ }),
-/* 67 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11214,8 +9824,8 @@ exports.CountedSet = CountedSet;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var Operation_1 = __webpack_require__(18);
-var Path_1 = __webpack_require__(10);
+var Operation_1 = __webpack_require__(10);
+var Path_1 = __webpack_require__(2);
 /**
  * @param {!OperationSource} source
  * @param {!Path} path
@@ -11247,7 +9857,7 @@ exports.Overwrite = Overwrite;
 
 
 /***/ }),
-/* 68 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11268,12 +9878,12 @@ exports.Overwrite = Overwrite;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var CacheNode_1 = __webpack_require__(32);
-var ChildrenNode_1 = __webpack_require__(12);
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(8);
-var ViewCache_1 = __webpack_require__(69);
-var View_1 = __webpack_require__(122);
+var CacheNode_1 = __webpack_require__(24);
+var ChildrenNode_1 = __webpack_require__(4);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(0);
+var ViewCache_1 = __webpack_require__(61);
+var View_1 = __webpack_require__(123);
 var __referenceConstructor;
 /**
  * SyncPoint represents a single location in a SyncTree with 1 or more event registrations, meaning we need to
@@ -11504,7 +10114,7 @@ exports.SyncPoint = SyncPoint;
 
 
 /***/ }),
-/* 69 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11525,8 +10135,8 @@ exports.SyncPoint = SyncPoint;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var ChildrenNode_1 = __webpack_require__(12);
-var CacheNode_1 = __webpack_require__(32);
+var ChildrenNode_1 = __webpack_require__(4);
+var CacheNode_1 = __webpack_require__(24);
 /**
  * Stores the data we have cached for a view.
  *
@@ -11607,7 +10217,7 @@ exports.ViewCache = ViewCache;
 
 
 /***/ }),
-/* 70 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11628,7 +10238,7 @@ exports.ViewCache = ViewCache;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
 /**
  * Returns the delta from the previous call to get stats.
  *
@@ -11659,7 +10269,7 @@ exports.StatsListener = StatsListener;
 
 
 /***/ }),
-/* 71 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11690,19 +10300,19 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var app_1 = __webpack_require__(16);
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(8);
-var util_3 = __webpack_require__(8);
-var util_4 = __webpack_require__(9);
-var Path_1 = __webpack_require__(10);
-var VisibilityMonitor_1 = __webpack_require__(134);
-var OnlineMonitor_1 = __webpack_require__(135);
-var util_5 = __webpack_require__(8);
-var Connection_1 = __webpack_require__(73);
-var util_6 = __webpack_require__(8);
-var util_7 = __webpack_require__(8);
-var ServerActions_1 = __webpack_require__(76);
+var app_1 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(0);
+var util_3 = __webpack_require__(0);
+var util_4 = __webpack_require__(1);
+var Path_1 = __webpack_require__(2);
+var VisibilityMonitor_1 = __webpack_require__(135);
+var OnlineMonitor_1 = __webpack_require__(136);
+var util_5 = __webpack_require__(0);
+var Connection_1 = __webpack_require__(65);
+var util_6 = __webpack_require__(0);
+var util_7 = __webpack_require__(0);
+var ServerActions_1 = __webpack_require__(68);
 var RECONNECT_MIN_DELAY = 1000;
 var RECONNECT_MAX_DELAY_DEFAULT = 60 * 5 * 1000; // 5 minutes in milliseconds (Case: 1858)
 var RECONNECT_MAX_DELAY_FOR_ADMINS = 30 * 1000; // 30 seconds for admin clients (likely to be a backend server)
@@ -12475,7 +11085,7 @@ exports.PersistentConnection = PersistentConnection;
 
 
 /***/ }),
-/* 72 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12496,7 +11106,7 @@ exports.PersistentConnection = PersistentConnection;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
 /**
  * Base class to be used if you want to emit events. Call the constructor with
  * the set of allowed event names.
@@ -12561,7 +11171,7 @@ exports.EventEmitter = EventEmitter;
 
 
 /***/ }),
-/* 73 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12582,10 +11192,10 @@ exports.EventEmitter = EventEmitter;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(9);
-var storage_1 = __webpack_require__(26);
-var Constants_1 = __webpack_require__(27);
-var TransportManager_1 = __webpack_require__(136);
+var util_1 = __webpack_require__(1);
+var storage_1 = __webpack_require__(18);
+var Constants_1 = __webpack_require__(19);
+var TransportManager_1 = __webpack_require__(137);
 // Abort upgrade attempt if it takes longer than 60s.
 var UPGRADE_TIMEOUT = 60000;
 // For some transports (WebSockets), we need to "validate" the transport by exchanging a few requests and responses.
@@ -13061,7 +11671,7 @@ exports.Connection = Connection;
 
 
 /***/ }),
-/* 74 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13082,13 +11692,13 @@ exports.Connection = Connection;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(9);
-var CountedSet_1 = __webpack_require__(66);
-var StatsManager_1 = __webpack_require__(42);
-var PacketReceiver_1 = __webpack_require__(137);
-var Constants_1 = __webpack_require__(27);
-var util_2 = __webpack_require__(8);
-var util_3 = __webpack_require__(8);
+var util_1 = __webpack_require__(1);
+var CountedSet_1 = __webpack_require__(58);
+var StatsManager_1 = __webpack_require__(34);
+var PacketReceiver_1 = __webpack_require__(138);
+var Constants_1 = __webpack_require__(19);
+var util_2 = __webpack_require__(0);
+var util_3 = __webpack_require__(0);
 // URL query parameters associated with longpolling
 exports.FIREBASE_LONGPOLL_START_PARAM = 'start';
 exports.FIREBASE_LONGPOLL_CLOSE_COMMAND = 'close';
@@ -13697,7 +12307,7 @@ exports.FirebaseIFrameScriptHolder = FirebaseIFrameScriptHolder;
 
 
 /***/ }),
-/* 75 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13718,15 +12328,15 @@ exports.FirebaseIFrameScriptHolder = FirebaseIFrameScriptHolder;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var app_1 = __webpack_require__(16);
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(9);
-var StatsManager_1 = __webpack_require__(42);
-var Constants_1 = __webpack_require__(27);
-var util_3 = __webpack_require__(8);
-var storage_1 = __webpack_require__(26);
-var util_4 = __webpack_require__(8);
-var util_5 = __webpack_require__(8);
+var app_1 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(1);
+var StatsManager_1 = __webpack_require__(34);
+var Constants_1 = __webpack_require__(19);
+var util_3 = __webpack_require__(0);
+var storage_1 = __webpack_require__(18);
+var util_4 = __webpack_require__(0);
+var util_5 = __webpack_require__(0);
 var WEBSOCKET_MAX_FRAME_SIZE = 16384;
 var WEBSOCKET_KEEPALIVE_INTERVAL = 45000;
 var WebSocketImpl = null;
@@ -14053,10 +12663,10 @@ exports.WebSocketConnection = WebSocketConnection;
 
 //# sourceMappingURL=WebSocketConnection.js.map
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
 
 /***/ }),
-/* 76 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14134,7 +12744,7 @@ exports.ServerActions = ServerActions;
 
 
 /***/ }),
-/* 77 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14155,10 +12765,10 @@ exports.ServerActions = ServerActions;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var IndexedFilter_1 = __webpack_require__(41);
-var PriorityIndex_1 = __webpack_require__(11);
-var Node_1 = __webpack_require__(13);
-var ChildrenNode_1 = __webpack_require__(12);
+var IndexedFilter_1 = __webpack_require__(33);
+var PriorityIndex_1 = __webpack_require__(3);
+var Node_1 = __webpack_require__(5);
+var ChildrenNode_1 = __webpack_require__(4);
 /**
  * Filters nodes by range and uses an IndexFilter to track any changes after filtering the node
  *
@@ -14284,15 +12894,15 @@ exports.RangedFilter = RangedFilter;
 
 
 /***/ }),
-/* 78 */
+/* 70 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_util__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__firebase_util__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_errors__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_token_manager__ = __webpack_require__(148);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_notification_permission__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_errors__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_token_manager__ = __webpack_require__(149);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_notification_permission__ = __webpack_require__(72);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -14465,7 +13075,7 @@ var ControllerInterface = /** @class */ (function () {
 
 
 /***/ }),
-/* 79 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -14566,7 +13176,7 @@ var SUBSCRIPTION_DETAILS = {
 
 
 /***/ }),
-/* 80 */
+/* 72 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -14596,7 +13206,7 @@ var SUBSCRIPTION_DETAILS = {
 
 
 /***/ }),
-/* 81 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -14646,7 +13256,7 @@ var createNewMsg = function (msgType, msgData) {
 
 
 /***/ }),
-/* 82 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -14680,22 +13290,22 @@ var ErrorCode;
 
 
 /***/ }),
-/* 83 */
+/* 75 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Reference; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__implementation_args__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__implementation_blob__ = __webpack_require__(85);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__implementation_error__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__implementation_location__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__implementation_metadata__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__implementation_object__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__implementation_path__ = __webpack_require__(84);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__implementation_requests__ = __webpack_require__(86);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__implementation_string__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__implementation_type__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__task__ = __webpack_require__(159);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__implementation_args__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__implementation_blob__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__implementation_error__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__implementation_location__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__implementation_metadata__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__implementation_object__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__implementation_path__ = __webpack_require__(76);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__implementation_requests__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__implementation_string__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__implementation_type__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__task__ = __webpack_require__(160);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -14938,7 +13548,7 @@ var Reference = /** @class */ (function () {
 
 
 /***/ }),
-/* 84 */
+/* 76 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -15011,14 +13621,14 @@ function lastComponent(path) {
 
 
 /***/ }),
-/* 85 */
+/* 77 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FbsBlob; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fs__ = __webpack_require__(157);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__string__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fs__ = __webpack_require__(158);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__string__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type__ = __webpack_require__(6);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -15151,7 +13761,7 @@ var FbsBlob = /** @class */ (function () {
 
 
 /***/ }),
-/* 86 */
+/* 78 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -15171,14 +13781,14 @@ var FbsBlob = /** @class */ (function () {
 /* harmony export (immutable) */ __webpack_exports__["f"] = getResumableUploadStatus;
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return resumableUploadChunkSize; });
 /* harmony export (immutable) */ __webpack_exports__["b"] = continueResumableUpload;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__array__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blob__ = __webpack_require__(85);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__error__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__metadata__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__object__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__requestinfo__ = __webpack_require__(158);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__type__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__url__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__array__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blob__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__error__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__metadata__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__object__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__requestinfo__ = __webpack_require__(159);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__type__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__url__ = __webpack_require__(38);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -15513,32 +14123,1444 @@ function continueResumableUpload(location, authWrapper, url, blob, chunkSize, ma
 
 
 /***/ }),
-/* 87 */
+/* 79 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game_js__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ui_js__ = __webpack_require__(86);
+
+
+
+window.leftPressed = false;
+window.rightPressed = false;
+window.difficultyLevel = 1;
+window.muted = false;
+
+let difficultyModifier = 1;
+let rotateSpeed = 118;
+let lineSpeed1 = 4.1;
+let lineSpeed2 = 2.1;
+let lineLifeTimer = 108;
+let ballSpeed = .088;
+
+let bgmStartTimes1 = [0, 30.23, 50.177, 75.77, 126.03];
+let bgmStartTimes2 = [0, 32.34, 56.29, 77.65];
+let bgmStartTimes3 = [0, 9.9, 29.7, 49.5, 89.07, 108.88];
+
+const mainMenu = new Image();
+mainMenu.src = 'assets/images/MainMenu.png';
+
+const menuBgm = new Audio('./assets/audio/Mangetsu.mp3');
+menuBgm.loop = true;
+
+const beginAudio = new Audio('./assets/audio/Begin.mp3');
+const gameOverAudio = new Audio('./assets/audio/GameOver.mp3');
+
+menuBgm.play();
+
+const bgm1 = new Audio('./assets/audio/CODABuildingTheme.mp3');
+bgm1.loop = true;
+
+const bgm2 = new Audio('./assets/audio/BattleTheme1.mp3');
+bgm2.addEventListener('timeupdate', function () {
+  var buffer = .412;
+  if (this.currentTime > this.duration - buffer) {
+    this.currentTime = 2.98;
+    this.play();
+  }
+}, false);
+
+const bgm3 = new Audio('./assets/audio/Xeleuiem.mp3');
+bgm3.addEventListener('timeupdate', function () {
+  var buffer = .252;
+  if (this.currentTime > this.duration - buffer) {
+    this.currentTime = 9.9;
+    this.play();
+  }
+}, false);
+
+let bgm;
+let bgmStartTimes;
+
+function setBgm() {
+  if (window.difficultyLevel === 1) {
+    bgm = bgm1;
+    bgmStartTimes = bgmStartTimes1;
+  } else if (window.difficultyLevel === 2) {
+    bgm = bgm2;
+    bgmStartTimes = bgmStartTimes2;
+  } else {
+    bgm = bgm3;
+    bgmStartTimes = bgmStartTimes3;
+  }
+}
+
+setBgm();
+
+const hitSound = new Audio('./assets/audio/hitSound.mp3');
+
+document.addEventListener('DOMContentLoaded', () => {
+  const gameCanvas = document.getElementById('game');
+  gameCanvas.height = 500;
+  gameCanvas.width = 500;
+  const canvasContext = gameCanvas.getContext('2d');
+
+  const toolsCanvas = document.getElementById('tools');
+  toolsCanvas.height = 616;
+  toolsCanvas.width = 616;
+  const toolsCanvasContext = toolsCanvas.getContext('2d');
+
+  let ui;
+
+  let game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
+    canvasContext,
+    gameCanvas,
+    toolsCanvas,
+    toolsCanvasContext,
+    ui,
+    bgm,
+    menuBgm,
+    gameOverAudio,
+    bgmStartTimes,
+    hitSound,
+    lineSpeed1,
+    lineSpeed2,
+    difficultyModifier,
+    rotateSpeed,
+    lineLifeTimer,
+    ballSpeed
+  );
+
+  mainMenu.onload = () => {
+    ui = new __WEBPACK_IMPORTED_MODULE_1__ui_js__["a" /* default */](game, toolsCanvasContext, toolsCanvas, true, mainMenu, bgm);
+    ui.render();
+    ui.displayHighScores();
+  };
+
+  const setDifficulty1 = () => {
+    window.difficultyLevel = 1;
+    difficultyModifier = 1;
+    setBgm();
+    rotateSpeed = 160;
+    lineSpeed1 = 3.5;
+    lineSpeed2 = 1.7;
+    lineLifeTimer = 138.7;
+    ballSpeed = .088;
+    ui.displayHighScores();
+  };
+
+  const setDifficulty2 = () => {
+    window.difficultyLevel = 2;
+    difficultyModifier = 2;
+    setBgm();
+    rotateSpeed = 106;
+    lineSpeed1 = 5.25;
+    lineSpeed2 = 3.25;
+    lineLifeTimer = 74;
+    ballSpeed = .125;
+    ui.displayHighScores();
+  };
+
+  const setDifficulty3 = () => {
+    window.difficultyLevel = 3;
+    difficultyModifier = 3;
+    setBgm();
+    rotateSpeed = 59;
+    lineSpeed1 = 6.2;
+    lineSpeed2 = 4.2;
+    lineLifeTimer = 65;
+    ballSpeed = .173;
+    ui.displayHighScores();
+  };
+
+  window.addEventListener('keydown', checkKeyPressed, false);
+  window.addEventListener('keyup', checkKeyLifted, false);
+
+  function checkKeyPressed(event) {
+    switch (event.keyCode) {
+      case 27:
+        if (game.gameActive === true || game.gameOver === true) {
+          game.gameActive = false;
+          cancelAnimationFrame(game.frames);
+          game.ctx.clearRect(-300, -300, gameCanvas.width + 300, gameCanvas.height + 300);
+          ui.toolsCtx.clearRect(-300, -300, toolsCanvas.width + 300, toolsCanvas.height + 300);
+          ui.shouldDrawMainMenu = true;
+          game.hitSound.pause();
+          game.hitSound.currentTime = 0;
+          if (!window.muted) menuBgm.play();
+          bgm.pause();
+          bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
+          game.gameOver = false;
+        }
+
+        break;
+      case 32:
+        if (window.difficultyLevel === 1) setDifficulty1();
+        setBgm();
+        beginAudio.pause();
+        gameOverAudio.pause();
+        beginAudio.currentTime = 0;
+        if (!window.muted) beginAudio.play();
+        if (game.gameActive === false) {
+          game.hitSound.pause();
+          game.hitSound.currentTime = 0;
+          game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
+            canvasContext,
+            gameCanvas,
+            toolsCanvas,
+            toolsCanvasContext,
+            ui,
+            bgm,
+            menuBgm,
+            gameOverAudio,
+            bgmStartTimes,
+            hitSound,
+            lineSpeed1,
+            lineSpeed2,
+            difficultyModifier,
+            rotateSpeed,
+            lineLifeTimer,
+            ballSpeed
+          );
+          ui.game = game;
+          ui.bgm = bgm;
+          ui.shouldDrawMainMenu = false;
+          game.gameActive = true;
+          game.gameOver = false;
+          menuBgm.pause();
+          bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
+          if (!window.muted) bgm.play();
+          game.begin();
+        }
+
+        break;
+      case 37:
+        window.leftPressed = true;
+        if (ui.shouldDrawMainMenu === true) {
+          if (window.difficultyLevel === 3) {
+            setDifficulty2();
+          } else if (window.difficultyLevel === 2) {
+            setDifficulty1();
+          }
+        }
+
+        break;
+      case 39:
+        window.rightPressed = true;
+        if (ui.shouldDrawMainMenu === true) {
+          if (window.difficultyLevel === 1) {
+            if (ui.stage1Victory === true) {
+              setDifficulty2();
+            } else {
+              ui.stage3LockedDisplay = false;
+              ui.stage2LockedDisplay = true;
+            }
+          } else if (window.difficultyLevel === 2) {
+            if (ui.stage2Victory === true) {
+              setDifficulty3();
+            } else {
+              ui.stage2LockedDisplay = false;
+              ui.stage3LockedDisplay = true;
+            }
+          }
+        }
+
+        break;
+      case 49:
+        if (ui.shouldDrawMainMenu === true) {
+          setDifficulty1();
+        }
+
+        break;
+      case 50:
+        if (ui.shouldDrawMainMenu === true) {
+          if (ui.stage1Victory === true) {
+            setDifficulty2();
+          } else {
+            ui.stage3LockedDisplay = false;
+            ui.stage2LockedDisplay = true;
+          }
+        }
+
+        break;
+      case 51:
+        if (ui.shouldDrawMainMenu === true) {
+          if (ui.stage2Victory === true) {
+            setDifficulty3();
+          } else {
+            ui.stage2LockedDisplay = false;
+            ui.stage3LockedDisplay = true;
+          }
+        }
+
+        break;
+      case 77:
+        if (game.gameActive === true) {
+          if (window.muted) {
+            window.muted = false;
+            bgm.play();
+            ui.muteButtonDisplay = false;
+          } else {
+            window.muted = true;
+            bgm.pause();
+            ui.muteButtonDisplay = true;
+          }
+        } else {
+          if (window.muted) {
+            window.muted = false;
+            menuBgm.play();
+            ui.muteButtonDisplay = false;
+          } else {
+            window.muted = true;
+            menuBgm.pause();
+            ui.muteButtonDisplay = true;
+          }
+        }
+    }
+  }
+
+  function checkKeyLifted(event) {
+    switch (event.keyCode) {
+      case 37:
+        window.leftPressed = false;
+        break;
+      case 39:
+        window.rightPressed = false;
+        break;
+    }
+  }
+
+});
+
+
+/***/ }),
+/* 80 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__line_js__ = __webpack_require__(81);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__center_js__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__player_js__ = __webpack_require__(83);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_line_circle_collision__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_line_circle_collision__);
+
+
+
+
+
+class Game {
+  constructor(
+    ctx,
+    gameCanvas,
+    toolsCanvas,
+    toolsCtx,
+    ui,
+    bgm,
+    menuBgm,
+    gameOverAudio,
+    bgmStartTimes,
+    hitSound,
+    lineSpeed1,
+    lineSpeed2,
+    difficultyModifier,
+    rotateSpeed,
+    lineLifeTimer,
+    ballSpeed
+  ) {
+    this.ctx = ctx;
+    this.gameCanvas = gameCanvas;
+    this.lineWidth = 10;
+
+    this.toolsCtx = toolsCtx;
+    this.toolsCanvas = toolsCanvas;
+    this.ui = ui;
+
+    this.bgm = bgm;
+    this.menuBgm = menuBgm;
+    this.bgmStartTimes = bgmStartTimes;
+    this.hitSound = hitSound;
+    this.hitSound.volume = 0.7;
+    this.gameOverAudio = gameOverAudio;
+
+    this.gameActive = false;
+    this.gameOver = false;
+    this.difficultyModifier = difficultyModifier;
+
+    this.lines = [];
+    this.lines2 = [];
+    this.frames;
+
+    this.specialLineCount = 0;
+    this.specialFlag = false;
+    this.specialLineFrequency = () => (
+      Math.floor(Math.random() * 15 - (5 * (this.difficultyModifier - 1))) + 1
+    );
+
+    this.specialLineQuantity = this.difficultyModifier === 1 ? 9 : 11;
+
+    this.startTime;
+
+    this.r = Math.floor(Math.random() * 250) + 6;
+    this.g = Math.floor(Math.random() * 250) + 6;
+    this.b = Math.floor(Math.random() * 250) + 6;
+    this.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
+
+    this.center = new __WEBPACK_IMPORTED_MODULE_1__center_js__["a" /* default */](ctx, gameCanvas, this.difficultyModifier, 49);
+
+    this.interval = 0;
+    this.interval2 = -(lineLifeTimer / 2);
+
+    this.rotateTimer = 130;
+    this.rotateDir = 'left';
+    this.rotateSpeed = rotateSpeed;
+    this.lineSpeed1 = lineSpeed1;
+    this.lineSpeed2 = lineSpeed2;
+    this.lineLifeTimer = lineLifeTimer;
+    this.ballSpeed = ballSpeed;
+
+    this.player = new __WEBPACK_IMPORTED_MODULE_2__player_js__["a" /* default */](ctx, gameCanvas, this.color, this.ballSpeed);
+
+    this.gameOverScreen = new Image();
+    this.gameOverScreen.src = 'assets/images/GameOver.png';
+    this.stageCompleteScreen = new Image();
+    this.stageCompleteScreen.src = 'assets/images/StageComplete.png';
+    this.gameCompleteScreen = new Image();
+    this.gameCompleteScreen.src = 'assets/images/GameComplete.png';
+  }
+
+  moveLines() {
+    this.lines.forEach(line => {
+      line.closeIn();
+    });
+    this.lines2.forEach(line => {
+      line.closeIn();
+    });
+  };
+
+  begin() {
+    this.startTime = new Date();
+    this.ui.render();
+    const animateCallback = () => {
+      this.render(this.ctx);
+      this.frames = requestAnimationFrame(animateCallback);
+    };
+
+    if (this.gameActive === true) {
+      animateCallback();
+    } else {
+      cancelAnimationFrame(frames);
+    }
+
+  };
+
+  end() {
+    this.color = 'red';
+    if (!window.muted) this.hitSound.play();
+    this.gameOverAudio.pause();
+    this.gameOverAudio.currentTime = 0;
+    if (!window.muted) this.gameOverAudio.play();
+    this.bgm.pause();
+    this.bgm.currentTime = this.bgmStartTimes[Math.floor(Math.random() * this.bgmStartTimes.length)];
+    if (!window.muted) this.menuBgm.play();
+    this.ui.drawFinalScore();
+    this.ui.sendHighScores();
+    this.gameActive = false;
+    this.gameOver = true;
+    cancelAnimationFrame(this.frames);
+  }
+
+  choosePattern(ctx) {
+    let specialLines;
+    if (this.specialLineFrequency() === 1) {
+      switch (Math.floor(Math.random() * this.specialLineQuantity) + 1) {
+        case 1:
+          this.specialFlag = true;
+          specialLines = [
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+          ];
+          break;
+        case 2:
+          this.specialFlag = true;
+          specialLines = [
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+          ];
+          break;
+        case 3:
+          this.specialFlag = true;
+          specialLines = [
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+          ];
+          break;
+        case 4:
+          this.specialFlag = true;
+          specialLines = [
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+          ];
+          break;
+        case 5:
+          this.specialFlag = true;
+          specialLines = [
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+          ];
+          break;
+        case 6:
+          this.specialFlag = true;
+          specialLines = [
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 9, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+          ];
+          break;
+        case 7:
+          this.specialFlag = true;
+          specialLines = [
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 10, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+          ];
+          break;
+        case 8:
+          this.specialFlag = true;
+          specialLines = [
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 11, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+          ];
+          break;
+        case 9:
+          this.specialFlag = true;
+          specialLines = [
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 12, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+          ];
+          break;
+        case 10:
+          this.specialFlag = true;
+          specialLines = [
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 10, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 11, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+          ];
+          break;
+        case 11:
+          this.specialFlag = true;
+          specialLines = [
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 9, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 12, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+          ];
+          break;
+      }
+    }
+
+    if (specialLines) return specialLines;
+
+    let allDiagLines = [
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 4, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                ];
+    let allLines = [
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                ];
+    return Math.floor(Math.random() * 3) === 1 ? allDiagLines : allLines;
+  }
+
+  makePatterns(ctx) {
+    this.specialFlag = false;
+    let chosenLines = this.choosePattern(ctx);
+    if (this.interval > this.lineLifeTimer) {
+      let randNum = Math.floor(Math.random() * chosenLines.length);
+      if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
+        if (this.specialFlag === false) chosenLines.splice((randNum + Math.floor((Math.random() * 3) + 1)) % 4, 1);
+      }
+
+      if (this.specialFlag === false) chosenLines.splice(randNum, 1);
+      this.specialFlag = false;
+      this.lines = chosenLines;
+      this.interval = 0;
+    } else {
+      this.interval += 1;
+    }
+
+    this.specialFlag = false;
+    let chosenLines2 = this.choosePattern(ctx);
+    if (this.interval2 > this.lineLifeTimer) {
+      let randNum2 = Math.floor(Math.random() * chosenLines2.length);
+      if (Math.floor(Math.random() * this.difficultyModifier) === 0) {
+        if (this.specialFlag === false) chosenLines2.splice((randNum2 + Math.floor((Math.random() * 3) + 1)) % 4, 1);
+      }
+
+      if (this.specialFlag === false) chosenLines2.splice(randNum2, 1);
+      this.specialFlag = false;
+      this.lines2 = chosenLines2;
+      this.interval2 = 0;
+    } else {
+      this.interval2 += 1;
+    }
+  }
+
+  checkCollision() {
+    let circle = [this.player.ball.x, this.player.ball.y];
+    let radius = this.player.ball.radius;
+    this.lines.forEach((line) => {
+      let a = line.startPoint;
+      let b = line.endPoint;
+      let hit = __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default()(a, b, circle, radius);
+      if (hit === true) {
+        this.end();
+      }
+    });
+    this.lines2.forEach((line) => {
+      let a = line.startPoint;
+      let b = line.endPoint;
+      let hit = __WEBPACK_IMPORTED_MODULE_3_line_circle_collision___default()(a, b, circle, radius);
+      if (hit === true) {
+        this.end();
+      }
+    });
+  }
+
+  rotate(ctx, flip) {
+    if (flip === true) this.rotateDir = this.rotateDir === 'left' ? 'right' : 'left';
+    let rotation = this.rotateDir === 'left' ? -this.rotateSpeed : this.rotateSpeed;
+    ctx.translate(this.gameCanvas.width / 2, this.gameCanvas.width / 2);
+    ctx.rotate(Math.PI / rotation);
+    ctx.translate(-this.gameCanvas.width / 2, -this.gameCanvas.width / 2);
+  }
+
+  setColor() {
+    this.r += Math.floor(Math.random() * 250) + 2;
+    this.r = this.r % 256;
+    if (this.r < 40) this.r = 40;
+
+    this.g += Math.floor(Math.random() * 250) + 2;
+    this.g = this.g % 256;
+    if (this.g < 40) this.g = 40;
+
+    this.b += Math.floor(Math.random() * 250) + 2;
+    this.b = this.b % 256;
+    if (this.b < 40) this.b = 40;
+    this.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
+  }
+
+  pulseCenter() {
+    if (window.difficultyLevel === 1) {
+      if (this.center.radius < 40) {
+        this.center.radius += 20;
+      } else {
+        this.center.radius -= .4068;
+      }
+    }
+
+    if (window.difficultyLevel === 2) {
+      if (this.center.radius < 40) {
+        this.center.radius += 20;
+      } else {
+        this.center.radius -= .513;
+      }
+    }
+
+    if (window.difficultyLevel === 3) {
+      if (this.center.radius < 47) {
+        this.center.radius += 18;
+      } else {
+        this.center.radius -= .499;
+      }
+    }
+  }
+
+
+  doEvilThingsToFirstStage() {
+    if (parseInt(this.ui.score) > 30 && window.difficultyLevel === 1) {
+      this.rotateSpeed = 120;
+    }
+  }
+
+  doEvilThingsToSecondStage() {
+    if (parseInt(this.ui.score) > 30 && window.difficultyLevel === 2) {
+      this.rotateSpeed = 80;
+    }
+  }
+
+  doEvilThingsToThirdStage() {
+    if (parseInt(this.ui.score) > 10 && window.difficultyLevel === 3) {
+      this.center.color = 'black';
+      if (parseInt(this.ui.score) > 20 && parseInt(this.ui.score) < 30) {
+        this.rotateSpeed = 0;
+      }
+      if (parseInt(this.ui.score) > 30) {
+        this.rotateSpeed = 59;
+      }
+      if (parseInt(this.ui.score) > 35) {
+        this.lineWidth = 5;
+      }
+      if (parseInt(this.ui.score) > 40) {
+        this.color = 'white';
+        this.rotateSpeed = 0;
+      }
+      if (parseInt(this.ui.score) > 45) {
+        this.rotateSpeed = 59;
+      }
+      if (parseInt(this.ui.score) > 50 && parseInt(this.ui.score.charAt(3)) % 2 !== 0) {
+        this.lineWidth = 1;
+        this.player.color = 'black';
+      }
+      if (parseInt(this.ui.score) > 50 && parseInt(this.ui.score.charAt(3)) % 2 === 0) {
+        this.lineWidth = 1;
+        this.player.color = 'white';
+      }
+    }
+  }
+
+  render(ctx) {
+    if (this.gameActive === true) {
+      this.makePatterns(ctx);
+
+      if (this.ui.score > 60.0 && window.difficultyLevel !== 1) {
+        if (this.rotateSpeed > 60) this.rotateSpeed -= .05;
+        if (this.player.ballSpeed < .17) this.player.ballSpeed += .00005;
+        this.lineSpeed1 += .001;
+        this.lineSpeed2 += .001;
+        this.lineLifeTimer -= .02;
+      } else if (this.ui.score > 60 && window.difficultyLevel === 1 ) {
+        if (this.rotateSpeed > 50) this.rotateSpeed -= .05;
+        if (this.player.ballSpeed < .18) this.player.ballSpeed += .00005;
+        if (this.lineSpeed1 < 6.3) {
+          this.lineSpeed1 += .001;
+          this.lineSpeed2 += .001;
+          this.lineLifeTimer -= .0321;
+        }
+      }
+
+      this.checkCollision();
+      ctx.clearRect(-700, -700, this.gameCanvas.width + 700, this.gameCanvas.height + 700);
+
+      if (this.rotateTimer < 1) {
+        this.rotate(ctx, true);
+        this.rotateTimer = Math.floor(Math.random() * 190) + 70;
+      } else {
+        this.rotate(ctx, false);
+        this.rotateTimer = this.rotateTimer - 1;
+      }
+
+      this.setColor();
+
+      this.doEvilThingsToFirstStage();
+      this.doEvilThingsToThirdStage();
+
+      this.pulseCenter();
+
+      this.moveLines();
+      this.player.render(ctx);
+      this.lines.forEach((line) => {
+        line.render(ctx);
+      });
+      this.lines2.forEach((line) => {
+        line.render(ctx);
+      });
+      this.center.render(ctx);
+    } else if (this.gameOver === true) {
+      if (parseInt(this.ui.score) >= 60.0 && window.difficultyLevel === 3) {
+        this.toolsCtx.drawImage(
+          this.gameCompleteScreen,
+          this.toolsCanvas.width / 2 - this.gameCompleteScreen.width / 2,
+          this.toolsCanvas.height / 2 - this.gameCompleteScreen.height / 2
+        );
+      } else if (parseInt(this.ui.score) >= 60.0) {
+        this.toolsCtx.drawImage(
+          this.stageCompleteScreen,
+          this.toolsCanvas.width / 2 - this.stageCompleteScreen.width / 2,
+          this.toolsCanvas.height / 2 - this.stageCompleteScreen.height / 2
+        );
+      } else {
+        this.toolsCtx.drawImage(
+          this.gameOverScreen,
+          this.toolsCanvas.width / 2 - this.gameOverScreen.width / 2,
+          this.toolsCanvas.height / 2 - this.gameOverScreen.height / 2
+        );
+      }
+    }
+  };
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Game);
+
+
+/***/ }),
+/* 81 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Line {
+  constructor(ctx, gameCanvas, type, color, lineSpeed1, lineSpeed2, lineWidth, game) {
+    this.ctx = ctx;
+    this.gameCanvas = gameCanvas;
+    this.game = game;
+    this.color = color;
+    this.x = 0;
+    this.y = 0;
+    this.halfWidth = this.gameCanvas.width / 2;
+    this.halfHeight = this.gameCanvas.height / 2;
+    this.fullWidth = this.gameCanvas.width;
+    this.fullHeight = this.gameCanvas.height;
+
+    this.lineSpeed1 = lineSpeed1;
+    this.lineSpeed2 = lineSpeed2;
+
+    this.lineWidth = lineWidth;
+    this.type = type;
+    this.handleType(type);
+    this.startPoint = [0, 0];
+    this.endPoint = [0, 0];
+  }
+
+  handleType(type) {
+    if (type === 1) {
+      this.x = -200;
+      this.y = 0;
+    } else if (type === 2) {
+      this.x = this.gameCanvas.height + 200;
+      this.y = this.gameCanvas.width;
+    } else if (type === 3) {
+      this.x = (this.gameCanvas.width / 2);
+      this.y = -200;
+    } else if (type === 4) {
+      this.x = -200;
+      this.y = this.gameCanvas.height / 2;
+    } else if (type === 5) {
+      this.x = 0;
+      this.y = 0;
+    } else if (type === 6) {
+      this.x = this.gameCanvas.width;
+      this.y = 0;
+    } else if (type === 7) {
+      this.x = 0;
+      this.y = 0;
+    } else if (type === 8) {
+      this.x = 0;
+      this.y = this.gameCanvas.height;
+    } else if (type === 9) {
+      this.x = 0;
+      this.y = this.gameCanvas.height;
+    } else if (type === 10) {
+      this.x = -200;
+      this.y = this.gameCanvas.height / 2;
+    } else if (type === 11) {
+      this.x = (this.gameCanvas.width / 2);
+      this.y = -200;
+    } else if (type === 12) {
+      this.x = 0;
+      this.y = 0;
+    }
+
+  }
+
+  closeIn() {
+    if (this.type < 5) {
+      if (this.type === 1) {
+        this.x = this.x + this.lineSpeed1;
+        this.y = this.y + this.lineSpeed1;
+      } else if (this.type === 2) {
+        this.x = this.x - this.lineSpeed1;
+        this.y = this.y - this.lineSpeed1;
+      } else if (this.type === 3) {
+        this.fullWidth = this.fullWidth - this.lineSpeed1;
+        this.y = this.y + this.lineSpeed1;
+      } else if (this.type === 4) {
+        this.x = this.x + this.lineSpeed1;
+        this.fullHeight = this.fullHeight - this.lineSpeed1;
+      }
+
+    } else {
+      if (this.type === 5) {
+        this.x = this.x + this.lineSpeed2;
+        this.y = this.y + this.lineSpeed2;
+        this.fullHeight = this.fullHeight - this.lineSpeed2;
+      } else if (this.type === 6) {
+        this.x = this.x - this.lineSpeed2;
+        this.y = this.y + this.lineSpeed2;
+        this.fullHeight = this.fullHeight - this.lineSpeed2;
+      } else if (this.type === 7) {
+        this.x = this.x + this.lineSpeed2;
+        this.y = this.y + this.lineSpeed2;
+        this.fullWidth = this.fullWidth - this.lineSpeed2;
+      } else if (this.type === 8) {
+        this.x = this.x + this.lineSpeed2;
+        this.y = this.y - this.lineSpeed2;
+        this.fullWidth = this.fullWidth - this.lineSpeed2;
+      } else if (this.type === 9) {
+        this.x = this.x + this.lineSpeed2 + 2;
+        this.y = this.y - this.lineSpeed2 - 2;
+        this.fullWidth = this.fullWidth - this.lineSpeed2 - 2;
+      } else if (this.type === 10) {
+        this.x = this.x + this.lineSpeed1 + 2;
+        this.fullHeight = this.fullHeight - this.lineSpeed1 - 2;
+      } else if (this.type === 11) {
+        this.fullWidth = this.fullWidth - this.lineSpeed1 - 2;
+        this.y = this.y + this.lineSpeed1 + 2;
+      } else if (this.type === 12) {
+        this.x = this.x + this.lineSpeed2 + 2;
+        this.y = this.y + this.lineSpeed2 + 2;
+        this.fullWidth = this.fullWidth - this.lineSpeed2 - 2;
+      }
+
+    }
+
+  }
+
+  render(ctx) {
+    ctx.beginPath();
+    ctx.strokeStyle = this.color;
+    ctx.lineWidth = this.lineWidth;
+    if (this.type === 1) {
+      this.startPoint = [this.x, this.halfHeight];
+      ctx.moveTo(this.x, this.halfHeight);
+      this.endPoint = [this.halfWidth, this.y - 200];
+      ctx.lineTo(this.halfWidth, this.y - 200);
+    } else if (this.type === 2) {
+      this.startPoint = [this.x, this.halfHeight];
+      ctx.moveTo(this.x, this.halfHeight);
+      this.endPoint = [this.halfWidth, this.y + 200];
+      ctx.lineTo(this.halfWidth, this.y + 200);
+    } else if (this.type === 3) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.fullWidth + 200, this.halfHeight];
+      ctx.lineTo(this.fullWidth + 200, this.halfHeight);
+    } else if (this.type === 4) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.halfWidth, this.fullHeight + 200];
+      ctx.lineTo(this.halfWidth, this.fullHeight + 200);
+    } else if (this.type === 5) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.x, this.fullHeight];
+      ctx.lineTo(this.x, this.fullHeight);
+    } else if (this.type === 6) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.x, this.fullHeight];
+      ctx.lineTo(this.x, this.fullHeight);
+    } else if (this.type === 7) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.fullWidth, this.y];
+      ctx.lineTo(this.fullWidth, this.y);
+    } else if (this.type === 8) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.fullWidth, this.y];
+      ctx.lineTo(this.fullWidth, this.y);
+    } else if (this.type === 9) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.fullWidth, this.y];
+      ctx.lineTo(this.fullWidth, this.y);
+      this.color = this.game.color;
+    } else if (this.type === 10) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.halfWidth, this.fullHeight + 200];
+      ctx.lineTo(this.halfWidth, this.fullHeight + 200);
+      this.color = this.game.color;
+    } else if (this.type === 11) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.fullWidth + 200, this.halfHeight];
+      ctx.lineTo(this.fullWidth + 200, this.halfHeight);
+      this.color = this.game.color;
+    } else if (this.type === 12) {
+      this.startPoint = [this.x, this.y];
+      ctx.moveTo(this.x, this.y);
+      this.endPoint = [this.fullWidth, this.y];
+      ctx.lineTo(this.fullWidth, this.y);
+      this.color = this.game.color;
+    }
+
+    ctx.closePath();
+    ctx.stroke();
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Line);
+
+
+/***/ }),
+/* 82 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Center {
+  constructor(ctx, gameCanvas, difficultyModifier, radius) {
+    this.ctx = ctx;
+    this.gameCanvas = gameCanvas;
+    this.radius = radius;
+    if (difficultyModifier == 1) this.color = '#7C7C7C';
+    if (difficultyModifier == 2) this.color = '#303030';
+    if (difficultyModifier == 3) this.color = '#131313';
+  }
+
+  render(ctx) {
+    let centerX = this.gameCanvas.width / 2;
+    let centerY = this.gameCanvas.height / 2;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, this.radius, 0, Math.PI * 2, false);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.closePath();
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Center);
+
+
+/***/ }),
+/* 83 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Player {
+  constructor(ctx, gameCanvas, color, ballSpeed) {
+    this.ctx = ctx;
+    this.gameCanvas = gameCanvas;
+    this.color = color;
+    this.circle = {
+      centerX: this.gameCanvas.width / 2,
+      centerY: this.gameCanvas.height / 2,
+      radius: 75,
+      angle: 0,
+    };
+    this.ball = { x: 0, y: 0, speed: 0 };
+    this.ball.x = 0;
+    this.ball.y = 0;
+    this.ball.radius = 8;
+    this.ballSpeed = ballSpeed;
+  }
+
+  render(ctx) {
+
+    if (window.rightPressed) {
+      this.ball.speed = this.ballSpeed;
+    }
+
+    if (window.leftPressed) {
+      this.ball.speed = -(this.ballSpeed);
+    }
+
+    if (!window.leftPressed && !window.rightPressed) {
+      this.ball.speed = 0;
+    }
+
+    ctx.strokeStyle = this.color;
+
+    this.ball.x = this.circle.centerX + Math.cos(this.circle.angle) * this.circle.radius;
+    this.ball.y = this.circle.centerY + Math.sin(this.circle.angle) * this.circle.radius;
+
+    this.circle.angle += this.ball.speed;
+
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.ball.x, this.ball.y, this.ball.radius, 0, Math.PI * 2, true);
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Player);
+
+
+/***/ }),
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+var pointCircleCollide = __webpack_require__(85)
 
-var firebase = __webpack_require__(88);
-__webpack_require__(108);
-__webpack_require__(110);
-__webpack_require__(145);
-__webpack_require__(152);
+var tmp = [0, 0]
 
-module.exports = firebase;
+function lineCircleCollide(a, b, circle, radius, nearest) {
+    //check to see if start or end points lie within circle 
+    if (pointCircleCollide(a, circle, radius)) {
+        if (nearest) {
+            nearest[0] = a[0]
+            nearest[1] = a[1]
+        }
+        return true
+    } if (pointCircleCollide(b, circle, radius)) {
+        if (nearest) {
+            nearest[0] = b[0]
+            nearest[1] = b[1]
+        }
+        return true
+    }
+    
+    var x1 = a[0],
+        y1 = a[1],
+        x2 = b[0],
+        y2 = b[1],
+        cx = circle[0],
+        cy = circle[1]
+
+    //vector d
+    var dx = x2 - x1
+    var dy = y2 - y1
+    
+    //vector lc
+    var lcx = cx - x1
+    var lcy = cy - y1
+    
+    //project lc onto d, resulting in vector p
+    var dLen2 = dx * dx + dy * dy //len2 of d
+    var px = dx
+    var py = dy
+    if (dLen2 > 0) {
+        var dp = (lcx * dx + lcy * dy) / dLen2
+        px *= dp
+        py *= dp
+    }
+    
+    if (!nearest)
+        nearest = tmp
+    nearest[0] = x1 + px
+    nearest[1] = y1 + py
+    
+    //len2 of p
+    var pLen2 = px * px + py * py
+    
+    //check collision
+    return pointCircleCollide(nearest, circle, radius)
+            && pLen2 <= dLen2 && (px * dx + py * dy) >= 0
+}
+
+module.exports = lineCircleCollide
+
+/***/ }),
+/* 85 */
+/***/ (function(module, exports) {
+
+function pointCircleCollision(point, circle, r) {
+    if (r===0) return false
+    var dx = circle[0] - point[0]
+    var dy = circle[1] - point[1]
+    return dx * dx + dy * dy <= r * r
+}
+
+module.exports = pointCircleCollision
+
+/***/ }),
+/* 86 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__db_js__ = __webpack_require__(87);
+
+
+class Ui {
+  constructor(game, toolsCtx, toolsCanvas, shouldDrawMainMenu, mainMenu, bgm) {
+
+    this.game = game;
+    this.toolsCtx = toolsCtx;
+    this.toolsCanvas = toolsCanvas;
+    this.score;
+    this.highScore1 = 0;
+    this.highScore2 = 0;
+    this.highScore3 = 0;
+    this.shouldDrawMainMenu = shouldDrawMainMenu;
+    this.mainMenu = mainMenu;
+    this.bgm = bgm;
+
+    this.stage2LockedDisplay = false;
+    this.muteButtonDisplay = false;
+
+    this.stage1Victory = true;
+    this.stage2Victory = true;
+    this.stage3Victory = false;
+  }
+
+  drawElapsedTime() {
+    if (this.game.gameActive === true) {
+      let elapsed = parseInt((new Date() - this.game.startTime));
+      let hundredths = (elapsed / 1000).toFixed(2);
+      if (hundredths.length < 2) hundredths = '0' + hundredths;
+      this.toolsCtx.save();
+      this.toolsCtx.beginPath();
+      this.toolsCtx.fillStyle = 'white';
+      if (parseInt(hundredths) >= 60.0) this.toolsCtx.fillStyle = 'lightgreen';
+
+      this.toolsCtx.font = '50px Orbitron';
+
+      this.toolsCtx.globalAlpha = 0.50;
+      this.toolsCtx.fillText(hundredths, this.toolsCanvas.width - 365, 60);
+      this.toolsCtx.restore();
+      this.score = hundredths;
+    }
+  }
+
+  drawFinalScore() {
+
+    if (window.difficultyLevel === 1) {
+      if (parseInt(this.score) > parseInt(this.highScore1)) {
+        this.highScore1 = this.score;
+      }
+    } else if (window.difficultyLevel === 2) {
+      if (parseInt(this.score) > parseInt(this.highScore2)) {
+        this.highScore2 = this.score;
+      }
+    } else if (window.difficultyLevel === 3) {
+      if (parseInt(this.score) > parseInt(this.highScore3)) {
+        this.highScore3 = this.score;
+      }
+    }
+
+    this.toolsCtx.save();
+    this.toolsCtx.beginPath();
+    this.toolsCtx.fillStyle = 'white';
+
+    if (parseInt(this.score) >= 60.0) {
+      this.toolsCtx.fillStyle = 'lightgreen';
+      if (window.difficultyLevel === 1) {
+        this.stage1Victory = true;
+      } else if (window.difficultyLevel === 2) {
+        this.stage2Victory = true;
+      } else if (window.difficultyLevel === 3) {
+        this.stage3Victory = true;
+      }
+    }
+
+    this.toolsCtx.font = '50px Orbitron';
+    this.toolsCtx.fillText(this.score, this.toolsCanvas.width - 365, 60);
+    this.toolsCtx.restore();
+  }
+
+  drawHighScore() {
+    if (window.difficultyLevel === 1) {
+      if (this.highScore1) {
+        this.toolsCtx.save();
+        this.toolsCtx.beginPath();
+        this.toolsCtx.fillStyle = 'white';
+        this.toolsCtx.font = '26px Orbitron';
+        this.toolsCtx.globalAlpha = 0.70;
+        this.toolsCtx.fillText('Best: ' + this.highScore1, this.toolsCanvas.width - 585, 40);
+        this.toolsCtx.restore();
+      }
+    } else if (window.difficultyLevel === 2) {
+      if (this.highScore2) {
+        this.toolsCtx.save();
+        this.toolsCtx.beginPath();
+        this.toolsCtx.fillStyle = 'white';
+        this.toolsCtx.font = '26px Orbitron';
+        this.toolsCtx.globalAlpha = 0.70;
+        this.toolsCtx.fillText('Best: ' + this.highScore2, this.toolsCanvas.width - 585, 40);
+        this.toolsCtx.restore();
+      }
+    } else if (window.difficultyLevel === 3) {
+      if (this.highScore3) {
+        this.toolsCtx.save();
+        this.toolsCtx.beginPath();
+        this.toolsCtx.fillStyle = 'white';
+        this.toolsCtx.font = '26px Orbitron';
+        this.toolsCtx.globalAlpha = 0.70;
+        this.toolsCtx.fillText('Best: ' + this.highScore3, this.toolsCanvas.width - 585, 40);
+        this.toolsCtx.restore();
+      }
+    }
+  }
+
+  drawMainMenu() {
+    this.toolsCtx.drawImage(this.mainMenu,
+      this.toolsCanvas.width / 2 - this.mainMenu.width / 2,
+      this.toolsCanvas.height / 2 - this.mainMenu.height / 2
+    );
+    this.drawDifficulty();
+  }
+
+  drawMuteButton() {
+    this.toolsCtx.beginPath();
+    this.toolsCtx.strokeStyle = 'red';
+    this.toolsCtx.lineWidth = 4;
+    this.toolsCtx.moveTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 27);
+    this.toolsCtx.lineTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 43);
+    this.toolsCtx.moveTo(this.toolsCanvas.width - 183, this.toolsCanvas.height - 43);
+    this.toolsCtx.lineTo(this.toolsCanvas.width - 156, this.toolsCanvas.height - 43);
+    this.toolsCtx.moveTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 43);
+    this.toolsCtx.lineTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 27);
+    this.toolsCtx.moveTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 43);
+    this.toolsCtx.lineTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 27);
+    this.toolsCtx.closePath();
+    this.toolsCtx.stroke();
+  }
+
+  drawDifficulty() {
+    this.toolsCtx.beginPath();
+    this.toolsCtx.lineWidth = 6;
+    if (window.difficultyLevel === 1) {
+      this.toolsCtx.strokeStyle = this.stage1Victory ? 'green' : 'blue';
+      this.toolsCtx.moveTo(10, this.toolsCanvas.height - 15);
+      this.toolsCtx.lineTo(75, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(10, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(75, this.toolsCanvas.height - 65);
+      this.toolsCtx.moveTo(13, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(13, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(72, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(72, this.toolsCanvas.height - 15);
+    } else if (window.difficultyLevel === 2) {
+      this.toolsCtx.strokeStyle = this.stage2Victory ? 'green' : 'blue';
+      this.toolsCtx.moveTo(85, this.toolsCanvas.height - 14);
+      this.toolsCtx.lineTo(150, this.toolsCanvas.height - 14);
+      this.toolsCtx.moveTo(85, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(150, this.toolsCanvas.height - 65);
+      this.toolsCtx.moveTo(88, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(88, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(147, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(147, this.toolsCanvas.height - 15);
+    } else if (window.difficultyLevel === 3) {
+      this.toolsCtx.strokeStyle = this.stage3Victory ? 'green' : 'blue';
+      this.toolsCtx.moveTo(162, this.toolsCanvas.height - 15);
+      this.toolsCtx.lineTo(227, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(162, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(227, this.toolsCanvas.height - 65);
+      this.toolsCtx.moveTo(165, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(165, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(224, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(224, this.toolsCanvas.height - 15);
+    }
+
+    this.toolsCtx.closePath();
+    this.toolsCtx.stroke();
+  }
+
+  stage2Locked() {
+    this.toolsCtx.save();
+    this.toolsCtx.beginPath();
+    this.toolsCtx.fillStyle = 'red';
+    this.toolsCtx.font = '22px Orbitron';
+    this.toolsCtx.fillText('Unlocked by reaching 60 seconds on Stage 1', 25, this.toolsCanvas.height - 230);
+    this.toolsCtx.strokeStyle = 'red';
+    this.toolsCtx.moveTo(85, this.toolsCanvas.height - 15);
+    this.toolsCtx.lineTo(150, this.toolsCanvas.height - 15);
+    this.toolsCtx.moveTo(85, this.toolsCanvas.height - 65);
+    this.toolsCtx.lineTo(150, this.toolsCanvas.height - 65);
+    this.toolsCtx.moveTo(88, this.toolsCanvas.height - 65);
+    this.toolsCtx.lineTo(88, this.toolsCanvas.height - 15);
+    this.toolsCtx.moveTo(147, this.toolsCanvas.height - 65);
+    this.toolsCtx.lineTo(147, this.toolsCanvas.height - 15);
+    this.toolsCtx.closePath();
+    this.toolsCtx.stroke();
+    this.toolsCtx.restore();
+  }
+
+  stage3Locked() {
+    this.toolsCtx.save();
+    this.toolsCtx.beginPath();
+    this.toolsCtx.fillStyle = 'red';
+    this.toolsCtx.font = '22px Orbitron';
+    this.toolsCtx.fillText('Unlocked by reaching 60 seconds on Stage 2', 25, this.toolsCanvas.height - 230);
+    this.toolsCtx.strokeStyle = 'red';
+    this.toolsCtx.moveTo(162, this.toolsCanvas.height - 15);
+    this.toolsCtx.lineTo(227, this.toolsCanvas.height - 15);
+    this.toolsCtx.moveTo(162, this.toolsCanvas.height - 65);
+    this.toolsCtx.lineTo(227, this.toolsCanvas.height - 65);
+    this.toolsCtx.moveTo(165, this.toolsCanvas.height - 65);
+    this.toolsCtx.lineTo(165, this.toolsCanvas.height - 15);
+    this.toolsCtx.moveTo(224, this.toolsCanvas.height - 65);
+    this.toolsCtx.lineTo(224, this.toolsCanvas.height - 15);
+    this.toolsCtx.closePath();
+    this.toolsCtx.stroke();
+    this.toolsCtx.restore();
+  }
+
+
+  sendHighScores() {
+    let newScore = [{ stage: window.difficultyLevel, score: this.score, invscore: -(this.score)}];
+    __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
+    this.displayHighScores();
+  }
+
+  displayHighScores() {
+    document.getElementById('scores').innerHTML = '';
+    let i = 0;
+    __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').orderByChild('0/invscore').on('child_added', (data) => {
+      let childScoreHolder = data.val();
+      if (childScoreHolder != undefined) {
+        let childScore = childScoreHolder[0];
+        console.log(childScore.stage);
+        console.log(window.difficultyLevel);
+        if (window.difficultyLevel == childScore.stage && i < 10) {
+          document.getElementById('scores').innerHTML += 'Stage ' + childScore.stage + ': ' + childScore.score + '<br/>';
+          i += 1;
+        }
+      }
+    })
+  }
+
+  render() {
+    const animateCallback = () => {
+      this.toolsCtx.clearRect(0, 0, this.toolsCanvas.width, this.toolsCanvas.height);
+      this.shouldDrawMainMenu === true ? this.drawMainMenu() : null;
+      this.game.gameOver === false ? this.drawElapsedTime() : this.drawFinalScore();
+      if (this.highScore1 > 0 || this.highScore2 > 0 || this.highScore3 > 0) this.drawHighScore();
+
+      if (this.stage2LockedDisplay === true) {
+        this.stage2Locked();
+        setTimeout(() => (this.stage2LockedDisplay = false), 2300);
+      }
+
+      if (this.stage3LockedDisplay === true) {
+        this.stage3Locked();
+        setTimeout(() => (this.stage3LockedDisplay = false), 2300);
+      }
+
+      if (this.muteButtonDisplay === true) {
+        this.drawMuteButton();
+      }
+
+      this.frames = requestAnimationFrame(animateCallback);
+    };
+
+    animateCallback();
+
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Ui);
+
+
+/***/ }),
+/* 87 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_firebase__ = __webpack_require__(88);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_firebase___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_firebase__);
+
+
+let config = {
+  apiKey: "AIzaSyDt8PkaeIRweTCNOv7ratnfW13kgHuQNdY",
+  authDomain: "escape-the-core.firebaseapp.com",
+  databaseURL: "https://escape-the-core.firebaseio.com",
+  projectId: "escape-the-core",
+  storageBucket: "",
+  messagingSenderId: "855395305407"
+};
+const firebaseApp = __WEBPACK_IMPORTED_MODULE_0_firebase___default.a.initializeApp(config)
+
+const db = firebaseApp.database()
+
+/* harmony default export */ __webpack_exports__["a"] = (db);
 
 
 /***/ }),
@@ -15561,21 +15583,50 @@ module.exports = firebase;
  * limitations under the License.
  */
 
-__webpack_require__(89);
-module.exports = __webpack_require__(16).default;
+var firebase = __webpack_require__(89);
+__webpack_require__(109);
+__webpack_require__(111);
+__webpack_require__(146);
+__webpack_require__(153);
+
+module.exports = firebase;
 
 
 /***/ }),
 /* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+__webpack_require__(90);
+module.exports = __webpack_require__(8).default;
+
+
+/***/ }),
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_polyfills_promise__ = __webpack_require__(90);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_polyfills_promise__ = __webpack_require__(91);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_polyfills_promise___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__src_polyfills_promise__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_shims_find__ = __webpack_require__(94);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_shims_find__ = __webpack_require__(95);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_shims_find___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__src_shims_find__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_shims_findIndex__ = __webpack_require__(95);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_shims_findIndex__ = __webpack_require__(96);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_shims_findIndex___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__src_shims_findIndex__);
 /**
  * Copyright 2017 Google Inc.
@@ -15600,7 +15651,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -15633,15 +15684,15 @@ var __global = (function () {
 // Polyfill Promise
 if (typeof Promise === 'undefined') {
     // HACK: TS throws an error if I attempt to use 'dot-notation'
-    __global['Promise'] = Promise = __webpack_require__(91);
+    __global['Promise'] = Promise = __webpack_require__(92);
 }
 
 //# sourceMappingURL=promise.js.map
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(36)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(28)))
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(setImmediate) {(function (root) {
@@ -15878,10 +15929,10 @@ if (typeof Promise === 'undefined') {
 
 })(this);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(92).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(93).setImmediate))
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var apply = Function.prototype.apply;
@@ -15934,13 +15985,13 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(93);
+__webpack_require__(94);
 exports.setImmediate = setImmediate;
 exports.clearImmediate = clearImmediate;
 
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -16130,10 +16181,10 @@ exports.clearImmediate = clearImmediate;
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(36), __webpack_require__(48)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(28), __webpack_require__(40)))
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports) {
 
 /**
@@ -16197,7 +16248,7 @@ if (!Array.prototype.find) {
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports) {
 
 /**
@@ -16261,12 +16312,12 @@ if (!Array.prototype.findIndex) {
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = createFirebaseNamespace;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_util__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__firebase_util__);
 /**
  * Copyright 2017 Google Inc.
@@ -16631,7 +16682,7 @@ var appErrors = new __WEBPACK_IMPORTED_MODULE_0__firebase_util__["ErrorFactory"]
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16713,7 +16764,7 @@ exports.patchProperty = patchProperty;
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16781,7 +16832,7 @@ exports.Deferred = Deferred;
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16802,7 +16853,7 @@ exports.Deferred = Deferred;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var constants_1 = __webpack_require__(37);
+var constants_1 = __webpack_require__(29);
 /**
  * Returns navigator.userAgent string or '' if it's not defined.
  * @return {string} user agent string
@@ -16850,7 +16901,7 @@ exports.isNodeSdk = function () {
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16940,7 +16991,7 @@ exports.ErrorFactory = ErrorFactory;
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16961,8 +17012,8 @@ exports.ErrorFactory = ErrorFactory;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var crypt_1 = __webpack_require__(50);
-var json_1 = __webpack_require__(51);
+var crypt_1 = __webpack_require__(42);
+var json_1 = __webpack_require__(43);
 /**
  * Decodes a Firebase auth. token into constituent parts.
  *
@@ -17075,7 +17126,7 @@ exports.isAdmin = function (token) {
 
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17096,7 +17147,7 @@ exports.isAdmin = function (token) {
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var obj_1 = __webpack_require__(52);
+var obj_1 = __webpack_require__(44);
 /**
  * Returns a querystring-formatted string (e.g. &arg=val&arg2=val2) from a params
  * object (e.g. {arg: 'val', arg2: 'val2'})
@@ -17141,7 +17192,7 @@ exports.querystringDecode = function (querystring) {
 
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17172,7 +17223,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var hash_1 = __webpack_require__(104);
+var hash_1 = __webpack_require__(105);
 /**
  * @fileoverview SHA-1 cryptographic hash.
  * Variable names follow the notation in FIPS PUB 180-3:
@@ -17427,7 +17478,7 @@ exports.Sha1 = Sha1;
 
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17489,7 +17540,7 @@ exports.Hash = Hash;
 
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17716,7 +17767,7 @@ function noop() {
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17833,7 +17884,7 @@ exports.validateContextObject = validateContextObject;
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17854,7 +17905,7 @@ exports.validateContextObject = validateContextObject;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var assert_1 = __webpack_require__(49);
+var assert_1 = __webpack_require__(41);
 // Code originally came from goog.crypt.stringToUtf8ByteArray, but for some reason they
 // automatically replaced '\r\n' with '\n', and they didn't handle surrogate pairs,
 // so it's been modified.
@@ -17932,7 +17983,7 @@ exports.stringLength = function (str) {
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -17951,15 +18002,15 @@ exports.stringLength = function (str) {
  * limitations under the License.
  */
 
-__webpack_require__(109);
+__webpack_require__(110);
 
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {(function() {
-  var firebase = __webpack_require__(16).default;
+  var firebase = __webpack_require__(8).default;
   var h,aa=aa||{},k=this;function m(a){return"string"==typeof a}function ba(a){return"boolean"==typeof a}function ca(){}
 function da(a){var b=typeof a;if("object"==b)if(a){if(a instanceof Array)return"array";if(a instanceof Object)return b;var c=Object.prototype.toString.call(a);if("[object Window]"==c)return"object";if("[object Array]"==c||"number"==typeof a.length&&"undefined"!=typeof a.splice&&"undefined"!=typeof a.propertyIsEnumerable&&!a.propertyIsEnumerable("splice"))return"array";if("[object Function]"==c||"undefined"!=typeof a.call&&"undefined"!=typeof a.propertyIsEnumerable&&!a.propertyIsEnumerable("call"))return"function"}else return"null";
 else if("function"==b&&"undefined"==typeof a.call)return"object";return b}function ea(a){return null===a}function fa(a){return"array"==da(a)}function ha(a){var b=da(a);return"array"==b||"object"==b&&"number"==typeof a.length}function p(a){return"function"==da(a)}function q(a){var b=typeof a;return"object"==b&&null!=a||"function"==b}var ia="closure_uid_"+(1E9*Math.random()>>>0),ja=0;function ka(a,b,c){return a.call.apply(a.bind,arguments)}
@@ -18248,37 +18299,12 @@ Y(yh.prototype,{toJSON:{name:"toJSON",j:[V(null,!0)]}});Y(hm.prototype,{clear:{n
 c){a=new ul(a);c({INTERNAL:{getUid:r(a.getUid,a),getToken:r(a.Vb,a),addAuthTokenListener:r(a.Mb,a),removeAuthTokenListener:r(a.qc,a)}});return a},a,function(a,c){if("create"===a)try{c.auth()}catch(d){}});firebase.INTERNAL.extendNamespace({User:Bk})}else throw Error("Cannot find the firebase namespace; be sure to include firebase-app.js before this library.");})();
 }).call(typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : {});
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(36)))
-
-/***/ }),
-/* 110 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-module.exports = __webpack_require__(111);
-
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(28)))
 
 /***/ }),
 /* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
 /**
  * Copyright 2017 Google Inc.
  *
@@ -18294,47 +18320,8 @@ module.exports = __webpack_require__(111);
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-var app_1 = __webpack_require__(16);
-var Database_1 = __webpack_require__(53);
-exports.Database = Database_1.Database;
-var Query_1 = __webpack_require__(57);
-exports.Query = Query_1.Query;
-var Reference_1 = __webpack_require__(38);
-exports.Reference = Reference_1.Reference;
-var util_1 = __webpack_require__(9);
-exports.enableLogging = util_1.enableLogging;
-var RepoManager_1 = __webpack_require__(43);
-var INTERNAL = __webpack_require__(143);
-var TEST_ACCESS = __webpack_require__(144);
-var util_2 = __webpack_require__(8);
-var ServerValue = Database_1.Database.ServerValue;
-exports.ServerValue = ServerValue;
-function registerDatabase(instance) {
-    // Register the Database Service with the 'firebase' namespace.
-    var namespace = instance.INTERNAL.registerService('database', function (app, unused, url) { return RepoManager_1.RepoManager.getInstance().databaseFromApp(app, url); }, 
-    // firebase.database namespace properties
-    {
-        Reference: Reference_1.Reference,
-        Query: Query_1.Query,
-        Database: Database_1.Database,
-        enableLogging: util_1.enableLogging,
-        INTERNAL: INTERNAL,
-        ServerValue: ServerValue,
-        TEST_ACCESS: TEST_ACCESS
-    }, null, true);
-    if (util_2.isNodeSdk()) {
-        module.exports = namespace;
-    }
-}
-exports.registerDatabase = registerDatabase;
-registerDatabase(app_1.default);
-var DataSnapshot_1 = __webpack_require__(39);
-exports.DataSnapshot = DataSnapshot_1.DataSnapshot;
-var onDisconnect_1 = __webpack_require__(56);
-exports.OnDisconnect = onDisconnect_1.OnDisconnect;
 
-//# sourceMappingURL=index.js.map
+module.exports = __webpack_require__(112);
 
 
 /***/ }),
@@ -18359,7 +18346,71 @@ exports.OnDisconnect = onDisconnect_1.OnDisconnect;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
+var app_1 = __webpack_require__(8);
+var Database_1 = __webpack_require__(45);
+exports.Database = Database_1.Database;
+var Query_1 = __webpack_require__(49);
+exports.Query = Query_1.Query;
+var Reference_1 = __webpack_require__(30);
+exports.Reference = Reference_1.Reference;
+var util_1 = __webpack_require__(1);
+exports.enableLogging = util_1.enableLogging;
+var RepoManager_1 = __webpack_require__(35);
+var INTERNAL = __webpack_require__(144);
+var TEST_ACCESS = __webpack_require__(145);
+var util_2 = __webpack_require__(0);
+var ServerValue = Database_1.Database.ServerValue;
+exports.ServerValue = ServerValue;
+function registerDatabase(instance) {
+    // Register the Database Service with the 'firebase' namespace.
+    var namespace = instance.INTERNAL.registerService('database', function (app, unused, url) { return RepoManager_1.RepoManager.getInstance().databaseFromApp(app, url); }, 
+    // firebase.database namespace properties
+    {
+        Reference: Reference_1.Reference,
+        Query: Query_1.Query,
+        Database: Database_1.Database,
+        enableLogging: util_1.enableLogging,
+        INTERNAL: INTERNAL,
+        ServerValue: ServerValue,
+        TEST_ACCESS: TEST_ACCESS
+    }, null, true);
+    if (util_2.isNodeSdk()) {
+        module.exports = namespace;
+    }
+}
+exports.registerDatabase = registerDatabase;
+registerDatabase(app_1.default);
+var DataSnapshot_1 = __webpack_require__(31);
+exports.DataSnapshot = DataSnapshot_1.DataSnapshot;
+var onDisconnect_1 = __webpack_require__(48);
+exports.OnDisconnect = onDisconnect_1.OnDisconnect;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+/* 113 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+var util_1 = __webpack_require__(0);
 /**
  * Wraps a DOM Storage object and:
  * - automatically encode objects as JSON strings before storing them to allow us to store arbitrary types.
@@ -18428,7 +18479,7 @@ exports.DOMStorageWrapper = DOMStorageWrapper;
 
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18449,7 +18500,7 @@ exports.DOMStorageWrapper = DOMStorageWrapper;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
 /**
  * An in-memory storage implementation that matches the API of DOMStorageWrapper
  * (TODO: create interface for both to implement).
@@ -18486,7 +18537,7 @@ exports.MemoryStorage = MemoryStorage;
 
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18507,7 +18558,7 @@ exports.MemoryStorage = MemoryStorage;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
 var TransactionResult = /** @class */ (function () {
     /**
      * A type for the resolve value of Firebase.transaction.
@@ -18534,7 +18585,7 @@ exports.TransactionResult = TransactionResult;
 
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18555,7 +18606,7 @@ exports.TransactionResult = TransactionResult;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
 /**
  * Fancy ID generator that creates 20-character string identifiers with the
  * following properties:
@@ -18619,7 +18670,7 @@ exports.nextPushId = (function () {
 
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18640,10 +18691,10 @@ exports.nextPushId = (function () {
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var DataSnapshot_1 = __webpack_require__(39);
-var Event_1 = __webpack_require__(117);
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(8);
+var DataSnapshot_1 = __webpack_require__(31);
+var Event_1 = __webpack_require__(118);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(0);
 /**
  * Represents registration for 'value' events.
  */
@@ -18841,7 +18892,7 @@ exports.ChildEventRegistration = ChildEventRegistration;
 
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18862,7 +18913,7 @@ exports.ChildEventRegistration = ChildEventRegistration;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
 /**
  * Encapsulates the data needed to raise an event
  * @implements {Event}
@@ -18960,7 +19011,7 @@ exports.CancelEvent = CancelEvent;
 
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18981,19 +19032,19 @@ exports.CancelEvent = CancelEvent;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(9);
-var AckUserWrite_1 = __webpack_require__(119);
-var ChildrenNode_1 = __webpack_require__(12);
-var util_3 = __webpack_require__(8);
-var ImmutableTree_1 = __webpack_require__(40);
-var ListenComplete_1 = __webpack_require__(120);
-var Merge_1 = __webpack_require__(121);
-var Operation_1 = __webpack_require__(18);
-var Overwrite_1 = __webpack_require__(67);
-var Path_1 = __webpack_require__(10);
-var SyncPoint_1 = __webpack_require__(68);
-var WriteTree_1 = __webpack_require__(127);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(1);
+var AckUserWrite_1 = __webpack_require__(120);
+var ChildrenNode_1 = __webpack_require__(4);
+var util_3 = __webpack_require__(0);
+var ImmutableTree_1 = __webpack_require__(32);
+var ListenComplete_1 = __webpack_require__(121);
+var Merge_1 = __webpack_require__(122);
+var Operation_1 = __webpack_require__(10);
+var Overwrite_1 = __webpack_require__(59);
+var Path_1 = __webpack_require__(2);
+var SyncPoint_1 = __webpack_require__(60);
+var WriteTree_1 = __webpack_require__(128);
 /**
  * SyncTree is the central class for managing event callback registration, data caching, views
  * (query processing), and event generation.  There are typically two SyncTree instances for
@@ -19678,7 +19729,7 @@ exports.SyncTree = SyncTree;
 
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19699,9 +19750,9 @@ exports.SyncTree = SyncTree;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var Path_1 = __webpack_require__(10);
-var Operation_1 = __webpack_require__(18);
+var util_1 = __webpack_require__(0);
+var Path_1 = __webpack_require__(2);
+var Operation_1 = __webpack_require__(10);
 var AckUserWrite = /** @class */ (function () {
     /**
      *
@@ -19747,7 +19798,7 @@ exports.AckUserWrite = AckUserWrite;
 
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19768,8 +19819,8 @@ exports.AckUserWrite = AckUserWrite;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var Path_1 = __webpack_require__(10);
-var Operation_1 = __webpack_require__(18);
+var Path_1 = __webpack_require__(2);
+var Operation_1 = __webpack_require__(10);
 /**
  * @param {!OperationSource} source
  * @param {!Path} path
@@ -19799,7 +19850,7 @@ exports.ListenComplete = ListenComplete;
 
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19820,10 +19871,10 @@ exports.ListenComplete = ListenComplete;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var Operation_1 = __webpack_require__(18);
-var Overwrite_1 = __webpack_require__(67);
-var Path_1 = __webpack_require__(10);
-var util_1 = __webpack_require__(8);
+var Operation_1 = __webpack_require__(10);
+var Overwrite_1 = __webpack_require__(59);
+var Path_1 = __webpack_require__(2);
+var util_1 = __webpack_require__(0);
 /**
  * @param {!OperationSource} source
  * @param {!Path} path
@@ -19886,7 +19937,7 @@ exports.Merge = Merge;
 
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19907,16 +19958,16 @@ exports.Merge = Merge;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var IndexedFilter_1 = __webpack_require__(41);
-var ViewProcessor_1 = __webpack_require__(123);
-var ChildrenNode_1 = __webpack_require__(12);
-var CacheNode_1 = __webpack_require__(32);
-var ViewCache_1 = __webpack_require__(69);
-var EventGenerator_1 = __webpack_require__(126);
-var util_1 = __webpack_require__(8);
-var Operation_1 = __webpack_require__(18);
-var Change_1 = __webpack_require__(20);
-var PriorityIndex_1 = __webpack_require__(11);
+var IndexedFilter_1 = __webpack_require__(33);
+var ViewProcessor_1 = __webpack_require__(124);
+var ChildrenNode_1 = __webpack_require__(4);
+var CacheNode_1 = __webpack_require__(24);
+var ViewCache_1 = __webpack_require__(61);
+var EventGenerator_1 = __webpack_require__(127);
+var util_1 = __webpack_require__(0);
+var Operation_1 = __webpack_require__(10);
+var Change_1 = __webpack_require__(12);
+var PriorityIndex_1 = __webpack_require__(3);
 /**
  * A view represents a specific location and query that has 1 or more event registrations.
  *
@@ -20101,7 +20152,7 @@ exports.View = View;
 
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20122,15 +20173,15 @@ exports.View = View;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var Operation_1 = __webpack_require__(18);
-var util_1 = __webpack_require__(8);
-var ChildChangeAccumulator_1 = __webpack_require__(124);
-var Change_1 = __webpack_require__(20);
-var ChildrenNode_1 = __webpack_require__(12);
-var KeyIndex_1 = __webpack_require__(22);
-var ImmutableTree_1 = __webpack_require__(40);
-var Path_1 = __webpack_require__(10);
-var CompleteChildSource_1 = __webpack_require__(125);
+var Operation_1 = __webpack_require__(10);
+var util_1 = __webpack_require__(0);
+var ChildChangeAccumulator_1 = __webpack_require__(125);
+var Change_1 = __webpack_require__(12);
+var ChildrenNode_1 = __webpack_require__(4);
+var KeyIndex_1 = __webpack_require__(14);
+var ImmutableTree_1 = __webpack_require__(32);
+var Path_1 = __webpack_require__(2);
+var CompleteChildSource_1 = __webpack_require__(126);
 /**
  * @constructor
  * @struct
@@ -20703,7 +20754,7 @@ exports.ViewProcessor = ViewProcessor;
 
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20724,9 +20775,9 @@ exports.ViewProcessor = ViewProcessor;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var Change_1 = __webpack_require__(20);
-var util_2 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
+var Change_1 = __webpack_require__(12);
+var util_2 = __webpack_require__(0);
 /**
  * @constructor
  */
@@ -20791,7 +20842,7 @@ exports.ChildChangeAccumulator = ChildChangeAccumulator;
 
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20812,7 +20863,7 @@ exports.ChildChangeAccumulator = ChildChangeAccumulator;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var CacheNode_1 = __webpack_require__(32);
+var CacheNode_1 = __webpack_require__(24);
 /**
  * An implementation of CompleteChildSource that never returns any additional children
  *
@@ -20901,7 +20952,7 @@ exports.WriteTreeCompleteChildSource = WriteTreeCompleteChildSource;
 
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20922,9 +20973,9 @@ exports.WriteTreeCompleteChildSource = WriteTreeCompleteChildSource;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var Node_1 = __webpack_require__(13);
-var Change_1 = __webpack_require__(20);
-var util_1 = __webpack_require__(8);
+var Node_1 = __webpack_require__(5);
+var Change_1 = __webpack_require__(12);
+var util_1 = __webpack_require__(0);
 /**
  * An EventGenerator is used to convert "raw" changes (Change) as computed by the
  * CacheDiffer into actual events (Event) that can be raised.  See generateEventsForChanges()
@@ -21038,7 +21089,7 @@ exports.EventGenerator = EventGenerator;
 
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21059,12 +21110,12 @@ exports.EventGenerator = EventGenerator;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(8);
-var Path_1 = __webpack_require__(10);
-var CompoundWrite_1 = __webpack_require__(128);
-var PriorityIndex_1 = __webpack_require__(11);
-var ChildrenNode_1 = __webpack_require__(12);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(0);
+var Path_1 = __webpack_require__(2);
+var CompoundWrite_1 = __webpack_require__(129);
+var PriorityIndex_1 = __webpack_require__(3);
+var ChildrenNode_1 = __webpack_require__(4);
 /**
  * WriteTree tracks all pending user-initiated writes and has methods to calculate the result of merging them
  * with underlying server data (to create "event cache" data).  Pending writes are added with addOverwrite()
@@ -21678,7 +21729,7 @@ exports.WriteTreeRef = WriteTreeRef;
 
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21699,12 +21750,12 @@ exports.WriteTreeRef = WriteTreeRef;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var ImmutableTree_1 = __webpack_require__(40);
-var Path_1 = __webpack_require__(10);
-var util_1 = __webpack_require__(8);
-var Node_1 = __webpack_require__(13);
-var PriorityIndex_1 = __webpack_require__(11);
-var util_2 = __webpack_require__(8);
+var ImmutableTree_1 = __webpack_require__(32);
+var Path_1 = __webpack_require__(2);
+var util_1 = __webpack_require__(0);
+var Node_1 = __webpack_require__(5);
+var PriorityIndex_1 = __webpack_require__(3);
+var util_2 = __webpack_require__(0);
 /**
  * This class holds a collection of writes that can be applied to nodes in unison. It abstracts away the logic with
  * dealing with priority writes and multiple nested writes. At any given path there is only allowed to be one write
@@ -21902,7 +21953,7 @@ exports.CompoundWrite = CompoundWrite;
 
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21923,7 +21974,7 @@ exports.CompoundWrite = CompoundWrite;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var ChildrenNode_1 = __webpack_require__(12);
+var ChildrenNode_1 = __webpack_require__(4);
 /**
  * Mutable object which basically just stores a reference to the "latest" immutable snapshot.
  *
@@ -21947,7 +21998,7 @@ exports.SnapshotHolder = SnapshotHolder;
 
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21968,7 +22019,7 @@ exports.SnapshotHolder = SnapshotHolder;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(9);
+var util_1 = __webpack_require__(1);
 /**
  * Abstraction around FirebaseApp's token fetching capabilities.
  */
@@ -22039,7 +22090,7 @@ exports.AuthTokenProvider = AuthTokenProvider;
 
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22060,8 +22111,8 @@ exports.AuthTokenProvider = AuthTokenProvider;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(0);
 /**
  * Tracks a collection of stats.
  *
@@ -22088,7 +22139,7 @@ exports.StatsCollection = StatsCollection;
 
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22109,9 +22160,9 @@ exports.StatsCollection = StatsCollection;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(9);
-var StatsListener_1 = __webpack_require__(70);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(1);
+var StatsListener_1 = __webpack_require__(62);
 // Assuming some apps may have a short amount of time on page, and a bulk of firebase operations probably
 // happen on page load, we try to report our first set of stats pretty quickly, but we wait at least 10
 // seconds to try to ensure the Firebase connection is established / settled.
@@ -22163,7 +22214,7 @@ exports.StatsReporter = StatsReporter;
 
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22184,7 +22235,7 @@ exports.StatsReporter = StatsReporter;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(9);
+var util_1 = __webpack_require__(1);
 /**
  * The event queue serves a few purposes:
  * 1. It ensures we maintain event order in the face of event callbacks doing operations that result in more
@@ -22342,7 +22393,7 @@ exports.EventList = EventList;
 
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22373,8 +22424,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var EventEmitter_1 = __webpack_require__(72);
-var util_1 = __webpack_require__(8);
+var EventEmitter_1 = __webpack_require__(64);
+var util_1 = __webpack_require__(0);
 /**
  * @extends {EventEmitter}
  */
@@ -22439,7 +22490,7 @@ exports.VisibilityMonitor = VisibilityMonitor;
 
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22470,9 +22521,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var EventEmitter_1 = __webpack_require__(72);
-var util_2 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
+var EventEmitter_1 = __webpack_require__(64);
+var util_2 = __webpack_require__(0);
 /**
  * Monitors online state (as reported by window.online/offline events).
  *
@@ -22534,7 +22585,7 @@ exports.OnlineMonitor = OnlineMonitor;
 
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22555,9 +22606,9 @@ exports.OnlineMonitor = OnlineMonitor;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var BrowserPollConnection_1 = __webpack_require__(74);
-var WebSocketConnection_1 = __webpack_require__(75);
-var util_1 = __webpack_require__(9);
+var BrowserPollConnection_1 = __webpack_require__(66);
+var WebSocketConnection_1 = __webpack_require__(67);
+var util_1 = __webpack_require__(1);
 /**
  * Currently simplistic, this class manages what transport a Connection should use at various stages of its
  * lifecycle.
@@ -22640,7 +22691,7 @@ exports.TransportManager = TransportManager;
 
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22661,7 +22712,7 @@ exports.TransportManager = TransportManager;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(9);
+var util_1 = __webpack_require__(1);
 /**
  * This class ensures the packets from the server arrive in order
  * This class takes data from the server and ensures it gets passed into the callbacks in order.
@@ -22733,7 +22784,7 @@ exports.PacketReceiver = PacketReceiver;
 
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22764,12 +22815,12 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(9);
-var util_3 = __webpack_require__(8);
-var util_4 = __webpack_require__(8);
-var util_5 = __webpack_require__(8);
-var ServerActions_1 = __webpack_require__(76);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(1);
+var util_3 = __webpack_require__(0);
+var util_4 = __webpack_require__(0);
+var util_5 = __webpack_require__(0);
+var ServerActions_1 = __webpack_require__(68);
 /**
  * An implementation of ServerActions that communicates with the server via REST requests.
  * This is mostly useful for compatibility with crawlers, where we don't want to spin up a full
@@ -22930,7 +22981,7 @@ exports.ReadonlyRestClient = ReadonlyRestClient;
 
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22951,16 +23002,16 @@ exports.ReadonlyRestClient = ReadonlyRestClient;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var util_2 = __webpack_require__(9);
-var KeyIndex_1 = __webpack_require__(22);
-var PriorityIndex_1 = __webpack_require__(11);
-var ValueIndex_1 = __webpack_require__(59);
-var PathIndex_1 = __webpack_require__(63);
-var IndexedFilter_1 = __webpack_require__(41);
-var LimitedFilter_1 = __webpack_require__(140);
-var RangedFilter_1 = __webpack_require__(77);
-var util_3 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
+var util_2 = __webpack_require__(1);
+var KeyIndex_1 = __webpack_require__(14);
+var PriorityIndex_1 = __webpack_require__(3);
+var ValueIndex_1 = __webpack_require__(51);
+var PathIndex_1 = __webpack_require__(55);
+var IndexedFilter_1 = __webpack_require__(33);
+var LimitedFilter_1 = __webpack_require__(141);
+var RangedFilter_1 = __webpack_require__(69);
+var util_3 = __webpack_require__(0);
 /**
  * This class is an immutable-from-the-public-api struct containing a set of query parameters defining a
  * range to be returned for a particular location. It is assumed that validation of parameters is done at the
@@ -23343,7 +23394,7 @@ exports.QueryParams = QueryParams;
 
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23364,11 +23415,11 @@ exports.QueryParams = QueryParams;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var RangedFilter_1 = __webpack_require__(77);
-var ChildrenNode_1 = __webpack_require__(12);
-var Node_1 = __webpack_require__(13);
-var util_1 = __webpack_require__(8);
-var Change_1 = __webpack_require__(20);
+var RangedFilter_1 = __webpack_require__(69);
+var ChildrenNode_1 = __webpack_require__(4);
+var Node_1 = __webpack_require__(5);
+var util_1 = __webpack_require__(0);
+var Change_1 = __webpack_require__(12);
 /**
  * Applies a limit and a range to a node and uses RangedFilter to do the heavy lifting where possible
  *
@@ -23609,7 +23660,7 @@ exports.LimitedFilter = LimitedFilter;
 
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23630,19 +23681,19 @@ exports.LimitedFilter = LimitedFilter;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var Reference_1 = __webpack_require__(38);
-var DataSnapshot_1 = __webpack_require__(39);
-var Path_1 = __webpack_require__(10);
-var Tree_1 = __webpack_require__(142);
-var PriorityIndex_1 = __webpack_require__(11);
-var util_2 = __webpack_require__(9);
-var ServerValues_1 = __webpack_require__(64);
-var validation_1 = __webpack_require__(17);
-var util_3 = __webpack_require__(8);
-var nodeFromJSON_1 = __webpack_require__(23);
-var ChildrenNode_1 = __webpack_require__(12);
-var Repo_1 = __webpack_require__(31);
+var util_1 = __webpack_require__(0);
+var Reference_1 = __webpack_require__(30);
+var DataSnapshot_1 = __webpack_require__(31);
+var Path_1 = __webpack_require__(2);
+var Tree_1 = __webpack_require__(143);
+var PriorityIndex_1 = __webpack_require__(3);
+var util_2 = __webpack_require__(1);
+var ServerValues_1 = __webpack_require__(56);
+var validation_1 = __webpack_require__(9);
+var util_3 = __webpack_require__(0);
+var nodeFromJSON_1 = __webpack_require__(15);
+var ChildrenNode_1 = __webpack_require__(4);
+var Repo_1 = __webpack_require__(23);
 // TODO: This is pretty messy.  Ideally, a lot of this would move into FirebaseData, or a transaction-specific
 // component used by FirebaseData, but it has ties to user callbacks (transaction update and onComplete) as well
 // as the realtime connection (to send transactions to the server).  So that all needs to be decoupled first.
@@ -24181,7 +24232,7 @@ Repo_1.Repo.prototype.abortTransactionsOnNode_ = function (node) {
 
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24202,9 +24253,9 @@ Repo_1.Repo.prototype.abortTransactionsOnNode_ = function (node) {
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(8);
-var Path_1 = __webpack_require__(10);
-var util_2 = __webpack_require__(8);
+var util_1 = __webpack_require__(0);
+var Path_1 = __webpack_require__(2);
+var util_2 = __webpack_require__(0);
 /**
  * Node in a Tree.
  */
@@ -24415,7 +24466,7 @@ exports.Tree = Tree;
 
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24436,8 +24487,8 @@ exports.Tree = Tree;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var WebSocketConnection_1 = __webpack_require__(75);
-var BrowserPollConnection_1 = __webpack_require__(74);
+var WebSocketConnection_1 = __webpack_require__(67);
+var BrowserPollConnection_1 = __webpack_require__(66);
 /**
  * INTERNAL methods for internal-use only (tests, etc.).
  *
@@ -24476,7 +24527,7 @@ exports.interceptServerData = function (ref, callback) {
 
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24497,10 +24548,10 @@ exports.interceptServerData = function (ref, callback) {
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var RepoInfo_1 = __webpack_require__(55);
-var PersistentConnection_1 = __webpack_require__(71);
-var RepoManager_1 = __webpack_require__(43);
-var Connection_1 = __webpack_require__(73);
+var RepoInfo_1 = __webpack_require__(47);
+var PersistentConnection_1 = __webpack_require__(63);
+var RepoManager_1 = __webpack_require__(35);
+var Connection_1 = __webpack_require__(65);
 exports.DataConnection = PersistentConnection_1.PersistentConnection;
 /**
  * @param {!string} pathString
@@ -24565,7 +24616,7 @@ exports.forceRestClient = function (forceRestClient) {
 
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -24584,19 +24635,19 @@ exports.forceRestClient = function (forceRestClient) {
  * limitations under the License.
  */
 
-__webpack_require__(146);
+__webpack_require__(147);
 
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["registerMessaging"] = registerMessaging;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_controllers_window_controller__ = __webpack_require__(147);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_controllers_sw_controller__ = __webpack_require__(151);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__firebase_app__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_controllers_window_controller__ = __webpack_require__(148);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_controllers_sw_controller__ = __webpack_require__(152);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__firebase_app__ = __webpack_require__(8);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -24637,16 +24688,16 @@ registerMessaging(__WEBPACK_IMPORTED_MODULE_2__firebase_app__["firebase"]);
 
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__controller_interface__ = __webpack_require__(78);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_errors__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_worker_page_message__ = __webpack_require__(81);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_default_sw__ = __webpack_require__(150);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_notification_permission__ = __webpack_require__(80);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__firebase_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__controller_interface__ = __webpack_require__(70);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_errors__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_worker_page_message__ = __webpack_require__(73);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_default_sw__ = __webpack_require__(151);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_notification_permission__ = __webpack_require__(72);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__firebase_util__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__firebase_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__firebase_util__);
 /**
  * Copyright 2017 Google Inc.
@@ -24968,15 +25019,15 @@ var WindowController = /** @class */ (function (_super) {
 
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_util__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__firebase_util__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__errors__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__helpers_array_buffer_to_base64__ = __webpack_require__(149);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__fcm_details__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__errors__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__helpers_array_buffer_to_base64__ = __webpack_require__(150);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__fcm_details__ = __webpack_require__(71);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -25346,7 +25397,7 @@ var TokenManager = /** @class */ (function () {
 
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -25381,7 +25432,7 @@ function toBase64(arrayBuffer) {
 
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -25410,14 +25461,14 @@ function toBase64(arrayBuffer) {
 
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__controller_interface__ = __webpack_require__(78);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_errors__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_worker_page_message__ = __webpack_require__(81);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_fcm_details__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__controller_interface__ = __webpack_require__(70);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_errors__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_worker_page_message__ = __webpack_require__(73);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_fcm_details__ = __webpack_require__(71);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -25733,7 +25784,7 @@ var SWController = /** @class */ (function (_super) {
 
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -25752,22 +25803,22 @@ var SWController = /** @class */ (function (_super) {
  * limitations under the License.
  */
 
-__webpack_require__(153);
+__webpack_require__(154);
 
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["registerStorage"] = registerStorage;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_app__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_implementation_string__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_implementation_taskenums__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_implementation_xhriopool__ = __webpack_require__(154);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_reference__ = __webpack_require__(83);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_service__ = __webpack_require__(163);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_app__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_implementation_string__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_implementation_taskenums__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_implementation_xhriopool__ = __webpack_require__(155);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_reference__ = __webpack_require__(75);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_service__ = __webpack_require__(164);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -25816,12 +25867,12 @@ registerStorage(__WEBPACK_IMPORTED_MODULE_0__firebase_app__["default"]);
 
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return XhrIoPool; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__xhrio_network__ = __webpack_require__(155);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__xhrio_network__ = __webpack_require__(156);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -25855,16 +25906,16 @@ var XhrIoPool = /** @class */ (function () {
 
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NetworkXhrIo; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__object__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__promise_external__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__xhrio__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__object__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__promise_external__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__xhrio__ = __webpack_require__(74);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -26002,12 +26053,12 @@ var NetworkXhrIo = /** @class */ (function () {
 
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = jsonObjectOrNull;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type__ = __webpack_require__(6);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -26048,13 +26099,13 @@ function jsonObjectOrNull(s) {
 
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = getBlob;
 /* harmony export (immutable) */ __webpack_exports__["b"] = sliceBlob;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type__ = __webpack_require__(6);
 
 function getBlobBuilder() {
     if (typeof BlobBuilder !== 'undefined') {
@@ -26121,7 +26172,7 @@ function sliceBlob(blob, start, end) {
 
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -26160,21 +26211,21 @@ var RequestInfo = /** @class */ (function () {
 
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return UploadTask; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__implementation_taskenums__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__implementation_observer__ = __webpack_require__(160);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tasksnapshot__ = __webpack_require__(161);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__implementation_args__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__implementation_array__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__implementation_async__ = __webpack_require__(162);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__implementation_error__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__implementation_promise_external__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__implementation_requests__ = __webpack_require__(86);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__implementation_type__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__implementation_taskenums__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__implementation_observer__ = __webpack_require__(161);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tasksnapshot__ = __webpack_require__(162);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__implementation_args__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__implementation_array__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__implementation_async__ = __webpack_require__(163);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__implementation_error__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__implementation_promise_external__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__implementation_requests__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__implementation_type__ = __webpack_require__(6);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -26740,12 +26791,12 @@ var UploadTask = /** @class */ (function () {
 
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Observer; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type__ = __webpack_require__(6);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -26790,7 +26841,7 @@ var Observer = /** @class */ (function () {
 
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -26830,12 +26881,12 @@ var UploadTaskSnapshot = /** @class */ (function () {
 
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = async;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__promise_external__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__promise_external__ = __webpack_require__(11);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -26876,18 +26927,18 @@ function async(f) {
 
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Service; });
 /* unused harmony export ServiceInternals */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__implementation_args__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__implementation_authwrapper__ = __webpack_require__(164);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__implementation_location__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__implementation_promise_external__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__implementation_request__ = __webpack_require__(167);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reference__ = __webpack_require__(83);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__implementation_args__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__implementation_authwrapper__ = __webpack_require__(165);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__implementation_location__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__implementation_promise_external__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__implementation_request__ = __webpack_require__(168);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reference__ = __webpack_require__(75);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -27037,18 +27088,18 @@ var ServiceInternals = /** @class */ (function () {
 
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthWrapper; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__error__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__failrequest__ = __webpack_require__(165);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__location__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__promise_external__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__requestmap__ = __webpack_require__(166);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__type__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__error__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__failrequest__ = __webpack_require__(166);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__location__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__promise_external__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__requestmap__ = __webpack_require__(167);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__type__ = __webpack_require__(6);
 
 
 
@@ -27173,12 +27224,12 @@ var AuthWrapper = /** @class */ (function () {
 
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FailRequest; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__promise_external__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__promise_external__ = __webpack_require__(11);
 
 /**
  * A request whose promise always fails.
@@ -27205,13 +27256,13 @@ var FailRequest = /** @class */ (function () {
 
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return RequestMap; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(26);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -27271,7 +27322,7 @@ var RequestMap = /** @class */ (function () {
 
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -27279,15 +27330,15 @@ var RequestMap = /** @class */ (function () {
 /* unused harmony export addAuthHeader_ */
 /* unused harmony export addVersionHeader_ */
 /* harmony export (immutable) */ __webpack_exports__["a"] = makeRequest;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_app__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__array__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__backoff__ = __webpack_require__(168);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__error__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__object__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__promise_external__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__type__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__url__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__xhrio__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_app__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__array__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__backoff__ = __webpack_require__(169);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__error__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__object__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__promise_external__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__type__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__url__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__xhrio__ = __webpack_require__(74);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -27511,7 +27562,7 @@ function makeRequest(requestInfo, authToken, pool) {
 
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -27634,30 +27685,6 @@ function stop(id) {
 }
 
 //# sourceMappingURL=backoff.js.map
-
-
-/***/ }),
-/* 169 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_firebase__ = __webpack_require__(87);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_firebase___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_firebase__);
-
-
-let config = {
-  apiKey: "AIzaSyDt8PkaeIRweTCNOv7ratnfW13kgHuQNdY",
-  authDomain: "escape-the-core.firebaseapp.com",
-  databaseURL: "https://escape-the-core.firebaseio.com",
-  projectId: "escape-the-core",
-  storageBucket: "",
-  messagingSenderId: "855395305407"
-};
-const firebaseApp = __WEBPACK_IMPORTED_MODULE_0_firebase___default.a.initializeApp(config)
-
-const db = firebaseApp.database()
-
-/* harmony default export */ __webpack_exports__["a"] = (db);
 
 
 /***/ })
