@@ -163,6 +163,21 @@ a:hover {
   color: white;
   background-color: black;
   text-align: center;
+  font-size: 22px;
+}
+
+.scores-header {
+  padding: 5px;
+  font-size: 125%;
+  margin: 0px;
+  margin-bottom: -23px;
+}
+
+.scores-stage {
+  padding: 5px;
+  font-size: 115%;
+  margin: 0px;
+  margin-bottom: -18px;
 }
 
 .name-input {
@@ -176,7 +191,7 @@ a:hover {
   text-align: center;
 }
 
-@media only screen and (max-width: 890px) {
+@media only screen and (max-width: 980px) {
   .scores {
     display: none;
   }
@@ -224,7 +239,10 @@ a:hover {
   }
 }
 
-@media only screen and (max-height: 610px) {
+@media only screen and (max-width: 610px) {
+  header {
+    display: none;
+  }
   #game {
     transform: scale(.8);
       margin-top: -120px !important;

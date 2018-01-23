@@ -15586,7 +15586,7 @@ class Ui {
 
   displayHighScores() {
     document.getElementById('scores').innerHTML = '';
-    document.getElementById('scores').innerHTML += 'Stage: ' + window.difficultyLevel + '<br/>';
+    document.getElementById('scores').innerHTML += '<h3 class="scores-stage">Stage: ' + window.difficultyLevel + '</h3><br/>';
     let i = 0;
     __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').orderByChild('0/invscore').on('child_added', (data) => {
       let childScoreHolder = data.val();
