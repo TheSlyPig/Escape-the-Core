@@ -14474,6 +14474,12 @@ class Game {
     lineLifeTimer,
     ballSpeed
   ) {
+
+
+    document.addEventListener('visibilitychange', () => {
+      this.escIfLoseFocus();
+    });
+
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
     this.lineWidth = 10;
@@ -14830,6 +14836,19 @@ class Game {
         this.player.color = 'white';
       }
     }
+  }
+
+  escIfLoseFocus() {
+    this.gameActive = false;
+    cancelAnimationFrame(this.frames);
+    this.ctx.clearRect(-300, -300, this.gameCanvas.width + 300, this.gameCanvas.height + 300);
+    this.ui.toolsCtx.clearRect(-300, -300, this.toolsCanvas.width + 300, this.toolsCanvas.height + 300);
+    this.ui.shouldDrawMainMenu = true;
+    this.hitSound.pause();
+    this.hitSound.currentTime = 0;
+    if (!window.muted) this.menuBgm.play();
+    this.bgm.pause();
+    this.gameOver = false;
   }
 
   render(ctx) {
