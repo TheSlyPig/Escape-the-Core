@@ -14277,6 +14277,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('keydown', checkKeyPressed, false);
   window.addEventListener('keyup', checkKeyLifted, false);
+  // window.playerName = prompt('What is your name?');
 
   function checkKeyPressed(event) {
     switch (event.keyCode) {
@@ -14351,14 +14352,16 @@ document.addEventListener('DOMContentLoaded', () => {
         window.rightPressed = true;
         if (ui.shouldDrawMainMenu === true) {
           if (window.difficultyLevel === 1) {
-            if (ui.stage1Victory === true) {
+            ui.stage1Victory = localStorage.getItem('stage1Victory');
+            if (ui.stage1Victory === 'true') {
               setDifficulty2();
             } else {
               ui.stage3LockedDisplay = false;
               ui.stage2LockedDisplay = true;
             }
           } else if (window.difficultyLevel === 2) {
-            if (ui.stage2Victory === true) {
+            ui.stage2Victory = localStorage.getItem('stage2Victory');
+            if (ui.stage2Victory === 'true') {
               setDifficulty3();
             } else {
               ui.stage2LockedDisplay = false;
@@ -14376,7 +14379,8 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case 50:
         if (ui.shouldDrawMainMenu === true) {
-          if (ui.stage1Victory === true) {
+          ui.stage1Victory = localStorage.getItem('stage1Victory');
+          if (ui.stage1Victory === 'true') {
             setDifficulty2();
           } else {
             ui.stage3LockedDisplay = false;
@@ -14387,7 +14391,8 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case 51:
         if (ui.shouldDrawMainMenu === true) {
-          if (ui.stage2Victory === true) {
+          ui.stage2Victory = localStorage.getItem('stage2Victory');
+          if (ui.stage2Victory === 'true') {
             setDifficulty3();
           } else {
             ui.stage2LockedDisplay = false;
@@ -14827,6 +14832,7 @@ class Game {
   }
 
   render(ctx) {
+
     if (this.gameActive === true) {
       this.makePatterns(ctx);
 
@@ -15289,6 +15295,23 @@ class Ui {
     this.stage1Victory = false;
     this.stage2Victory = false;
     this.stage3Victory = false;
+
+    this.getVictoryStatus();
+
+  }
+
+  getVictoryStatus() {
+    if (localStorage.getItem("stage1Victory") != null) {
+      this.stage1Victory = localStorage.getItem("stage1Victory");
+    }
+
+    if (localStorage.getItem("stage2Victory") != null) {
+      this.stage2Victory = localStorage.getItem("stage2Victory");
+    }
+
+    if (localStorage.getItem("stage3Victory") != null) {
+      this.stage3Victory = localStorage.getItem("stage3Victory");
+    }
   }
 
   drawElapsedTime() {
@@ -15333,11 +15356,11 @@ class Ui {
     if (parseInt(this.score) >= 60.0) {
       this.toolsCtx.fillStyle = 'lightgreen';
       if (window.difficultyLevel === 1) {
-        this.stage1Victory = true;
+        localStorage.setItem("stage1Victory", true);
       } else if (window.difficultyLevel === 2) {
-        this.stage2Victory = true;
+        localStorage.setItem("stage2Victory", true);
       } else if (window.difficultyLevel === 3) {
-        this.stage3Victory = true;
+        localStorage.setItem("stage3Victory", true);
       }
     }
 
@@ -15487,18 +15510,45 @@ class Ui {
   sendHighScores() {
     let newScore = [{ stage: window.difficultyLevel, score: this.score, invscore: -(this.score)}];
     __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
+    this.setCookies();
     this.displayHighScores();
+  }
+
+  setCookies() {
+    if (window.difficultyLevel === 1) {
+      let storedHighScore = localStorage.getItem('highscore1')
+      if (storedHighScore < this.highscore1) {
+        localStorage.setItem("highscore1", this.highscore1);
+      }
+    }
+    if (window.difficultyLevel === 2) {
+      let storedHighScore = localStorage.getItem('highscore2')
+      if (storedHighScore < this.highscore2) {
+        localStorage.setItem("highscore2", this.highscore2);
+      }
+    }
+    if (window.difficultyLevel === 3) {
+      let storedHighScore = localStorage.getItem('highscore3')
+      if (storedHighScore < this.highscore3) {
+        localStorage.setItem("highscore3", this.highscore3);
+      }
+    }
+    this.getVictoryStatus();
   }
 
   displayHighScores() {
     document.getElementById('scores').innerHTML = '';
+
+    // let scoresHtml = document.getElementById('scores');
+    // if (scoresHtml) {
+    //   scoresHtml.innerHTML += 'Name: ' + window.playerName;
+    // }
+
     let i = 0;
     __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').orderByChild('0/invscore').on('child_added', (data) => {
       let childScoreHolder = data.val();
       if (childScoreHolder != undefined) {
         let childScore = childScoreHolder[0];
-        console.log(childScore.stage);
-        console.log(window.difficultyLevel);
         if (window.difficultyLevel == childScore.stage && i < 10) {
           document.getElementById('scores').innerHTML += 'Stage ' + childScore.stage + ': ' + childScore.score + '<br/>';
           i += 1;
