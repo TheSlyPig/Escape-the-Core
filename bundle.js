@@ -14300,11 +14300,11 @@ document.addEventListener('DOMContentLoaded', () => {
       case 32:
         if (window.difficultyLevel === 1) setDifficulty1();
         setBgm();
-        beginAudio.pause();
         gameOverAudio.pause();
-        beginAudio.currentTime = 0;
-        if (!window.muted) beginAudio.play();
         if (game.gameActive === false) {
+          beginAudio.pause();
+          beginAudio.currentTime = 0;
+          if (!window.muted) beginAudio.play();
           game.hitSound.pause();
           game.hitSound.currentTime = 0;
           game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
@@ -14571,6 +14571,7 @@ class Game {
     if (!window.muted) this.menuBgm.play();
     this.ui.drawFinalScore();
     this.ui.sendHighScores();
+    this.ui.setCookies();
     this.gameActive = false;
     this.gameOver = true;
     cancelAnimationFrame(this.frames);
@@ -15297,20 +15298,35 @@ class Ui {
     this.stage3Victory = false;
 
     this.getVictoryStatus();
+    this.getStoredHighScores();
 
   }
 
   getVictoryStatus() {
     if (localStorage.getItem("stage1Victory") != null) {
-      this.stage1Victory = localStorage.getItem("stage1Victory");
+      this.stage1Victory = parseInt(localStorage.getItem("stage1Victory"));
     }
 
     if (localStorage.getItem("stage2Victory") != null) {
-      this.stage2Victory = localStorage.getItem("stage2Victory");
+      this.stage2Victory = parseInt(localStorage.getItem("stage2Victory"));
     }
 
     if (localStorage.getItem("stage3Victory") != null) {
-      this.stage3Victory = localStorage.getItem("stage3Victory");
+      this.stage3Victory = parseInt(localStorage.getItem("stage3Victory"));
+    }
+  }
+
+  getStoredHighScores() {
+    if (localStorage.getItem("highScore1") != null) {
+      this.highScore1 = localStorage.getItem("highScore1");
+    }
+
+    if (localStorage.getItem("highScore2") != null) {
+      this.highScore2 = localStorage.getItem("highScore2");
+    }
+
+    if (localStorage.getItem("highScore3") != null) {
+      this.highScore3 = localStorage.getItem("highScore3");
     }
   }
 
@@ -15356,11 +15372,11 @@ class Ui {
     if (parseInt(this.score) >= 60.0) {
       this.toolsCtx.fillStyle = 'lightgreen';
       if (window.difficultyLevel === 1) {
-        localStorage.setItem("stage1Victory", true);
+        localStorage.setItem('stage1Victory', 'true');
       } else if (window.difficultyLevel === 2) {
-        localStorage.setItem("stage2Victory", true);
+        localStorage.setItem('stage2Victory', 'true');
       } else if (window.difficultyLevel === 3) {
-        localStorage.setItem("stage3Victory", true);
+        localStorage.setItem('stage3Victory', 'true');
       }
     }
 
@@ -15510,27 +15526,26 @@ class Ui {
   sendHighScores() {
     let newScore = [{ stage: window.difficultyLevel, score: this.score, invscore: -(this.score)}];
     __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
-    this.setCookies();
     this.displayHighScores();
   }
 
   setCookies() {
     if (window.difficultyLevel === 1) {
-      let storedHighScore = localStorage.getItem('highscore1')
-      if (storedHighScore < this.highscore1) {
-        localStorage.setItem("highscore1", this.highscore1);
+      let storedHighScore = localStorage.getItem('highScore1') == null ? 0 : localStorage.getItem('highScore1');
+      if (parseInt(storedHighScore) < parseInt(this.highScore1) || storedHighScore == null) {
+        localStorage.setItem('highScore1', this.highScore1);
       }
     }
     if (window.difficultyLevel === 2) {
-      let storedHighScore = localStorage.getItem('highscore2')
-      if (storedHighScore < this.highscore2) {
-        localStorage.setItem("highscore2", this.highscore2);
+      let storedHighScore = localStorage.getItem('highScore2') == null ? 0 : localStorage.getItem('highScore2');
+      if (parseInt(storedHighScore) < parseInt(this.highScore2) || storedHighScore == null) {
+        localStorage.setItem('highScore2', this.highScore2);
       }
     }
     if (window.difficultyLevel === 3) {
-      let storedHighScore = localStorage.getItem('highscore3')
-      if (storedHighScore < this.highscore3) {
-        localStorage.setItem("highscore3", this.highscore3);
+      let storedHighScore = localStorage.getItem('highScore3') == null ? 0 : localStorage.getItem('highScore3');
+      if (parseInt(storedHighScore) < parseInt(this.highScore3) || storedHighScore == null) {
+        localStorage.setItem('highScore3', this.highScore3);
       }
     }
     this.getVictoryStatus();
