@@ -14239,6 +14239,11 @@ document.addEventListener('DOMContentLoaded', () => {
     ui.displayHighScores();
   };
 
+  if (localStorage.getItem('userName') !== null) {
+    if (document.getElementById("user-name") !== null)
+    document.getElementById("user-name").value = localStorage.getItem('userName');
+  }
+
   const setDifficulty1 = () => {
     window.difficultyLevel = 1;
     difficultyModifier = 1;
@@ -14551,6 +14556,8 @@ class Game {
   };
 
   begin() {
+    let userNameValue = document.getElementById('user-name').value;
+    localStorage.setItem('userName', userNameValue);
     this.startTime = new Date();
     this.ui.render();
     const animateCallback = () => {
@@ -15543,7 +15550,13 @@ class Ui {
 
 
   sendHighScores() {
-    let newScore = [{ stage: window.difficultyLevel, score: this.score, invscore: -(this.score)}];
+    let newScore = [{
+      stage: window.difficultyLevel,
+      name: localStorage.getItem('userName'),
+      score: this.score,
+      invscore: -(this.score)
+    }];
+
     __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
     this.displayHighScores();
   }
@@ -15572,19 +15585,14 @@ class Ui {
 
   displayHighScores() {
     document.getElementById('scores').innerHTML = '';
-
-    // let scoresHtml = document.getElementById('scores');
-    // if (scoresHtml) {
-    //   scoresHtml.innerHTML += 'Name: ' + window.playerName;
-    // }
-
+    document.getElementById('scores').innerHTML += 'Stage: ' + window.difficultyLevel + '<br/>';
     let i = 0;
     __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').orderByChild('0/invscore').on('child_added', (data) => {
       let childScoreHolder = data.val();
       if (childScoreHolder != undefined) {
         let childScore = childScoreHolder[0];
         if (window.difficultyLevel == childScore.stage && i < 10) {
-          document.getElementById('scores').innerHTML += 'Stage ' + childScore.stage + ': ' + childScore.score + '<br/>';
+          document.getElementById('scores').innerHTML += childScore.name + ': ' + childScore.score + '<br/>';
           i += 1;
         }
       }
