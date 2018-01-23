@@ -15556,8 +15556,9 @@ class Ui {
       score: this.score,
       invscore: -(this.score)
     }];
-
-    __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
+    if (newScore.score > 10) {
+      __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
+    }
     this.displayHighScores();
   }
 
