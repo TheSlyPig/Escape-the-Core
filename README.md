@@ -16,9 +16,9 @@ Play now! - http://kegan-cunningham.me/Escape-the-Core
 ✓ Music plays in the background, and the center circle pulses with the beat.
 
 ✓ The music loops when the song ends, and when starting or restarting the level it starts at one of several possible starting points to 
-avoid too much repetition
+avoid too much repetition.
 
-✓ Sound effects, including an encouraging voice-over every 10 seconds
+✓ Sound effects, including an encouraging voice-over every 10 seconds.
 
 ✓ The colors of the lines are constantly changing.
 
