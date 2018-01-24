@@ -14157,8 +14157,6 @@ menuBgm.loop = true;
 
 const menu = new Audio('./assets/audio/Menu.mp3');
 
-const menuSelect = new Audio('./assets/audio/MenuSelect.mp3');
-
 const menuReject = new Audio('./assets/audio/MenuReject.mp3');
 
 const beginAudio = new Audio('./assets/audio/Begin.mp3');
@@ -15334,6 +15332,8 @@ class Ui {
     this.mainMenu = mainMenu;
     this.bgm = bgm;
 
+    this.feedbackTimeout;
+
     this.stage2LockedDisplay = false;
     this.muteButtonDisplay = false;
 
@@ -15620,11 +15620,30 @@ class Ui {
     })
   }
 
+  displayUsernameFeedback() {
+    let nameInput = document.getElementById('user-name');
+
+    nameInput.onkeyup = function (e) {
+      document.getElementById("name-feedback").innerHTML = "Saving...";
+        clearTimeout(this.feedbackTimeout);
+        this.feedbackTimeout = setTimeout(() => {
+          document.getElementById("name-feedback").innerHTML = "Saved!";
+          let userNameValue = document.getElementById('user-name').value;
+          localStorage.setItem('userName', userNameValue);
+          setTimeout(() => {
+            document.getElementById("name-feedback").innerHTML = "";
+          }, 1000);
+        }, 500);
+
+    };
+  }
+
   render() {
     const animateCallback = () => {
       this.toolsCtx.clearRect(0, 0, this.toolsCanvas.width, this.toolsCanvas.height);
       this.shouldDrawMainMenu === true ? this.drawMainMenu() : null;
       this.game.gameOver === false ? this.drawElapsedTime() : this.drawFinalScore();
+      this.displayUsernameFeedback();
       if (this.highScore1 > 0 || this.highScore2 > 0 || this.highScore3 > 0) this.drawHighScore();
 
       if (this.stage2LockedDisplay === true) {

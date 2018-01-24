@@ -184,6 +184,26 @@ a:hover {
   text-align: center;
 }
 
+.name-feedback {
+  margin: 0 auto;
+  height: 20px;
+  width: 100px;
+  margin-top: 5px;
+  padding: 5px;
+  color: white;
+  text-align: center;
+}
+
+.name-submit-button:hover {
+  background-color: #161616;
+  cursor: pointer;
+}
+
+.name-submit-button:active {
+  box-shadow: none;
+  margin-top: 6px;
+}
+
 #user-name {
   background-color: white;
   border-radius: 5px;
