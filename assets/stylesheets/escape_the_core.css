@@ -47,6 +47,11 @@ header {
   transform: scale(1);
 }
 
+header a:nth-child(3) img {
+  height: 35px;
+  width: 28px;
+}
+
 .icon {
   margin-left: 80px;
   margin-right: 80px;
@@ -60,9 +65,9 @@ header {
 
 .blue-img:hover {
   opacity: 1;
-  transition: opacity .25s ease-in-out;
-  -moz-transition: opacity .25s ease-in-out;
-  -webkit-transition: opacity .25s ease-in-out;
+  transition: opacity .03s ease-in-out;
+  -moz-transition: opacity .03s ease-in-out;
+  -webkit-transition: opacity .03s ease-in-out;
 }
 
 .white-img {
