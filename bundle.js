@@ -15574,7 +15574,9 @@ class Ui {
       score: this.score,
       invscore: -(this.score)
     }];
-    if (parseInt(newScore.score) > 10) {
+    console.log(parseInt(this.score))
+    console.log(parseInt(this.score) > 10)
+    if (parseInt(this.score) > 10) {
       __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
     }
     this.displayHighScores();
