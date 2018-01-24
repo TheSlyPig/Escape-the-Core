@@ -30,7 +30,7 @@ avoid too much repetition.
 
 ✓ Multiple levels of increasing difficulty, that are unlocked by beating the previous level.
 
-✓. Google Firebase integration for global high score tracking. The player can input their name to be saved alongside the high score.
+✓ Google Firebase integration for global high score tracking. The player can input their name to be saved alongside the high score.
 
 ![Escape-the-Core-Menu](assets/images/EscapeTheCoreMenu.gif)
 
