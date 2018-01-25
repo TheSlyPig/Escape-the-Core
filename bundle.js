@@ -14286,84 +14286,118 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('keydown', checkKeyPressed, false);
   window.addEventListener('keyup', checkKeyLifted, false);
-  // window.playerName = prompt('What is your name?');
+
+  toolsCanvas.focus();
 
   function checkKeyPressed(event) {
-    switch (event.keyCode) {
-      case 27:
-        if (game.gameActive === true || game.gameOver === true) {
-          if (!window.muted) menuReject.play();
-          game.gameActive = false;
-          cancelAnimationFrame(game.frames);
-          game.ctx.clearRect(-300, -300, gameCanvas.width + 300, gameCanvas.height + 300);
-          ui.toolsCtx.clearRect(-300, -300, toolsCanvas.width + 300, toolsCanvas.height + 300);
-          ui.shouldDrawMainMenu = true;
-          game.hitSound.pause();
-          game.hitSound.currentTime = 0;
-          if (!window.muted) menuBgm.play();
-          bgm.pause();
-          bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
-          game.gameOver = false;
-        }
+    if (document.activeElement === toolsCanvas || document.activeElement === gameCanvas) {
+      switch (event.keyCode) {
+        case 27:
+          if (game.gameActive === true || game.gameOver === true) {
+            if (!window.muted) menuReject.play();
+            game.gameActive = false;
+            cancelAnimationFrame(game.frames);
+            game.ctx.clearRect(-300, -300, gameCanvas.width + 300, gameCanvas.height + 300);
+            ui.toolsCtx.clearRect(-300, -300, toolsCanvas.width + 300, toolsCanvas.height + 300);
+            ui.shouldDrawMainMenu = true;
+            game.hitSound.pause();
+            game.hitSound.currentTime = 0;
+            if (!window.muted) menuBgm.play();
+            bgm.pause();
+            bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
+            game.gameOver = false;
+          }
 
-        break;
-      case 32:
-        if (window.difficultyLevel === 1) setDifficulty1();
-        setBgm();
-        gameOverAudio.pause();
-        if (game.gameActive === false) {
-          beginAudio.pause();
-          beginAudio.currentTime = 0;
-          if (!window.muted) beginAudio.play();
-          game.hitSound.pause();
-          game.hitSound.currentTime = 0;
-          game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
-            canvasContext,
-            gameCanvas,
-            toolsCanvas,
-            toolsCanvasContext,
-            ui,
-            bgm,
-            menuBgm,
-            gameOverAudio,
-            bgmStartTimes,
-            hitSound,
-            lineSpeed1,
-            lineSpeed2,
-            difficultyModifier,
-            rotateSpeed,
-            lineLifeTimer,
-            ballSpeed
-          );
-          ui.game = game;
-          ui.bgm = bgm;
-          ui.shouldDrawMainMenu = false;
-          game.gameActive = true;
-          game.gameOver = false;
-          menuBgm.pause();
-          bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
-          if (!window.muted) bgm.play();
-          game.begin();
-        }
+          break;
+        case 32:
+          if (window.difficultyLevel === 1) setDifficulty1();
+          setBgm();
+          gameOverAudio.pause();
+          if (game.gameActive === false) {
+            beginAudio.pause();
+            beginAudio.currentTime = 0;
+            if (!window.muted) beginAudio.play();
+            game.hitSound.pause();
+            game.hitSound.currentTime = 0;
+            game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
+              canvasContext,
+              gameCanvas,
+              toolsCanvas,
+              toolsCanvasContext,
+              ui,
+              bgm,
+              menuBgm,
+              gameOverAudio,
+              bgmStartTimes,
+              hitSound,
+              lineSpeed1,
+              lineSpeed2,
+              difficultyModifier,
+              rotateSpeed,
+              lineLifeTimer,
+              ballSpeed
+            );
+            ui.game = game;
+            ui.bgm = bgm;
+            ui.shouldDrawMainMenu = false;
+            game.gameActive = true;
+            game.gameOver = false;
+            menuBgm.pause();
+            bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
+            if (!window.muted) bgm.play();
+            game.begin();
+          }
 
-        break;
-      case 37:
-        window.leftPressed = true;
-        if (ui.shouldDrawMainMenu === true) {
-          if (window.difficultyLevel === 3) {
-            if (!window.muted) menu.play();
-            setDifficulty2();
-          } else if (window.difficultyLevel === 2) {
+          break;
+        case 37:
+          window.leftPressed = true;
+          if (ui.shouldDrawMainMenu === true) {
+            if (window.difficultyLevel === 3) {
+              if (!window.muted) menu.play();
+              setDifficulty2();
+            } else if (window.difficultyLevel === 2) {
+              if (!window.muted) menu.play();
+              setDifficulty1();
+            }
+          }
+
+          break;
+        case 39:
+          window.rightPressed = true;
+          if (ui.shouldDrawMainMenu === true) {
+            if (window.difficultyLevel === 1) {
+              ui.stage1Victory = localStorage.getItem('stage1Victory');
+              if (ui.stage1Victory === 'true') {
+                if (!window.muted) menu.play();
+                setDifficulty2();
+              } else {
+                if (!window.muted) menuReject.play();
+                ui.stage3LockedDisplay = false;
+                ui.stage2LockedDisplay = true;
+              }
+            } else if (window.difficultyLevel === 2) {
+              ui.stage2Victory = localStorage.getItem('stage2Victory');
+              if (ui.stage2Victory === 'true') {
+                if (!window.muted) menu.play();
+                setDifficulty3();
+              } else {
+                if (!window.muted) menuReject.play();
+                ui.stage2LockedDisplay = false;
+                ui.stage3LockedDisplay = true;
+              }
+            }
+          }
+
+          break;
+        case 49:
+          if (ui.shouldDrawMainMenu === true) {
             if (!window.muted) menu.play();
             setDifficulty1();
           }
-        }
 
-        break;
-      case 39:
-        window.rightPressed = true;
-        if (ui.shouldDrawMainMenu === true) {
-          if (window.difficultyLevel === 1) {
+          break;
+        case 50:
+          if (ui.shouldDrawMainMenu === true) {
             ui.stage1Victory = localStorage.getItem('stage1Victory');
             if (ui.stage1Victory === 'true') {
               if (!window.muted) menu.play();
@@ -14373,7 +14407,11 @@ document.addEventListener('DOMContentLoaded', () => {
               ui.stage3LockedDisplay = false;
               ui.stage2LockedDisplay = true;
             }
-          } else if (window.difficultyLevel === 2) {
+          }
+
+          break;
+        case 51:
+          if (ui.shouldDrawMainMenu === true) {
             ui.stage2Victory = localStorage.getItem('stage2Victory');
             if (ui.stage2Victory === 'true') {
               if (!window.muted) menu.play();
@@ -14384,66 +14422,31 @@ document.addEventListener('DOMContentLoaded', () => {
               ui.stage3LockedDisplay = true;
             }
           }
-        }
 
-        break;
-      case 49:
-        if (ui.shouldDrawMainMenu === true) {
-          if (!window.muted) menu.play();
-          setDifficulty1();
-        }
-
-        break;
-      case 50:
-        if (ui.shouldDrawMainMenu === true) {
-          ui.stage1Victory = localStorage.getItem('stage1Victory');
-          if (ui.stage1Victory === 'true') {
-            if (!window.muted) menu.play();
-            setDifficulty2();
+          break;
+        case 77:
+          if (game.gameActive === true) {
+            if (window.muted) {
+              window.muted = false;
+              bgm.play();
+              ui.muteButtonDisplay = false;
+            } else {
+              window.muted = true;
+              bgm.pause();
+              ui.muteButtonDisplay = true;
+            }
           } else {
-            if (!window.muted) menuReject.play();
-            ui.stage3LockedDisplay = false;
-            ui.stage2LockedDisplay = true;
+            if (window.muted) {
+              window.muted = false;
+              menuBgm.play();
+              ui.muteButtonDisplay = false;
+            } else {
+              window.muted = true;
+              menuBgm.pause();
+              ui.muteButtonDisplay = true;
+            }
           }
-        }
-
-        break;
-      case 51:
-        if (ui.shouldDrawMainMenu === true) {
-          ui.stage2Victory = localStorage.getItem('stage2Victory');
-          if (ui.stage2Victory === 'true') {
-            if (!window.muted) menu.play();
-            setDifficulty3();
-          } else {
-            if (!window.muted) menuReject.play();
-            ui.stage2LockedDisplay = false;
-            ui.stage3LockedDisplay = true;
-          }
-        }
-
-        break;
-      case 77:
-        if (game.gameActive === true) {
-          if (window.muted) {
-            window.muted = false;
-            bgm.play();
-            ui.muteButtonDisplay = false;
-          } else {
-            window.muted = true;
-            bgm.pause();
-            ui.muteButtonDisplay = true;
-          }
-        } else {
-          if (window.muted) {
-            window.muted = false;
-            menuBgm.play();
-            ui.muteButtonDisplay = false;
-          } else {
-            window.muted = true;
-            menuBgm.pause();
-            ui.muteButtonDisplay = true;
-          }
-        }
+      }
     }
   }
 
@@ -15574,7 +15577,13 @@ class Ui {
       score: this.score,
       invscore: -(this.score)
     }];
-    if (parseInt(this.score) > 19) {
+    if (parseInt(this.score) > 85 && window.difficultyLevel == 1) {
+      __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
+    }
+    if (parseInt(this.score) > 35 && window.difficultyLevel == 2) {
+      __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
+    }
+    if (parseInt(this.score) > 19 && window.difficultyLevel == 3) {
       __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
     }
     this.displayHighScores();
@@ -15621,16 +15630,17 @@ class Ui {
   displayUsernameFeedback() {
     let nameInput = document.getElementById('user-name');
 
-    nameInput.onkeyup = function (e) {
+    nameInput.onkeyup = (e) => {
       document.getElementById("name-feedback").innerHTML = "Saving...";
         clearTimeout(this.feedbackTimeout);
         this.feedbackTimeout = setTimeout(() => {
           document.getElementById("name-feedback").innerHTML = "Saved!";
           let userNameValue = document.getElementById('user-name').value;
           localStorage.setItem('userName', userNameValue);
+          document.activeElement.blur();
+          this.toolsCanvas.focus();
           setTimeout(() => {
             document.getElementById("name-feedback").innerHTML = "";
-            document.activeElement.blur();
           }, 1000);
         }, 1000);
 
