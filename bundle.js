@@ -14130,14 +14130,18 @@ function continueResumableUpload(location, authWrapper, url, blob, chunkSize, ma
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__game_js__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ui_js__ = __webpack_require__(86);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__keypresses_js__ = __webpack_require__(170);
 
 
 
+
+// window variables
 window.leftPressed = false;
 window.rightPressed = false;
 window.difficultyLevel = 1;
 window.muted = false;
 
+// default values (stage 1)
 let difficultyModifier = 1;
 let rotateSpeed = 118;
 let lineSpeed1 = 4.1;
@@ -14145,25 +14149,16 @@ let lineSpeed2 = 2.1;
 let lineLifeTimer = 108;
 let ballSpeed = .088;
 
-let bgmStartTimes1 = [0, 30.23, 50.177, 75.77, 126.03];
-let bgmStartTimes2 = [0, 32.34, 56.29, 77.65];
-let bgmStartTimes3 = [0, 9.9, 29.7, 49.5, 89.07, 108.88];
-
+// images
 const mainMenu = new Image();
 mainMenu.src = 'assets/images/MainMenu.png';
 
+// audio
 const menuBgm = new Audio('./assets/audio/Mangetsu.mp3');
 menuBgm.loop = true;
 
-const menu = new Audio('./assets/audio/Menu.mp3');
-
-const menuReject = new Audio('./assets/audio/MenuReject.mp3');
-
 const beginAudio = new Audio('./assets/audio/Begin.mp3');
 const gameOverAudio = new Audio('./assets/audio/GameOver.mp3');
-
-menuBgm.play();
-
 const bgm1 = new Audio('./assets/audio/CODABuildingTheme.mp3');
 bgm1.loop = true;
 
@@ -14187,6 +14182,11 @@ bgm3.addEventListener('timeupdate', function () {
 
 let bgm;
 let bgmStartTimes;
+let bgmStartTimes1 = [0, 30.23, 50.177, 75.77, 126.03];
+let bgmStartTimes2 = [0, 32.34, 56.29, 77.65];
+let bgmStartTimes3 = [0, 9.9, 29.7, 49.5, 89.07, 108.88];
+
+menuBgm.play();
 
 function setBgm() {
   if (window.difficultyLevel === 1) {
@@ -14205,6 +14205,7 @@ setBgm();
 
 const hitSound = new Audio('./assets/audio/hitSound.mp3');
 
+// initialize game when page is loaded
 document.addEventListener('DOMContentLoaded', () => {
   const gameCanvas = document.getElementById('game');
   gameCanvas.height = 500;
@@ -14248,6 +14249,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("user-name").value = localStorage.getItem('userName');
   }
 
+  // setting variables based on difficulty
   const setDifficulty1 = () => {
     window.difficultyLevel = 1;
     difficultyModifier = 1;
@@ -14284,168 +14286,40 @@ document.addEventListener('DOMContentLoaded', () => {
     ui.displayHighScores();
   };
 
-  window.addEventListener('keydown', checkKeyPressed, false);
-  window.addEventListener('keyup', checkKeyLifted, false);
-
   toolsCanvas.focus();
 
+  // handle keypresses
   function checkKeyPressed(event) {
     if (document.activeElement === toolsCanvas || document.activeElement === gameCanvas) {
       switch (event.keyCode) {
         case 27:
-          if (game.gameActive === true || game.gameOver === true) {
-            if (!window.muted) menuReject.play();
-            game.gameActive = false;
-            cancelAnimationFrame(game.frames);
-            game.ctx.clearRect(-300, -300, gameCanvas.width + 300, gameCanvas.height + 300);
-            ui.toolsCtx.clearRect(-300, -300, toolsCanvas.width + 300, toolsCanvas.height + 300);
-            ui.shouldDrawMainMenu = true;
-            game.hitSound.pause();
-            game.hitSound.currentTime = 0;
-            if (!window.muted) menuBgm.play();
-            bgm.pause();
-            bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
-            game.gameOver = false;
-          }
-
+          __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["d" /* handleEscape */](game, gameCanvas, ui, toolsCanvas, bgmStartTimes, bgm, menuBgm);
           break;
         case 32:
           if (window.difficultyLevel === 1) setDifficulty1();
           setBgm();
           gameOverAudio.pause();
-          if (game.gameActive === false) {
-            beginAudio.pause();
-            beginAudio.currentTime = 0;
-            if (!window.muted) beginAudio.play();
-            game.hitSound.pause();
-            game.hitSound.currentTime = 0;
-            game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
-              canvasContext,
-              gameCanvas,
-              toolsCanvas,
-              toolsCanvasContext,
-              ui,
-              bgm,
-              menuBgm,
-              gameOverAudio,
-              bgmStartTimes,
-              hitSound,
-              lineSpeed1,
-              lineSpeed2,
-              difficultyModifier,
-              rotateSpeed,
-              lineLifeTimer,
-              ballSpeed
-            );
-            ui.game = game;
-            ui.bgm = bgm;
-            ui.shouldDrawMainMenu = false;
-            game.gameActive = true;
-            game.gameOver = false;
-            menuBgm.pause();
-            bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
-            if (!window.muted) bgm.play();
-            game.begin();
-          }
-
+          handleSpace();
           break;
         case 37:
           window.leftPressed = true;
-          if (ui.shouldDrawMainMenu === true) {
-            if (window.difficultyLevel === 3) {
-              if (!window.muted) menu.play();
-              setDifficulty2();
-            } else if (window.difficultyLevel === 2) {
-              if (!window.muted) menu.play();
-              setDifficulty1();
-            }
-          }
-
+          __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["e" /* handleLeft */](ui, setDifficulty1, setDifficulty2);
           break;
         case 39:
           window.rightPressed = true;
-          if (ui.shouldDrawMainMenu === true) {
-            if (window.difficultyLevel === 1) {
-              ui.stage1Victory = localStorage.getItem('stage1Victory');
-              if (ui.stage1Victory === 'true') {
-                if (!window.muted) menu.play();
-                setDifficulty2();
-              } else {
-                if (!window.muted) menuReject.play();
-                ui.stage3LockedDisplay = false;
-                ui.stage2LockedDisplay = true;
-              }
-            } else if (window.difficultyLevel === 2) {
-              ui.stage2Victory = localStorage.getItem('stage2Victory');
-              if (ui.stage2Victory === 'true') {
-                if (!window.muted) menu.play();
-                setDifficulty3();
-              } else {
-                if (!window.muted) menuReject.play();
-                ui.stage2LockedDisplay = false;
-                ui.stage3LockedDisplay = true;
-              }
-            }
-          }
-
+          __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["g" /* handleRight */](ui, setDifficulty2, setDifficulty3);
           break;
         case 49:
-          if (ui.shouldDrawMainMenu === true) {
-            if (!window.muted) menu.play();
-            setDifficulty1();
-          }
-
+          __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["a" /* handle1 */](ui, setDifficulty1);
           break;
         case 50:
-          if (ui.shouldDrawMainMenu === true) {
-            ui.stage1Victory = localStorage.getItem('stage1Victory');
-            if (ui.stage1Victory === 'true') {
-              if (!window.muted) menu.play();
-              setDifficulty2();
-            } else {
-              if (!window.muted) menuReject.play();
-              ui.stage3LockedDisplay = false;
-              ui.stage2LockedDisplay = true;
-            }
-          }
-
+          __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["b" /* handle2 */](ui, setDifficulty2);
           break;
         case 51:
-          if (ui.shouldDrawMainMenu === true) {
-            ui.stage2Victory = localStorage.getItem('stage2Victory');
-            if (ui.stage2Victory === 'true') {
-              if (!window.muted) menu.play();
-              setDifficulty3();
-            } else {
-              if (!window.muted) menuReject.play();
-              ui.stage2LockedDisplay = false;
-              ui.stage3LockedDisplay = true;
-            }
-          }
-
+          __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["c" /* handle3 */](ui, setDifficulty3);
           break;
         case 77:
-          if (game.gameActive === true) {
-            if (window.muted) {
-              window.muted = false;
-              bgm.play();
-              ui.muteButtonDisplay = false;
-            } else {
-              window.muted = true;
-              bgm.pause();
-              ui.muteButtonDisplay = true;
-            }
-          } else {
-            if (window.muted) {
-              window.muted = false;
-              menuBgm.play();
-              ui.muteButtonDisplay = false;
-            } else {
-              window.muted = true;
-              menuBgm.pause();
-              ui.muteButtonDisplay = true;
-            }
-          }
+          __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["f" /* handleM */](game, ui, bgm, menuBgm);
       }
     }
   }
@@ -14460,6 +14334,47 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
     }
   }
+
+  window.addEventListener('keydown', checkKeyPressed, false);
+  window.addEventListener('keyup', checkKeyLifted, false);
+
+  function handleSpace() {
+    if (game.gameActive === false) {
+      beginAudio.pause();
+      beginAudio.currentTime = 0;
+      if (!window.muted) beginAudio.play();
+      game.hitSound.pause();
+      game.hitSound.currentTime = 0;
+      game = new __WEBPACK_IMPORTED_MODULE_0__game_js__["a" /* default */](
+        canvasContext,
+        gameCanvas,
+        toolsCanvas,
+        toolsCanvasContext,
+        ui,
+        bgm,
+        menuBgm,
+        gameOverAudio,
+        bgmStartTimes,
+        hitSound,
+        lineSpeed1,
+        lineSpeed2,
+        difficultyModifier,
+        rotateSpeed,
+        lineLifeTimer,
+        ballSpeed
+      );
+      ui.game = game;
+      ui.bgm = bgm;
+      ui.shouldDrawMainMenu = false;
+      game.gameActive = true;
+      game.gameOver = false;
+      menuBgm.pause();
+      bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
+      if (!window.muted) bgm.play();
+      game.begin();
+    }
+  }
+
 
 });
 
@@ -14499,19 +14414,21 @@ class Game {
     ballSpeed
   ) {
 
-
     document.addEventListener('visibilitychange', () => {
       this.escIfLoseFocus();
     });
-
+    //basic-setup
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
-    this.lineWidth = 10;
-
     this.toolsCtx = toolsCtx;
     this.toolsCanvas = toolsCanvas;
     this.ui = ui;
+    this.gameActive = false;
+    this.gameOver = false;
+    this.difficultyModifier = difficultyModifier;
+    this.center = new __WEBPACK_IMPORTED_MODULE_1__center_js__["a" /* default */](ctx, gameCanvas, this.difficultyModifier, 49);
 
+    //audio-setup
     this.bgm = bgm;
     this.menuBgm = menuBgm;
     this.bgmStartTimes = bgmStartTimes;
@@ -14519,44 +14436,37 @@ class Game {
     this.hitSound.volume = 0.7;
     this.gameOverAudio = gameOverAudio;
 
-    this.gameActive = false;
-    this.gameOver = false;
-    this.difficultyModifier = difficultyModifier;
-
+    //line-setup
+    this.lineWidth = 10;
     this.lines = [];
     this.lines2 = [];
     this.frames;
-
     this.specialLineCount = 0;
     this.specialFlag = false;
     this.specialLineFrequency = () => (
       Math.floor(Math.random() * 15 - (5 * (this.difficultyModifier - 1))) + 1
     );
-
     this.specialLineQuantity = this.difficultyModifier === 1 ? 9 : 11;
+    this.interval = 0;
+    this.interval2 = -(lineLifeTimer / 2);
+    this.lineSpeed1 = lineSpeed1;
+    this.lineSpeed2 = lineSpeed2;
+    this.lineLifeTimer = lineLifeTimer;
 
-    this.startTime;
-
+    //colors
     this.r = Math.floor(Math.random() * 250) + 6;
     this.g = Math.floor(Math.random() * 250) + 6;
     this.b = Math.floor(Math.random() * 250) + 6;
     this.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
 
-    this.center = new __WEBPACK_IMPORTED_MODULE_1__center_js__["a" /* default */](ctx, gameCanvas, this.difficultyModifier, 49);
-
-    this.interval = 0;
-    this.interval2 = -(lineLifeTimer / 2);
-
+    //rotation and player
     this.rotateTimer = 130;
     this.rotateDir = 'left';
     this.rotateSpeed = rotateSpeed;
-    this.lineSpeed1 = lineSpeed1;
-    this.lineSpeed2 = lineSpeed2;
-    this.lineLifeTimer = lineLifeTimer;
     this.ballSpeed = ballSpeed;
-
     this.player = new __WEBPACK_IMPORTED_MODULE_2__player_js__["a" /* default */](ctx, gameCanvas, this.color, this.ballSpeed);
 
+    //images
     this.gameOverScreen = new Image();
     this.gameOverScreen.src = 'assets/images/GameOver.png';
     this.stageCompleteScreen = new Image();
@@ -14611,7 +14521,7 @@ class Game {
 
   choosePattern(ctx) {
     let specialLines;
-    if (this.specialLineFrequency() === 1) {
+    if (this.specialLineFrequency() === 1) { // They rolled a special shape
       switch (Math.floor(Math.random() * this.specialLineQuantity) + 1) {
         case 1:
           this.specialFlag = true;
@@ -14659,7 +14569,7 @@ class Game {
             new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
           ];
           break;
-        case 6:
+        case 6: // Cases 6 and on are rainbow lines
           this.specialFlag = true;
           specialLines = [
             new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 9, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
@@ -14702,6 +14612,7 @@ class Game {
 
     if (specialLines) return specialLines;
 
+    // they didn't roll a special line
     let allDiagLines = [
                 new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
                 new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
@@ -14717,6 +14628,9 @@ class Game {
     return Math.floor(Math.random() * 3) === 1 ? allDiagLines : allLines;
   }
 
+// we have two shapes on screen at any given time, with an interval between them
+// this handles choosing the full shapes and removing 1-2 lines from non-special shapes
+// (to make it possible to get out)
   makePatterns(ctx) {
     this.specialFlag = false;
     let chosenLines = this.choosePattern(ctx);
@@ -14783,15 +14697,15 @@ class Game {
   setColor() {
     this.r += Math.floor(Math.random() * 250) + 2;
     this.r = this.r % 256;
-    if (this.r < 40) this.r = 40;
+    if (this.r < 40) this.r = 50;
 
     this.g += Math.floor(Math.random() * 250) + 2;
     this.g = this.g % 256;
-    if (this.g < 40) this.g = 40;
+    if (this.g < 40) this.g = 50;
 
     this.b += Math.floor(Math.random() * 250) + 2;
     this.b = this.b % 256;
-    if (this.b < 40) this.b = 40;
+    if (this.b < 40) this.b = 50;
     this.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
   }
 
@@ -14889,9 +14803,9 @@ class Game {
         this.lineSpeed2 += .001;
         this.lineLifeTimer -= .02;
       } else if (this.ui.score > 60 && window.difficultyLevel === 1 ) {
-        if (this.rotateSpeed > 50) this.rotateSpeed -= .05;
-        if (this.player.ballSpeed < .18) this.player.ballSpeed += .00005;
-        if (this.lineSpeed1 < 6.3) {
+        if (this.rotateSpeed > 60) this.rotateSpeed -= .05;
+        if (this.player.ballSpeed < .17) this.player.ballSpeed += .00005;
+        if (this.lineSpeed1 < 6.2) {
           this.lineSpeed1 += .001;
           this.lineSpeed2 += .001;
           this.lineLifeTimer -= .0321;
@@ -14910,20 +14824,22 @@ class Game {
       }
 
       this.setColor();
+      this.pulseCenter();
 
       this.doEvilThingsToFirstStage();
+      this.doEvilThingsToSecondStage();
       this.doEvilThingsToThirdStage();
-
-      this.pulseCenter();
 
       this.moveLines();
       this.player.render(ctx);
+
       this.lines.forEach((line) => {
         line.render(ctx);
       });
       this.lines2.forEach((line) => {
         line.render(ctx);
       });
+
       this.center.render(ctx);
     } else if (this.gameOver === true) {
       if (parseInt(this.ui.score) >= 60.0 && window.difficultyLevel === 3) {
@@ -14962,7 +14878,8 @@ class Line {
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
     this.game = game;
-    this.color = color;
+
+    // position variables
     this.x = 0;
     this.y = 0;
     this.halfWidth = this.gameCanvas.width / 2;
@@ -14970,17 +14887,23 @@ class Line {
     this.fullWidth = this.gameCanvas.width;
     this.fullHeight = this.gameCanvas.height;
 
+    this.color = color;
     this.lineSpeed1 = lineSpeed1;
     this.lineSpeed2 = lineSpeed2;
-
     this.lineWidth = lineWidth;
     this.type = type;
-    this.handleType(type);
     this.startPoint = [0, 0];
     this.endPoint = [0, 0];
+    this.handleTypes(type);
   }
 
-  handleType(type) {
+  handleTypes(type) {
+    this.handleDiagLines(type);
+    this.handleHorizVertLines(type);
+    this.handleSpecialLines(type);
+  }
+
+  handleDiagLines(type) {
     if (type === 1) {
       this.x = -200;
       this.y = 0;
@@ -14993,7 +14916,11 @@ class Line {
     } else if (type === 4) {
       this.x = -200;
       this.y = this.gameCanvas.height / 2;
-    } else if (type === 5) {
+    }
+  }
+
+  handleHorizVertLines(type) {
+    if (type === 5) {
       this.x = 0;
       this.y = 0;
     } else if (type === 6) {
@@ -15005,79 +14932,90 @@ class Line {
     } else if (type === 8) {
       this.x = 0;
       this.y = this.gameCanvas.height;
-    } else if (type === 9) {
-      this.x = 0;
-      this.y = this.gameCanvas.height;
-    } else if (type === 10) {
-      this.x = -200;
-      this.y = this.gameCanvas.height / 2;
-    } else if (type === 11) {
-      this.x = (this.gameCanvas.width / 2);
-      this.y = -200;
-    } else if (type === 12) {
-      this.x = 0;
-      this.y = 0;
     }
+  }
 
+  handleSpecialLines(type) {
+    if (type === 9) {
+     this.x = 0;
+     this.y = this.gameCanvas.height;
+   } else if (type === 10) {
+     this.x = -200;
+     this.y = this.gameCanvas.height / 2;
+   } else if (type === 11) {
+     this.x = (this.gameCanvas.width / 2);
+     this.y = -200;
+   } else if (type === 12) {
+     this.x = 0;
+     this.y = 0;
+   }
   }
 
   closeIn() {
     if (this.type < 5) {
-      if (this.type === 1) {
-        this.x = this.x + this.lineSpeed1;
-        this.y = this.y + this.lineSpeed1;
-      } else if (this.type === 2) {
-        this.x = this.x - this.lineSpeed1;
-        this.y = this.y - this.lineSpeed1;
-      } else if (this.type === 3) {
-        this.fullWidth = this.fullWidth - this.lineSpeed1;
-        this.y = this.y + this.lineSpeed1;
-      } else if (this.type === 4) {
-        this.x = this.x + this.lineSpeed1;
-        this.fullHeight = this.fullHeight - this.lineSpeed1;
-      }
-
+      this.handleDiagCloseIn();
+    } else if (this.type < 9) {
+      this.handleHorizVertCloseIn();
     } else {
-      if (this.type === 5) {
-        this.x = this.x + this.lineSpeed2;
-        this.y = this.y + this.lineSpeed2;
-        this.fullHeight = this.fullHeight - this.lineSpeed2;
-      } else if (this.type === 6) {
-        this.x = this.x - this.lineSpeed2;
-        this.y = this.y + this.lineSpeed2;
-        this.fullHeight = this.fullHeight - this.lineSpeed2;
-      } else if (this.type === 7) {
-        this.x = this.x + this.lineSpeed2;
-        this.y = this.y + this.lineSpeed2;
-        this.fullWidth = this.fullWidth - this.lineSpeed2;
-      } else if (this.type === 8) {
-        this.x = this.x + this.lineSpeed2;
-        this.y = this.y - this.lineSpeed2;
-        this.fullWidth = this.fullWidth - this.lineSpeed2;
-      } else if (this.type === 9) {
-        this.x = this.x + this.lineSpeed2 + 2;
-        this.y = this.y - this.lineSpeed2 - 2;
-        this.fullWidth = this.fullWidth - this.lineSpeed2 - 2;
-      } else if (this.type === 10) {
-        this.x = this.x + this.lineSpeed1 + 2;
-        this.fullHeight = this.fullHeight - this.lineSpeed1 - 2;
-      } else if (this.type === 11) {
-        this.fullWidth = this.fullWidth - this.lineSpeed1 - 2;
-        this.y = this.y + this.lineSpeed1 + 2;
-      } else if (this.type === 12) {
-        this.x = this.x + this.lineSpeed2 + 2;
-        this.y = this.y + this.lineSpeed2 + 2;
-        this.fullWidth = this.fullWidth - this.lineSpeed2 - 2;
-      }
-
+      this.handleSpecialCloseIn();
     }
-
   }
 
-  render(ctx) {
-    ctx.beginPath();
-    ctx.strokeStyle = this.color;
-    ctx.lineWidth = this.lineWidth;
+  handleDiagCloseIn() {
+    if (this.type === 1) {
+      this.x = this.x + this.lineSpeed1;
+      this.y = this.y + this.lineSpeed1;
+    } else if (this.type === 2) {
+      this.x = this.x - this.lineSpeed1;
+      this.y = this.y - this.lineSpeed1;
+    } else if (this.type === 3) {
+      this.fullWidth = this.fullWidth - this.lineSpeed1;
+      this.y = this.y + this.lineSpeed1;
+    } else if (this.type === 4) {
+      this.x = this.x + this.lineSpeed1;
+      this.fullHeight = this.fullHeight - this.lineSpeed1;
+    }
+  }
+
+  handleHorizVertCloseIn() {
+    if (this.type === 5) {
+      this.x = this.x + this.lineSpeed2;
+      this.y = this.y + this.lineSpeed2;
+      this.fullHeight = this.fullHeight - this.lineSpeed2;
+    } else if (this.type === 6) {
+      this.x = this.x - this.lineSpeed2;
+      this.y = this.y + this.lineSpeed2;
+      this.fullHeight = this.fullHeight - this.lineSpeed2;
+    } else if (this.type === 7) {
+      this.x = this.x + this.lineSpeed2;
+      this.y = this.y + this.lineSpeed2;
+      this.fullWidth = this.fullWidth - this.lineSpeed2;
+    } else if (this.type === 8) {
+      this.x = this.x + this.lineSpeed2;
+      this.y = this.y - this.lineSpeed2;
+      this.fullWidth = this.fullWidth - this.lineSpeed2;
+    }
+  }
+
+  handleSpecialCloseIn() {
+    if (this.type === 9) {
+      this.x = this.x + this.lineSpeed2 + 2;
+      this.y = this.y - this.lineSpeed2 - 2;
+      this.fullWidth = this.fullWidth - this.lineSpeed2 - 2;
+    } else if (this.type === 10) {
+      this.x = this.x + this.lineSpeed1 + 2;
+      this.fullHeight = this.fullHeight - this.lineSpeed1 - 2;
+    } else if (this.type === 11) {
+      this.fullWidth = this.fullWidth - this.lineSpeed1 - 2;
+      this.y = this.y + this.lineSpeed1 + 2;
+    } else if (this.type === 12) {
+      this.x = this.x + this.lineSpeed2 + 2;
+      this.y = this.y + this.lineSpeed2 + 2;
+      this.fullWidth = this.fullWidth - this.lineSpeed2 - 2;
+    }
+  }
+
+  renderDiagLines(ctx) {
     if (this.type === 1) {
       this.startPoint = [this.x, this.halfHeight];
       ctx.moveTo(this.x, this.halfHeight);
@@ -15098,7 +15036,11 @@ class Line {
       ctx.moveTo(this.x, this.y);
       this.endPoint = [this.halfWidth, this.fullHeight + 200];
       ctx.lineTo(this.halfWidth, this.fullHeight + 200);
-    } else if (this.type === 5) {
+    }
+  }
+
+  renderHorizVertLines(ctx) {
+    if (this.type === 5) {
       this.startPoint = [this.x, this.y];
       ctx.moveTo(this.x, this.y);
       this.endPoint = [this.x, this.fullHeight];
@@ -15118,7 +15060,11 @@ class Line {
       ctx.moveTo(this.x, this.y);
       this.endPoint = [this.fullWidth, this.y];
       ctx.lineTo(this.fullWidth, this.y);
-    } else if (this.type === 9) {
+    }
+  }
+
+  renderSpecialLines(ctx) {
+    if (this.type === 9) {
       this.startPoint = [this.x, this.y];
       ctx.moveTo(this.x, this.y);
       this.endPoint = [this.fullWidth, this.y];
@@ -15143,6 +15089,16 @@ class Line {
       ctx.lineTo(this.fullWidth, this.y);
       this.color = this.game.color;
     }
+  }
+
+  render(ctx) {
+    ctx.beginPath();
+    ctx.strokeStyle = this.color;
+    ctx.lineWidth = this.lineWidth;
+
+    this.renderDiagLines(ctx);
+    this.renderHorizVertLines(ctx);
+    this.renderSpecialLines(ctx);
 
     ctx.closePath();
     ctx.stroke();
@@ -15415,7 +15371,13 @@ class Ui {
     this.toolsCtx.save();
     this.toolsCtx.beginPath();
     this.toolsCtx.fillStyle = 'white';
+    this.handleStageCompletion(); // saving to localstorage
+    this.toolsCtx.font = '50px Orbitron';
+    this.toolsCtx.fillText(this.score, this.toolsCanvas.width - 365, 60);
+    this.toolsCtx.restore();
+  }
 
+  handleStageCompletion() {
     if (parseInt(this.score) >= 60.0) {
       this.toolsCtx.fillStyle = 'lightgreen';
       if (window.difficultyLevel === 1) {
@@ -15426,10 +15388,6 @@ class Ui {
         localStorage.setItem('stage3Victory', 'true');
       }
     }
-
-    this.toolsCtx.font = '50px Orbitron';
-    this.toolsCtx.fillText(this.score, this.toolsCanvas.width - 365, 60);
-    this.toolsCtx.restore();
   }
 
   drawHighScore() {
@@ -27826,6 +27784,143 @@ function stop(id) {
 }
 
 //# sourceMappingURL=backoff.js.map
+
+
+/***/ }),
+/* 170 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const menu = new Audio('./assets/audio/Menu.mp3');
+const menuReject = new Audio('./assets/audio/MenuReject.mp3');
+
+const handleEscape = (game, gameCanvas, ui, toolsCanvas, bgmStartTimes, bgm, menuBgm) => {
+  if (game.gameActive === true || game.gameOver === true) {
+    if (!window.muted) menuReject.play();
+    game.gameActive = false;
+    cancelAnimationFrame(game.frames);
+    game.ctx.clearRect(-300, -300, gameCanvas.width + 300, gameCanvas.height + 300);
+    ui.toolsCtx.clearRect(-300, -300, toolsCanvas.width + 300, toolsCanvas.height + 300);
+    ui.shouldDrawMainMenu = true;
+    game.hitSound.pause();
+    game.hitSound.currentTime = 0;
+    if (!window.muted) menuBgm.play();
+    bgm.pause();
+    bgm.currentTime = bgmStartTimes[Math.floor(Math.random() * bgmStartTimes.length)];
+    game.gameOver = false;
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["d"] = handleEscape;
+
+
+const handleLeft = (ui, setDifficulty1, setDifficulty2) => {
+  if (ui.shouldDrawMainMenu === true) {
+    if (window.difficultyLevel === 3) {
+      if (!window.muted) menu.play();
+      setDifficulty2();
+    } else if (window.difficultyLevel === 2) {
+      if (!window.muted) menu.play();
+      setDifficulty1();
+    }
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["e"] = handleLeft;
+
+
+const handleRight = (ui, setDifficulty2, setDifficulty3) => {
+  if (ui.shouldDrawMainMenu === true) {
+    if (window.difficultyLevel === 1) {
+      ui.stage1Victory = localStorage.getItem('stage1Victory');
+      if (ui.stage1Victory === 'true') {
+        if (!window.muted) menu.play();
+        setDifficulty2();
+      } else {
+        if (!window.muted) menuReject.play();
+        ui.stage3LockedDisplay = false;
+        ui.stage2LockedDisplay = true;
+      }
+    } else if (window.difficultyLevel === 2) {
+      ui.stage2Victory = localStorage.getItem('stage2Victory');
+      if (ui.stage2Victory === 'true') {
+        if (!window.muted) menu.play();
+        setDifficulty3();
+      } else {
+        if (!window.muted) menuReject.play();
+        ui.stage2LockedDisplay = false;
+        ui.stage3LockedDisplay = true;
+      }
+    }
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["g"] = handleRight;
+
+
+const handle1 = (ui, setDifficulty1) => {
+  if (ui.shouldDrawMainMenu === true) {
+    if (!window.muted) menu.play();
+    setDifficulty1();
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = handle1;
+
+
+const handle2 = (ui, setDifficulty2) => {
+  if (ui.shouldDrawMainMenu === true) {
+    ui.stage1Victory = localStorage.getItem('stage1Victory');
+    if (ui.stage1Victory === 'true') {
+      if (!window.muted) menu.play();
+      setDifficulty2();
+    } else {
+      if (!window.muted) menuReject.play();
+      ui.stage3LockedDisplay = false;
+      ui.stage2LockedDisplay = true;
+    }
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["b"] = handle2;
+
+
+const handle3 = (ui, setDifficulty3) => {
+  if (ui.shouldDrawMainMenu === true) {
+    ui.stage2Victory = localStorage.getItem('stage2Victory');
+    if (ui.stage2Victory === 'true') {
+      if (!window.muted) menu.play();
+      setDifficulty3();
+    } else {
+      if (!window.muted) menuReject.play();
+      ui.stage2LockedDisplay = false;
+      ui.stage3LockedDisplay = true;
+    }
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["c"] = handle3;
+
+
+const handleM = (game, ui, bgm, menuBgm) => {
+  if (game.gameActive === true) {
+    if (window.muted) {
+      window.muted = false;
+      bgm.play();
+      ui.muteButtonDisplay = false;
+    } else {
+      window.muted = true;
+      bgm.pause();
+      ui.muteButtonDisplay = true;
+    }
+  } else {
+    if (window.muted) {
+      window.muted = false;
+      menuBgm.play();
+      ui.muteButtonDisplay = false;
+    } else {
+      window.muted = true;
+      menuBgm.pause();
+      ui.muteButtonDisplay = true;
+    }
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["f"] = handleM;
+
 
 
 /***/ })
