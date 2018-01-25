@@ -15574,9 +15574,7 @@ class Ui {
       score: this.score,
       invscore: -(this.score)
     }];
-    console.log(parseInt(this.score))
-    console.log(parseInt(this.score) > 10)
-    if (parseInt(this.score) > 10) {
+    if (parseInt(this.score) > 19) {
       __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
     }
     this.displayHighScores();
@@ -15632,8 +15630,9 @@ class Ui {
           localStorage.setItem('userName', userNameValue);
           setTimeout(() => {
             document.getElementById("name-feedback").innerHTML = "";
+            document.activeElement.blur();
           }, 1000);
-        }, 500);
+        }, 1000);
 
     };
   }
