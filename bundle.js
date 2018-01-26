@@ -14249,8 +14249,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("user-name").value = localStorage.getItem('userName');
   }
 
+  let r = Math.floor(Math.random() * 250) + 6;
+  let g = Math.floor(Math.random() * 250) + 6;
+  let b = Math.floor(Math.random() * 250) + 6;
+  let r2 = Math.floor(Math.random() * 250) + 6;
+  let g2 = Math.floor(Math.random() * 250) + 6;
+  let b2 = Math.floor(Math.random() * 250) + 6;
+
   // setting variables based on difficulty
   const setDifficulty1 = () => {
+    gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${r},${g}, ${b},0.73) 0%,rgba(${r2},${g2}, ${b2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
     window.difficultyLevel = 1;
     difficultyModifier = 1;
     setBgm();
@@ -14263,6 +14271,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const setDifficulty2 = () => {
+    gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${r},${g}, ${b},0.73) 0%,rgba(${r2},${g2}, ${b2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
     window.difficultyLevel = 2;
     difficultyModifier = 2;
     setBgm();
@@ -14275,6 +14284,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const setDifficulty3 = () => {
+    gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${r},${g}, ${b},0.73) 0%,rgba(${r2},${g2}, ${b2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
     window.difficultyLevel = 3;
     difficultyModifier = 3;
     setBgm();
@@ -14458,6 +14468,21 @@ class Game {
     this.g = Math.floor(Math.random() * 250) + 6;
     this.b = Math.floor(Math.random() * 250) + 6;
     this.color = 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
+    this.colorChangeTimer = 0;
+
+    this.bgrUP = true;
+    this.bggUP = true;
+    this.bgbUP = true;
+    this.bgr2UP = true;
+    this.bgg2UP = true;
+    this.bgb2UP = true;
+
+    this.backgroundR = Math.floor(Math.random() * 250) + 6;
+    this.backgroundG = Math.floor(Math.random() * 250) + 6;
+    this.backgroundB = Math.floor(Math.random() * 250) + 6;
+    this.backgroundR2 = Math.floor(Math.random() * 250) + 6;
+    this.backgroundG2 = Math.floor(Math.random() * 250) + 6;
+    this.backgroundB2 = Math.floor(Math.random() * 250) + 6;
 
     //rotation and player
     this.rotateTimer = 130;
@@ -14473,6 +14498,31 @@ class Game {
     this.stageCompleteScreen.src = 'assets/images/StageComplete.png';
     this.gameCompleteScreen = new Image();
     this.gameCompleteScreen.src = 'assets/images/GameComplete.png';
+  }
+
+  colorChangeBackground() {
+
+    if(this.backgroundR > 254) this.bgrUP = false;
+    if(this.backgroundR < 1) this.bgrUP = true;
+    this.bgrUP === true ? this.backgroundR += (Math.floor(Math.random() * 4) + 1) : this.backgroundR -= (Math.floor(Math.random() * 6) + 1);
+    if(this.backgroundG > 254) this.bggUP = false;
+    if(this.backgroundG < 1) this.bggUP = true;
+    this.bggUP === true ? this.backgroundG += (Math.floor(Math.random() * 4) + 1) : this.backgroundG -= (Math.floor(Math.random() * 6) + 1);
+    if(this.backgroundB > 254) this.bgbUP = false;
+    if(this.backgroundB < 1) this.bgbUP = true;
+    this.bgbUP === true ? this.backgroundB += (Math.floor(Math.random() * 4) + 1) : this.backgroundB -= (Math.floor(Math.random() * 6) + 1);
+    if(this.backgroundR2 > 254) this.bgr2UP = false;
+    if(this.backgroundR2 < 1) this.bgr2UP = true;
+    this.bgr2UP === true ? this.backgroundR2 += (Math.floor(Math.random() * 6) + 1) : this.backgroundR2 -= (Math.floor(Math.random() * 4) + 1);
+    if(this.backgroundG2 > 254) this.bgg2UP = false;
+    if(this.backgroundG2 < 1) this.bgg2UP = true;
+    this.bgg2UP === true ? this.backgroundG2 += (Math.floor(Math.random() * 6) + 1) : this.backgroundG2 -= (Math.floor(Math.random() * 4) + 1);
+    if(this.backgroundB2 > 254) this.bgb2UP = false;
+    if(this.backgroundB2 < 1) this.bgb2UP = true;
+    this.bgb2UP === true ? this.backgroundB2 += (Math.floor(Math.random() * 6) + 1) : this.backgroundB2 -= (Math.floor(Math.random() * 4) + 1);
+
+    this.gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${this.backgroundR},${this.backgroundG}, ${this.backgroundB},0.73) 0%,rgba(${this.backgroundR2},${this.backgroundG2}, ${this.backgroundB2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
+
   }
 
   moveLines() {
@@ -14794,6 +14844,14 @@ class Game {
   render(ctx) {
 
     if (this.gameActive === true) {
+
+      if (this.colorChangeTimer > 4) {
+        this.colorChangeBackground();
+        this.colorChangeTimer = 0;
+      } else {
+        this.colorChangeTimer += 1;
+      }
+
       this.makePatterns(ctx);
 
       if (this.ui.score > 60.0 && window.difficultyLevel !== 1) {

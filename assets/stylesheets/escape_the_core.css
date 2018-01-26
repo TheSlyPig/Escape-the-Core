@@ -107,14 +107,13 @@ a:hover {
 }
 
 #game {
-  background-color: black;
   min-height: 500px;
   min-width: 500px;
   background-position: center;
   position: relative;
-  transform: scaleX()(1);
+  transform: scale(1.23);
   z-index: 6;
-  margin-top: 5px;
+  margin-top: 45px;
 }
 
 #tools {
