@@ -14151,7 +14151,7 @@ let ballSpeed = .088;
 
 // images
 const mainMenu = new Image();
-mainMenu.src = 'assets/images/MainMenu.png';
+mainMenu.src = './assets/images/MainMenu.png';
 
 // audio
 const menuBgm = new Audio('./assets/audio/Mangetsu.mp3');
@@ -14249,12 +14249,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("user-name").value = localStorage.getItem('userName');
   }
 
-  let r = Math.floor(Math.random() * 250) + 6;
-  let g = Math.floor(Math.random() * 250) + 6;
-  let b = Math.floor(Math.random() * 250) + 6;
-  let r2 = Math.floor(Math.random() * 250) + 6;
-  let g2 = Math.floor(Math.random() * 250) + 6;
-  let b2 = Math.floor(Math.random() * 250) + 6;
+  let r = Math.floor(Math.random() * 150) + 3;
+  let g = Math.floor(Math.random() * 150) + 3;
+  let b = Math.floor(Math.random() * 150) + 3;
+  let r2 = Math.floor(Math.random() * 120) + 120;
+  let g2 = Math.floor(Math.random() * 120) + 120;
+  let b2 = Math.floor(Math.random() * 120) + 120;
 
   // setting variables based on difficulty
   const setDifficulty1 = () => {
@@ -14297,12 +14297,23 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   toolsCanvas.focus();
+  canvasContext.save();
+  canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+  canvasContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+  canvasContext.restore();
+  gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${r},${g}, ${b},0.73) 0%,rgba(${r2},${g2}, ${b2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
 
   // handle keypresses
   function checkKeyPressed(event) {
     if (document.activeElement === toolsCanvas || document.activeElement === gameCanvas) {
       switch (event.keyCode) {
         case 27:
+          toolsCanvas.focus();
+          canvasContext.save();
+          canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+          canvasContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+          canvasContext.restore();
+          gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${r},${g}, ${b},0.73) 0%,rgba(${r2},${g2}, ${b2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
           __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["d" /* handleEscape */](game, gameCanvas, ui, toolsCanvas, bgmStartTimes, bgm, menuBgm);
           break;
         case 32:
@@ -14908,8 +14919,10 @@ class Game {
       }
 
       this.checkCollision();
-      ctx.clearRect(-700, -700, this.gameCanvas.width + 700, this.gameCanvas.height + 700);
-
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+      ctx.restore();
       if (this.rotateTimer < 1) {
         this.rotate(ctx, true);
         this.rotateTimer = Math.floor(Math.random() * 190) + 70;
@@ -15532,14 +15545,14 @@ class Ui {
       this.toolsCtx.beginPath();
       this.toolsCtx.strokeStyle = 'red';
       this.toolsCtx.lineWidth = 4;
-      this.toolsCtx.moveTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 27);
-      this.toolsCtx.lineTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 43);
-      this.toolsCtx.moveTo(this.toolsCanvas.width - 183, this.toolsCanvas.height - 43);
-      this.toolsCtx.lineTo(this.toolsCanvas.width - 156, this.toolsCanvas.height - 43);
-      this.toolsCtx.moveTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 43);
-      this.toolsCtx.lineTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 27);
-      this.toolsCtx.moveTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 43);
-      this.toolsCtx.lineTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 27);
+      this.toolsCtx.moveTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 13);
+      this.toolsCtx.lineTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 30);
+      this.toolsCtx.moveTo(this.toolsCanvas.width - 183, this.toolsCanvas.height - 30);
+      this.toolsCtx.lineTo(this.toolsCanvas.width - 156, this.toolsCanvas.height - 30);
+      this.toolsCtx.moveTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 30);
+      this.toolsCtx.lineTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 13);
+      this.toolsCtx.moveTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 30);
+      this.toolsCtx.lineTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 13);
       this.toolsCtx.closePath();
       this.toolsCtx.stroke();
     }
