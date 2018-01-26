@@ -14306,9 +14306,6 @@ document.addEventListener('DOMContentLoaded', () => {
           __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["d" /* handleEscape */](game, gameCanvas, ui, toolsCanvas, bgmStartTimes, bgm, menuBgm);
           break;
         case 32:
-          if (window.difficultyLevel === 1) setDifficulty1();
-          setBgm();
-          gameOverAudio.pause();
           handleSpace();
           break;
         case 37:
@@ -14350,6 +14347,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleSpace() {
     if (game.gameActive === false) {
+      if (window.difficultyLevel === 1) setDifficulty1();
+      setBgm();
+      gameOverAudio.pause();
       beginAudio.pause();
       beginAudio.currentTime = 0;
       if (!window.muted) beginAudio.play();
@@ -14502,22 +14502,22 @@ class Game {
 
   colorChangeBackground() {
 
-    if(this.backgroundR > 254) this.bgrUP = false;
+    if(this.backgroundR > 220) this.bgrUP = false;
     if(this.backgroundR < 1) this.bgrUP = true;
     this.bgrUP === true ? this.backgroundR += (Math.floor(Math.random() * 4) + 1) : this.backgroundR -= (Math.floor(Math.random() * 6) + 1);
-    if(this.backgroundG > 254) this.bggUP = false;
+    if(this.backgroundG > 220) this.bggUP = false;
     if(this.backgroundG < 1) this.bggUP = true;
     this.bggUP === true ? this.backgroundG += (Math.floor(Math.random() * 4) + 1) : this.backgroundG -= (Math.floor(Math.random() * 6) + 1);
-    if(this.backgroundB > 254) this.bgbUP = false;
+    if(this.backgroundB > 220) this.bgbUP = false;
     if(this.backgroundB < 1) this.bgbUP = true;
     this.bgbUP === true ? this.backgroundB += (Math.floor(Math.random() * 4) + 1) : this.backgroundB -= (Math.floor(Math.random() * 6) + 1);
-    if(this.backgroundR2 > 254) this.bgr2UP = false;
+    if(this.backgroundR2 > 220) this.bgr2UP = false;
     if(this.backgroundR2 < 1) this.bgr2UP = true;
     this.bgr2UP === true ? this.backgroundR2 += (Math.floor(Math.random() * 6) + 1) : this.backgroundR2 -= (Math.floor(Math.random() * 4) + 1);
-    if(this.backgroundG2 > 254) this.bgg2UP = false;
+    if(this.backgroundG2 > 220) this.bgg2UP = false;
     if(this.backgroundG2 < 1) this.bgg2UP = true;
     this.bgg2UP === true ? this.backgroundG2 += (Math.floor(Math.random() * 6) + 1) : this.backgroundG2 -= (Math.floor(Math.random() * 4) + 1);
-    if(this.backgroundB2 > 254) this.bgb2UP = false;
+    if(this.backgroundB2 > 220) this.bgb2UP = false;
     if(this.backgroundB2 < 1) this.bgb2UP = true;
     this.bgb2UP === true ? this.backgroundB2 += (Math.floor(Math.random() * 6) + 1) : this.backgroundB2 -= (Math.floor(Math.random() * 4) + 1);
 
@@ -14570,91 +14570,92 @@ class Game {
   }
 
   choosePattern(ctx) {
+    let currRgb = `rgb(${this.backgroundR + 80}, ${this.backgroundG + 80}, ${this.backgroundB + 80})`;
     let specialLines;
     if (this.specialLineFrequency() === 1) { // They rolled a special shape
       switch (Math.floor(Math.random() * this.specialLineQuantity) + 1) {
         case 1:
           this.specialFlag = true;
           specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
           ];
           break;
         case 2:
           this.specialFlag = true;
           specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
           ];
           break;
         case 3:
           this.specialFlag = true;
           specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
           ];
           break;
         case 4:
           this.specialFlag = true;
           specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
           ];
           break;
         case 5:
           this.specialFlag = true;
           specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
           ];
           break;
         case 6: // Cases 6 and on are rainbow lines
           this.specialFlag = true;
           specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 9, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 9, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
           ];
           break;
         case 7:
           this.specialFlag = true;
           specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 10, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 10, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
           ];
           break;
         case 8:
           this.specialFlag = true;
           specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 11, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 11, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
           ];
           break;
         case 9:
           this.specialFlag = true;
           specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 12, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 12, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
           ];
           break;
         case 10:
           this.specialFlag = true;
           specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 10, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 11, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 10, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 11, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
           ];
           break;
         case 11:
           this.specialFlag = true;
           specialLines = [
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 9, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
-            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 12, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 9, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
+            new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 12, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth, this),
           ];
           break;
       }
@@ -14664,16 +14665,16 @@ class Game {
 
     // they didn't roll a special line
     let allDiagLines = [
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 4, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 1, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 2, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 3, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 4, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
                 ];
     let allLines = [
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
-                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, this.color, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 5, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 6, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 7, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
+                new __WEBPACK_IMPORTED_MODULE_0__line_js__["a" /* default */](ctx, this.gameCanvas, 8, currRgb, this.lineSpeed1, this.lineSpeed2, this.lineWidth),
                 ];
     return Math.floor(Math.random() * 3) === 1 ? allDiagLines : allLines;
   }
@@ -14799,22 +14800,40 @@ class Game {
   }
 
   doEvilThingsToThirdStage() {
+    if (window.difficultyLevel === 3) {
+      if (this.backgroundR > 60) this.bgrUP = false;
+      if (this.backgroundG > 60) this.bggUP = false;
+      if (this.backgroundB > 60) this.bgbUP = false;
+      if (this.backgroundR2 > 60) this.bgr2UP = false;
+      if (this.backgroundG2 > 60) this.bgg2UP = false;
+      if (this.backgroundB2 > 60) this.bgb2UP = false;
+    }
     if (parseInt(this.ui.score) > 10 && window.difficultyLevel === 3) {
-      this.center.color = 'black';
-      if (parseInt(this.ui.score) > 20 && parseInt(this.ui.score) < 30) {
+      if (parseInt(this.ui.score) > 17 && parseInt(this.ui.score) < 30) {
         this.rotateSpeed = 0;
       }
-      if (parseInt(this.ui.score) > 30) {
+      if (parseInt(this.ui.score) > 23) {
         this.rotateSpeed = 59;
       }
-      if (parseInt(this.ui.score) > 35) {
-        this.lineWidth = 5;
+      if (parseInt(this.ui.score) > 33) {
+        this.rotateSpeed = 0;
+        this.specialLineFrequency = () => 1;
       }
       if (parseInt(this.ui.score) > 40) {
-        this.color = 'white';
-        this.rotateSpeed = 0;
+        this.rotateSpeed = 59;
+        this.specialLineFrequency = () => (
+          Math.floor(Math.random() * 15 - (5 * (this.difficultyModifier - 1))) + 1
+        );
       }
       if (parseInt(this.ui.score) > 45) {
+        this.color = 'white';
+        this.player.color = 'white';
+        this.center.color = 'white';
+        this.gameCanvas.style.backgroundImage = 'none';
+        this.gameCanvas.style.backgroundColor = 'black';
+        this.rotateSpeed = 0;
+      }
+      if (parseInt(this.ui.score) > 48) {
         this.rotateSpeed = 59;
       }
       if (parseInt(this.ui.score) > 50 && parseInt(this.ui.score.charAt(3)) % 2 !== 0) {
@@ -14845,12 +14864,14 @@ class Game {
 
     if (this.gameActive === true) {
 
-      if (this.colorChangeTimer > 4) {
+      if (this.colorChangeTimer > 2) {
         this.colorChangeBackground();
         this.colorChangeTimer = 0;
       } else {
         this.colorChangeTimer += 1;
       }
+
+      this.player.color = `rgb(${this.backgroundR + 70}, ${this.backgroundG + 70}, ${this.backgroundB + 70})`;
 
       this.makePatterns(ctx);
 
@@ -15176,9 +15197,9 @@ class Center {
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
     this.radius = radius;
-    if (difficultyModifier == 1) this.color = '#7C7C7C';
+    if (difficultyModifier == 1) this.color = 'white';
     if (difficultyModifier == 2) this.color = '#303030';
-    if (difficultyModifier == 3) this.color = '#131313';
+    if (difficultyModifier == 3) this.color = 'black';
   }
 
   render(ctx) {
@@ -15204,7 +15225,7 @@ class Player {
   constructor(ctx, gameCanvas, color, ballSpeed) {
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
-    this.color = color;
+    this.color = 'white';
     this.circle = {
       centerX: this.gameCanvas.width / 2,
       centerY: this.gameCanvas.height / 2,
@@ -15216,6 +15237,8 @@ class Player {
     this.ball.y = 0;
     this.ball.radius = 8;
     this.ballSpeed = ballSpeed;
+    ctx.strokeStyle = 'black';
+    ctx.stroke();
   }
 
   render(ctx) {
@@ -15231,8 +15254,6 @@ class Player {
     if (!window.leftPressed && !window.rightPressed) {
       this.ball.speed = 0;
     }
-
-    ctx.strokeStyle = this.color;
 
     this.ball.x = this.circle.centerX + Math.cos(this.circle.angle) * this.circle.radius;
     this.ball.y = this.circle.centerY + Math.sin(this.circle.angle) * this.circle.radius;
@@ -15491,19 +15512,21 @@ class Ui {
   }
 
   drawMuteButton() {
-    this.toolsCtx.beginPath();
-    this.toolsCtx.strokeStyle = 'red';
-    this.toolsCtx.lineWidth = 4;
-    this.toolsCtx.moveTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 27);
-    this.toolsCtx.lineTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 43);
-    this.toolsCtx.moveTo(this.toolsCanvas.width - 183, this.toolsCanvas.height - 43);
-    this.toolsCtx.lineTo(this.toolsCanvas.width - 156, this.toolsCanvas.height - 43);
-    this.toolsCtx.moveTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 43);
-    this.toolsCtx.lineTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 27);
-    this.toolsCtx.moveTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 43);
-    this.toolsCtx.lineTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 27);
-    this.toolsCtx.closePath();
-    this.toolsCtx.stroke();
+    if (!this.game.gameActive) {
+      this.toolsCtx.beginPath();
+      this.toolsCtx.strokeStyle = 'red';
+      this.toolsCtx.lineWidth = 4;
+      this.toolsCtx.moveTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 27);
+      this.toolsCtx.lineTo(this.toolsCanvas.width - 181, this.toolsCanvas.height - 43);
+      this.toolsCtx.moveTo(this.toolsCanvas.width - 183, this.toolsCanvas.height - 43);
+      this.toolsCtx.lineTo(this.toolsCanvas.width - 156, this.toolsCanvas.height - 43);
+      this.toolsCtx.moveTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 43);
+      this.toolsCtx.lineTo(this.toolsCanvas.width - 158, this.toolsCanvas.height - 27);
+      this.toolsCtx.moveTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 43);
+      this.toolsCtx.lineTo(this.toolsCanvas.width - 169, this.toolsCanvas.height - 27);
+      this.toolsCtx.closePath();
+      this.toolsCtx.stroke();
+    }
   }
 
   drawDifficulty() {

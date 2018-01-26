@@ -163,6 +163,8 @@ a:hover {
   position: absolute;
   top: 100px;
   left: 20px;
+  max-height: 260px;
+  height: 260px;
   z-index: 3;
   color: white;
   background-color: black;
