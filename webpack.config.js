@@ -1,7 +1,7 @@
 var path = require('path');
 
 module.exports = {
-  entry: './lib/escape_the_core.js',
+  entry: './lib/event_horizon.js',
   output: {
     path: path.resolve(__dirname),
     filename: 'bundle.js',

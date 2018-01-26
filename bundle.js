@@ -15226,8 +15226,8 @@ class Center {
     this.ctx = ctx;
     this.gameCanvas = gameCanvas;
     this.radius = radius;
-    if (difficultyModifier == 1) this.color = 'white';
-    if (difficultyModifier == 2) this.color = '#303030';
+    if (difficultyModifier == 1) this.color = 'black';
+    if (difficultyModifier == 2) this.color = 'black';
     if (difficultyModifier == 3) this.color = 'black';
   }
 
