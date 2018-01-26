@@ -1,10 +1,10 @@
-# Escape-the-Core
+# Event Horizon
 
-A fast-paced psuedo-rhythm game where the player must find the gaps in the enclosing shapes to escape the core.
+A fast-paced psuedo-rhythm game where the player must find the gaps in the enclosing shapes to escape the event horizon.
 
-Play now! - http://kegan-cunningham.me/Escape-the-Core
+Play now! - http://kegan-cunningham.me/Event-Horizon
 
-![Escape-the-Core](assets/images/EscapeTheCore.gif)
+![EventHorizon](assets/images/EventHorizon.gif)
 
 ## Features
 ✓ The player controls a small circle and can orbit the center circle by pressing the left and right keys.
@@ -32,7 +32,7 @@ avoid too much repetition.
 
 ✓ Google Firebase integration for global high score tracking. The player can input their name to be saved alongside the high score.
 
-![Escape-the-Core-Menu](assets/images/EscapeTheCoreMenu.gif)
+![EventHorizonMenu](assets/images/EventHorizonMenu.gif)
 
 ## Technologies, Libraries, APIs
 
