@@ -14308,13 +14308,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.activeElement === toolsCanvas || document.activeElement === gameCanvas) {
       switch (event.keyCode) {
         case 27:
-          toolsCanvas.focus();
-          canvasContext.save();
-          canvasContext.setTransform(1, 0, 0, 1, 0, 0);
-          canvasContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-          canvasContext.restore();
-          gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${r},${g}, ${b},0.73) 0%,rgba(${r2},${g2}, ${b2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
-          __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["d" /* handleEscape */](game, gameCanvas, ui, toolsCanvas, bgmStartTimes, bgm, menuBgm);
+        toolsCanvas.focus();
+        canvasContext.save();
+        canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+        canvasContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+        canvasContext.restore();
+        gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${r},${g}, ${b},0.73) 0%,rgba(${r2},${g2}, ${b2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
+        __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["d" /* handleEscape */](game, gameCanvas, ui, toolsCanvas, bgmStartTimes, bgm, menuBgm);
           break;
         case 32:
           handleSpace();

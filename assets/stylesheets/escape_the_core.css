@@ -219,7 +219,7 @@ a:hover {
   }
 
   #game {
-    margin-top: -57px !important;
+    margin-top: -76px !important;
   }
 
   #tools {
@@ -246,8 +246,8 @@ a:hover {
 
 @media only screen and (max-height: 610px) {
   #game {
-    transform: scale(.8);
-      margin-top: -120px !important;
+    transform: scale(.99);
+      margin-top: -200px !important;
   }
   #tools {
     transform: scale(.8);
@@ -260,8 +260,8 @@ a:hover {
     display: none;
   }
   #game {
-    transform: scale(.8);
-      margin-top: -120px !important;
+    transform: scale(.99);
+      margin-top: -200px !important;
   }
   #tools {
     transform: scale(.8);
@@ -274,7 +274,7 @@ a:hover {
     transform: scale(.8);
   }
   #game {
-    margin-top: -170px !important;
+    margin-top: 0px !important;
   }
   #tools {
     margin-top: -170px !important;
