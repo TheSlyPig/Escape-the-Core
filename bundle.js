@@ -14911,16 +14911,21 @@ class Game {
     }
 
     if (this.ui.score > 60 && window.difficultyLevel === 2 ) {
-      this.specialLineQuantity = 11;
-      this.specialLineFrequency = () => (
-        Math.floor(Math.random() * 6 ) + 1
-      );
-      this.backgroundR += 200;
-      this.backgroundG += 200;
-      this.backgroundB += 200;
-      this.backgroundR2 += 200;
-      this.backgroundG2 += 200;
-      this.backgroundB2 += 200;
+      if (this.intervalResetFlag === false) {
+        this.intervalResetFlag = true;
+        this.lines = [];
+        this.lines2 = [];
+        this.specialLineQuantity = 11;
+        this.specialLineFrequency = () => (
+          Math.floor(Math.random() * 6 ) + 1
+        );
+        this.backgroundR += 200;
+        this.backgroundG += 200;
+        this.backgroundB += 200;
+        this.backgroundR2 += 200;
+        this.backgroundG2 += 200;
+        this.backgroundB2 += 200;
+      }
     }
   }
 
