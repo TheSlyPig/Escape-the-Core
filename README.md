@@ -18,7 +18,7 @@ Play now! - http://kegan-cunningham.me/Event-Horizon
 ✓ The music loops when the song ends, and when starting or restarting the level it starts at one of several possible starting points to 
 avoid too much repetition.
 
-✓ Sound effects, including an encouraging voice-over every 10 seconds.
+✓ Sound effects, including a voice-over on game start and end.
 
 ✓ The colors of the lines are constantly changing.
 
@@ -28,7 +28,7 @@ avoid too much repetition.
 
 ✓ Takes advantage of local storage to remember the player's progress and best scores.
 
-✓ Multiple levels of increasing difficulty, that are unlocked by beating the previous level.
+✓ Multiple levels of increasing difficulty that are unlocked by beating the previous level.
 
 ✓ Google Firebase integration for global high score tracking. The player can input their name to be saved alongside the high score.
 
