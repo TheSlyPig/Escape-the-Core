@@ -14143,7 +14143,7 @@ window.muted = false;
 
 // default values (stage 1)
 let difficultyModifier = 1;
-let rotateSpeed = 118;
+let rotateSpeed = 300;
 let lineSpeed1 = 4.1;
 let lineSpeed2 = 2.1;
 let lineLifeTimer = 108;
@@ -14262,7 +14262,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.difficultyLevel = 1;
     difficultyModifier = 1;
     setBgm();
-    rotateSpeed = 160;
+    rotateSpeed = 300;
     lineSpeed1 = 3.5;
     lineSpeed2 = 1.7;
     lineLifeTimer = 138.7;
@@ -14811,7 +14811,13 @@ class Game {
 
 
   doEvilThingsToFirstStage() {
+    if (parseInt(this.ui.score) > 20 && window.difficultyLevel === 1) {
+      this.rotateSpeed = 200;
+    }
     if (parseInt(this.ui.score) > 30 && window.difficultyLevel === 1) {
+      this.rotateSpeed = 150;
+    }
+    if (parseInt(this.ui.score) > 50 && window.difficultyLevel === 1) {
       this.rotateSpeed = 120;
     }
     if (parseInt(this.ui.score) > 60 && window.difficultyLevel === 1) {
