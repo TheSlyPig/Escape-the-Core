@@ -15598,43 +15598,47 @@ class Ui {
   }
 
   stage2Locked() {
-    this.toolsCtx.save();
-    this.toolsCtx.beginPath();
-    this.toolsCtx.fillStyle = 'red';
-    this.toolsCtx.font = '22px Orbitron';
-    this.toolsCtx.fillText('Unlocked by reaching 60 seconds on Stage 1', 25, this.toolsCanvas.height - 230);
-    this.toolsCtx.strokeStyle = 'red';
-    this.toolsCtx.moveTo(85, this.toolsCanvas.height - 15);
-    this.toolsCtx.lineTo(150, this.toolsCanvas.height - 15);
-    this.toolsCtx.moveTo(85, this.toolsCanvas.height - 65);
-    this.toolsCtx.lineTo(150, this.toolsCanvas.height - 65);
-    this.toolsCtx.moveTo(88, this.toolsCanvas.height - 65);
-    this.toolsCtx.lineTo(88, this.toolsCanvas.height - 15);
-    this.toolsCtx.moveTo(147, this.toolsCanvas.height - 65);
-    this.toolsCtx.lineTo(147, this.toolsCanvas.height - 15);
-    this.toolsCtx.closePath();
-    this.toolsCtx.stroke();
-    this.toolsCtx.restore();
+    if (this.shouldDrawMainMenu === true) {
+      this.toolsCtx.save();
+      this.toolsCtx.beginPath();
+      this.toolsCtx.fillStyle = 'red';
+      this.toolsCtx.font = '22px Orbitron';
+      this.toolsCtx.fillText('Unlocked by reaching 60 seconds on Stage 1', 25, this.toolsCanvas.height - 230);
+      this.toolsCtx.strokeStyle = 'red';
+      this.toolsCtx.moveTo(85, this.toolsCanvas.height - 15);
+      this.toolsCtx.lineTo(150, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(85, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(150, this.toolsCanvas.height - 65);
+      this.toolsCtx.moveTo(88, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(88, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(147, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(147, this.toolsCanvas.height - 15);
+      this.toolsCtx.closePath();
+      this.toolsCtx.stroke();
+      this.toolsCtx.restore();
+    }
   }
 
   stage3Locked() {
-    this.toolsCtx.save();
-    this.toolsCtx.beginPath();
-    this.toolsCtx.fillStyle = 'red';
-    this.toolsCtx.font = '22px Orbitron';
-    this.toolsCtx.fillText('Unlocked by reaching 60 seconds on Stage 2', 25, this.toolsCanvas.height - 230);
-    this.toolsCtx.strokeStyle = 'red';
-    this.toolsCtx.moveTo(162, this.toolsCanvas.height - 15);
-    this.toolsCtx.lineTo(227, this.toolsCanvas.height - 15);
-    this.toolsCtx.moveTo(162, this.toolsCanvas.height - 65);
-    this.toolsCtx.lineTo(227, this.toolsCanvas.height - 65);
-    this.toolsCtx.moveTo(165, this.toolsCanvas.height - 65);
-    this.toolsCtx.lineTo(165, this.toolsCanvas.height - 15);
-    this.toolsCtx.moveTo(224, this.toolsCanvas.height - 65);
-    this.toolsCtx.lineTo(224, this.toolsCanvas.height - 15);
-    this.toolsCtx.closePath();
-    this.toolsCtx.stroke();
-    this.toolsCtx.restore();
+    if (this.shouldDrawMainMenu === true) {
+      this.toolsCtx.save();
+      this.toolsCtx.beginPath();
+      this.toolsCtx.fillStyle = 'red';
+      this.toolsCtx.font = '22px Orbitron';
+      this.toolsCtx.fillText('Unlocked by reaching 60 seconds on Stage 2', 25, this.toolsCanvas.height - 230);
+      this.toolsCtx.strokeStyle = 'red';
+      this.toolsCtx.moveTo(162, this.toolsCanvas.height - 15);
+      this.toolsCtx.lineTo(227, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(162, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(227, this.toolsCanvas.height - 65);
+      this.toolsCtx.moveTo(165, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(165, this.toolsCanvas.height - 15);
+      this.toolsCtx.moveTo(224, this.toolsCanvas.height - 65);
+      this.toolsCtx.lineTo(224, this.toolsCanvas.height - 15);
+      this.toolsCtx.closePath();
+      this.toolsCtx.stroke();
+      this.toolsCtx.restore();
+    }
   }
 
 
@@ -15651,7 +15655,7 @@ class Ui {
     if (parseInt(this.score) > 45 && window.difficultyLevel == 2) {
       __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
     }
-    if (parseInt(this.score) > 45 && window.difficultyLevel == 3) {
+    if (parseInt(this.score) > 9 && window.difficultyLevel == 3) {
       __WEBPACK_IMPORTED_MODULE_0__db_js__["a" /* default */].ref('scores').push(newScore);
     }
     this.displayHighScores();
