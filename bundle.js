@@ -14900,7 +14900,7 @@ class Game {
   }
 
   scalingDifficulty() {
-    if (this.ui.score > 60.0 && window.difficultyLevel !== 1) {
+    if (this.ui.score > 60.0 && window.difficultyLevel === 3) {
       if (this.rotateSpeed > 60) this.rotateSpeed -= .05;
       if (this.player.ballSpeed < .17) this.player.ballSpeed += .00005;
       this.lineSpeed1 += .001;
@@ -14908,6 +14908,19 @@ class Game {
       this.lineLifeTimer -= .02;
     } else if (this.ui.score > 60 && window.difficultyLevel === 1 ) {
       this.scalingDifficulty1();
+    }
+
+    if (this.ui.score > 60 && window.difficultyLevel === 2 ) {
+      this.specialLineQuantity = 11;
+      this.specialLineFrequency = () => (
+        Math.floor(Math.random() * 6 ) + 1
+      );
+      this.backgroundR += 200;
+      this.backgroundG += 200;
+      this.backgroundB += 200;
+      this.backgroundR2 += 200;
+      this.backgroundG2 += 200;
+      this.backgroundB2 += 200;
     }
   }
 
@@ -14946,6 +14959,10 @@ class Game {
         this.lineLifeTimer -= .0105;
       }
     }
+  }
+
+  scalingDifficulty2() {
+
   }
 
   render(ctx) {
@@ -15446,6 +15463,9 @@ class Ui {
     this.mainMenu = mainMenu;
     this.bgm = bgm;
 
+    this.cover = new Image();
+    this.cover.src = './assets/images/Stage2Cover.png';
+
     this.feedbackTimeout;
 
     this.stage2LockedDisplay = false;
@@ -15585,6 +15605,13 @@ class Ui {
       this.toolsCanvas.height / 2 - this.mainMenu.height / 2
     );
     this.drawDifficulty();
+  }
+
+  drawStage2Cover() {
+    this.toolsCtx.drawImage(this.cover,
+      this.toolsCanvas.width / 2 - this.mainMenu.width / 2,
+      this.toolsCanvas.height / 2 - this.mainMenu.height / 2
+    );
   }
 
   drawMuteButton() {
@@ -15770,6 +15797,11 @@ class Ui {
     const animateCallback = () => {
       this.toolsCtx.clearRect(0, 0, this.toolsCanvas.width, this.toolsCanvas.height);
       this.shouldDrawMainMenu === true ? this.drawMainMenu() : null;
+
+      if (this.score > 60 && window.difficultyLevel === 2 && this.shouldDrawMainMenu === false) {
+        this.drawStage2Cover();
+      }
+
       this.game.gameOver === false ? this.drawElapsedTime() : this.drawFinalScore();
       this.displayUsernameFeedback();
       if (this.highScore1 > 0 || this.highScore2 > 0 || this.highScore3 > 0) this.drawHighScore();
