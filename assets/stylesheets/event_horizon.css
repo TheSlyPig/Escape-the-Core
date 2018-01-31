@@ -1,3 +1,10 @@
+*, *:before, *:after {
+     -webkit-user-select: none;
+     -moz-user-select: none;
+     -ms-user-select: none;
+     user-select: none;
+}
+
 body {
   display: flex;
   justify-content: space-around;
