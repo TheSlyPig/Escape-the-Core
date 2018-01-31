@@ -133,6 +133,7 @@ a:hover {
   border: 1px solid white;
   margin-top: 5px;
   pointer-events: none;
+  touch-action: manipulation;
   -webkit-touch-callout: none;
   -webkit-user-select: none; /* Disable selection/copy in UIWebView */
 }
