@@ -14333,8 +14333,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.rightPressed = false;
   }
 
-  gameCanvas.addEventListener("mousedown", touchStart, false);
-  gameCanvas.addEventListener("mouseup", touchEnd, false);
+  gameCanvas.addEventListener("touchstart", touchStart, false);
+  gameCanvas.addEventListener("touchend", touchEnd, false);
 
   // handle keypresses
   function checkKeyPressed(event) {
