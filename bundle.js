@@ -14305,8 +14305,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // setup touch listeners
   const touchStart = (e) => {
-    const x = e.offsetX;
-    const y = e.offsetY;
+    const x = e.touches[0].clientX;
+    const y = e.touches[0].clientY;
     if(ui.shouldDrawMainMenu && y > 198 && y < 250) {
       handleSpace();
     } else if(ui.shouldDrawMainMenu === false && game.gameActive === false && y > 390) {
