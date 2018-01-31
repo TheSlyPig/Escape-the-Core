@@ -14303,18 +14303,45 @@ document.addEventListener('DOMContentLoaded', () => {
   canvasContext.restore();
   gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${r},${g}, ${b},0.73) 0%,rgba(${r2},${g2}, ${b2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
 
+  // setup touch listeners
+  const touchStart = (e) => {
+    const x = e.offsetX;
+    const y = e.offsetY;
+    if(ui.shouldDrawMainMenu && y > 198 && y < 250) {
+      handleSpace();
+    } else if(ui.shouldDrawMainMenu === false && game.gameActive === false && y > 390) {
+      handleEscape();
+    } else if(ui.shouldDrawMainMenu === false && game.gameActive === false) {
+      handleSpace();
+    } else if(x > 8 && x < 65 && y > 440 && y < 495) {
+      __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["a" /* handle1 */](ui, setDifficulty1);
+    } else if(x > 66 && x < 129 && y > 440 && y < 495) {
+      __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["b" /* handle2 */](ui, setDifficulty2);
+    } else if(x > 130 && x < 194 && y > 440 && y < 495) {
+      __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["c" /* handle3 */](ui, setDifficulty3);
+    } else if(x < 260) {
+      window.leftPressed = true;
+      __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["e" /* handleLeft */](ui, setDifficulty1, setDifficulty2);
+    } else {
+      window.rightPressed = true;
+      __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["g" /* handleRight */](ui, setDifficulty2, setDifficulty3);
+    }
+  }
+
+  const touchEnd = (e) => {
+    window.leftPressed = false;
+    window.rightPressed = false;
+  }
+
+  gameCanvas.addEventListener("mousedown", touchStart, false);
+  gameCanvas.addEventListener("mouseup", touchEnd, false);
+
   // handle keypresses
   function checkKeyPressed(event) {
     if (document.activeElement === toolsCanvas || document.activeElement === gameCanvas) {
       switch (event.keyCode) {
         case 27:
-        toolsCanvas.focus();
-        canvasContext.save();
-        canvasContext.setTransform(1, 0, 0, 1, 0, 0);
-        canvasContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-        canvasContext.restore();
-        gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${r},${g}, ${b},0.73) 0%,rgba(${r2},${g2}, ${b2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
-        __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["d" /* handleEscape */](game, gameCanvas, ui, toolsCanvas, bgmStartTimes, bgm, menuBgm);
+          handleEscape();
           break;
         case 32:
           handleSpace();
@@ -14355,6 +14382,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('keydown', checkKeyPressed, false);
   window.addEventListener('keyup', checkKeyLifted, false);
+
+  function handleEscape() {
+    toolsCanvas.focus();
+    canvasContext.save();
+    canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+    canvasContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+    canvasContext.restore();
+    gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${r},${g}, ${b},0.73) 0%,rgba(${r2},${g2}, ${b2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
+    __WEBPACK_IMPORTED_MODULE_2__keypresses_js__["d" /* handleEscape */](game, gameCanvas, ui, toolsCanvas, bgmStartTimes, bgm, menuBgm);
+  }
 
   function handleSpace() {
     if (game.gameActive === false) {
@@ -14594,7 +14631,6 @@ class Game {
     this.currRgb = `rgb(${this.backgroundR + 80}, ${this.backgroundG + 80}, ${this.backgroundB + 80})`;
     if (parseInt(this.ui.score) > 50 && window.difficultyLevel === 3) this.currRgb = 'black';
     let specialLines;
-    debugger
     if (typeof this.specialLineFrequency == "function" && this.specialLineFrequency() === 1) { // They rolled a special shape
       switch (Math.floor(Math.random() * this.specialLineQuantity) + 1) {
         case 1:

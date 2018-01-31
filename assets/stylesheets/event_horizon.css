@@ -126,6 +126,7 @@ a:hover {
   font-size: 150%;
   border: 1px solid white;
   margin-top: 5px;
+  pointer-events: none;
 }
 
 .back-arrow {
