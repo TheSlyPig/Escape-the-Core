@@ -14305,6 +14305,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // setup touch listeners
   const touchStart = (e) => {
+    e.preventDefault();
     const x = e.touches[0].pageX - e.touches[0].target.offsetLeft;
     const y = e.touches[0].pageY - e.touches[0].target.offsetTop;
     if(ui.shouldDrawMainMenu && y < 250) {
