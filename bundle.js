@@ -14307,7 +14307,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const touchStart = (e) => {
     const x = e.touches[0].pageX - e.touches[0].target.offsetLeft;
     const y = e.touches[0].pageY - e.touches[0].target.offsetTop;
-    if(ui.shouldDrawMainMenu && y > 198 && y < 250) {
+    if(ui.shouldDrawMainMenu && y < 250) {
       handleSpace();
     } else if(ui.shouldDrawMainMenu === false && game.gameActive === false && y > 390) {
       handleEscape();
