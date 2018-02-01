@@ -14333,7 +14333,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.leftPressed = false;
     window.rightPressed = false;
   }
-  
+
   toolsCanvas.addEventListener('touchstart', function(e) {
      e.preventDefault();
   });
