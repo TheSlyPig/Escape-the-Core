@@ -316,14 +316,14 @@ a:hover {
 }
 
 /* iphone 6, 6s */
-@media only screen and (max-device-width: 375px) and (max-device-height: 667px) and (-webkit-device-pixel-ratio: 2) {
+@media only screen and (min-device-width: 375px) and (max-device-height: 667px) and (-webkit-device-pixel-ratio: 2) {
 
   .scores {
     display: block;
     position: absolute;
-    top: 1000px;
-    left: 350px;
-    font-size: 170%;
+    top: 970px;
+    left: 300px;
+    font-size: 245%;
   }
 
   #game {
