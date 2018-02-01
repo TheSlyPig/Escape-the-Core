@@ -316,14 +316,14 @@ a:hover {
 }
 
 /* iphone 6, 6s */
-@media only screen and (min-device-width: 375px) and (max-device-height: 667px) and (-webkit-device-pixel-ratio: 2) {
+@media only screen and (min-device-width: 375px) and (max-device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation : portrait) {
 
   .scores {
     display: block;
     position: absolute;
     top: 970px;
     left: 300px;
-    font-size: 245%;
+    font-size: 215%;
   }
 
   #game {
@@ -338,7 +338,7 @@ a:hover {
 
 }
 /* iphone 6, 6s landscape*/
-@media only screen and (max-device-height: 375px) and (min-device-width: 667px) and (-webkit-device-pixel-ratio: 2) {
+@media only screen and (max-device-height: 375px) and (min-device-width: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation : landscape) {
 
   .scores {
     display: block;
