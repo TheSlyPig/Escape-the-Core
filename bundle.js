@@ -14164,7 +14164,7 @@ bgm1.loop = true;
 
 const bgm2 = new Audio('./assets/audio/BattleTheme1.mp3');
 bgm2.addEventListener('timeupdate', function () {
-  var buffer = .412;
+  var buffer = .454;
   if (this.currentTime > this.duration - buffer) {
     this.currentTime = 2.98;
     this.play();
