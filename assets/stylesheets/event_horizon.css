@@ -372,7 +372,7 @@ a:hover {
   .scores {
     display: block;
     position: absolute;
-    top: 100px;
+    bottom: 460px;
     left: 20px;
     font-size: 110%;
   }
