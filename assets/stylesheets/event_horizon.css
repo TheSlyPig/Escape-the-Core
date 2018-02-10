@@ -229,7 +229,7 @@ a:hover {
   .scores {
     display: block !important;
     position: absolute;
-    bottom: 200px;
+    bottom: 460px;
     top: auto;
     left: 350px;
     font-size: 165%;
@@ -269,7 +269,7 @@ a:hover {
   footer {
     position: absolute;
     right: 5px;
-    top: 100px;
+    bottom: 460px;
     max-width: 127px;
     max-height: 200px;
     border-bottom: 1px solid white;
