@@ -126,7 +126,7 @@ a:hover {
   margin-top: 47px;
   touch-action: manipulation;
   -webkit-touch-callout: none;
-  -webkit-user-select: none; /* Disable selection/copy in UIWebView */
+  -webkit-user-select: none;
 }
 
 #tools {
@@ -142,7 +142,7 @@ a:hover {
   pointer-events: none;
   touch-action: manipulation;
   -webkit-touch-callout: none;
-  -webkit-user-select: none; /* Disable selection/copy in UIWebView */
+  -webkit-user-select: none;
 }
 
 .back-arrow {
