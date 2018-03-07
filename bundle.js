@@ -14298,7 +14298,7 @@ document.addEventListener('DOMContentLoaded', () => {
   canvasContext.setTransform(1, 0, 0, 1, 0, 0);
   canvasContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
   canvasContext.restore();
-  gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${r},${g}, ${b},0.73) 0%,rgba(${r2},${g2}, ${b2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
+  gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${r},${g}, ${b},0.73) 0%,rgba(${r2},${g2}, ${b2},0.73) 100%)`;
 
   // setup touch listeners
   const touchStart = (e) => {
@@ -14588,7 +14588,7 @@ class Game {
     if(this.backgroundB2 < 1) this.bgb2UP = true;
     this.bgb2UP === true ? this.backgroundB2 += (Math.floor(Math.random() * 6) + 1) : this.backgroundB2 -= (Math.floor(Math.random() * 4) + 1);
 
-    this.gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${this.backgroundR},${this.backgroundG}, ${this.backgroundB},0.73) 0%,rgba(${this.backgroundR2},${this.backgroundG2}, ${this.backgroundB2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
+    this.gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${this.backgroundR},${this.backgroundG}, ${this.backgroundB},0.73) 0%,rgba(${this.backgroundR2},${this.backgroundG2}, ${this.backgroundB2},0.73) 100%)`;
 
   }
 
@@ -14912,7 +14912,7 @@ class Game {
       }
       if (parseInt(this.ui.score) > 47) {
         this.rotateSpeed = 59;
-        this.gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${this.backgroundR},${this.backgroundG}, ${this.backgroundB},0.73) 0%,rgba(${this.backgroundR2},${this.backgroundG2}, ${this.backgroundB2},0.73) 100%), url('./assets/images/BackgroundBlue.gif')`;
+        this.gameCanvas.style.backgroundImage = `linear-gradient(to bottom, rgba(${this.backgroundR},${this.backgroundG}, ${this.backgroundB},0.73) 0%,rgba(${this.backgroundR2},${this.backgroundG2}, ${this.backgroundB2},0.73) 100%)`;
         this.backgroundR += 2;
         this.backgroundG += 2;
         this.backgroundB += 2;
