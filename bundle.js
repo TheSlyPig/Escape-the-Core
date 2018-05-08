@@ -14139,7 +14139,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 window.leftPressed = false;
 window.rightPressed = false;
 window.difficultyLevel = 1;
-window.muted = false;
+window.muted = true;
 
 // default values (stage 1)
 let difficultyModifier = 1;
@@ -14150,6 +14150,9 @@ let lineLifeTimer = 108;
 let ballSpeed = .088;
 
 // images
+const playButton = new Image();
+playButton.src = './assets/images/PlayButton.png';
+
 const mainMenu = new Image();
 mainMenu.src = './assets/images/MainMenu.png';
 
@@ -14186,7 +14189,7 @@ let bgmStartTimes1 = [0, 30.23, 50.177, 75.77, 126.03];
 let bgmStartTimes2 = [0, 32.34, 56.29, 77.65];
 let bgmStartTimes3 = [0, 9.9, 29.7, 49.5, 89.07, 108.88];
 
-menuBgm.play();
+
 
 function setBgm() {
   if (window.difficultyLevel === 1) {
@@ -14207,6 +14210,7 @@ const hitSound = new Audio('./assets/audio/hitSound.mp3');
 
 // initialize game when page is loaded
 document.addEventListener('DOMContentLoaded', () => {
+
   const gameCanvas = document.getElementById('game');
   gameCanvas.height = 500;
   gameCanvas.width = 500;
@@ -14238,8 +14242,8 @@ document.addEventListener('DOMContentLoaded', () => {
     ballSpeed
   );
 
-  mainMenu.onload = () => {
-    ui = new __WEBPACK_IMPORTED_MODULE_1__ui_js__["a" /* default */](game, toolsCanvasContext, toolsCanvas, true, mainMenu, bgm);
+  playButton.onload = () => {
+    ui = new __WEBPACK_IMPORTED_MODULE_1__ui_js__["a" /* default */](game, toolsCanvasContext, toolsCanvas, false, mainMenu, bgm, playButton, true);
     ui.render();
     ui.displayHighScores();
   };
@@ -14403,7 +14407,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function handleSpace() {
-    if (game.gameActive === false) {
+    if (ui.shouldDrawPlayButton === true) {
+      let video = document.getElementById('background-blue');
+      video.play();
+      menuBgm.play();
+      window.muted = false;
+      ui.shouldDrawPlayButton = false;
+      ui.shouldDrawMainMenu = true;
+    } else if (game.gameActive === false) {
       if (window.difficultyLevel === 1) setDifficulty1();
       setBgm();
       gameOverAudio.pause();
@@ -14572,18 +14583,23 @@ class Game {
     if(this.backgroundR > 210) this.bgrUP = false;
     if(this.backgroundR < 1) this.bgrUP = true;
     this.bgrUP === true ? this.backgroundR += (Math.floor(Math.random() * 4) + 1) : this.backgroundR -= (Math.floor(Math.random() * 6) + 1);
+
     if(this.backgroundG > 210) this.bggUP = false;
     if(this.backgroundG < 1) this.bggUP = true;
     this.bggUP === true ? this.backgroundG += (Math.floor(Math.random() * 4) + 1) : this.backgroundG -= (Math.floor(Math.random() * 6) + 1);
+
     if(this.backgroundB > 210) this.bgbUP = false;
     if(this.backgroundB < 1) this.bgbUP = true;
     this.bgbUP === true ? this.backgroundB += (Math.floor(Math.random() * 4) + 1) : this.backgroundB -= (Math.floor(Math.random() * 6) + 1);
+
     if(this.backgroundR2 > 210) this.bgr2UP = false;
     if(this.backgroundR2 < 1) this.bgr2UP = true;
     this.bgr2UP === true ? this.backgroundR2 += (Math.floor(Math.random() * 6) + 1) : this.backgroundR2 -= (Math.floor(Math.random() * 4) + 1);
+
     if(this.backgroundG2 > 210) this.bgg2UP = false;
     if(this.backgroundG2 < 1) this.bgg2UP = true;
     this.bgg2UP === true ? this.backgroundG2 += (Math.floor(Math.random() * 6) + 1) : this.backgroundG2 -= (Math.floor(Math.random() * 4) + 1);
+
     if(this.backgroundB2 > 210) this.bgb2UP = false;
     if(this.backgroundB2 < 1) this.bgb2UP = true;
     this.bgb2UP === true ? this.backgroundB2 += (Math.floor(Math.random() * 6) + 1) : this.backgroundB2 -= (Math.floor(Math.random() * 4) + 1);
@@ -15010,10 +15026,6 @@ class Game {
         this.lineLifeTimer -= .0105;
       }
     }
-  }
-
-  scalingDifficulty2() {
-
   }
 
   render(ctx) {
@@ -15501,7 +15513,7 @@ module.exports = pointCircleCollision
 
 
 class Ui {
-  constructor(game, toolsCtx, toolsCanvas, shouldDrawMainMenu, mainMenu, bgm) {
+  constructor(game, toolsCtx, toolsCanvas, shouldDrawMainMenu, mainMenu, bgm, playButton, shouldDrawPlayButton) {
 
     this.game = game;
     this.toolsCtx = toolsCtx;
@@ -15511,7 +15523,9 @@ class Ui {
     this.highScore2 = 0;
     this.highScore3 = 0;
     this.shouldDrawMainMenu = shouldDrawMainMenu;
+    this.shouldDrawPlayButton = shouldDrawPlayButton;
     this.mainMenu = mainMenu;
+    this.playButton = playButton;
     this.bgm = bgm;
 
     this.cover = new Image();
@@ -15660,6 +15674,13 @@ class Ui {
     this.drawDifficulty();
   }
 
+  drawPlayButton() {
+    this.toolsCtx.drawImage(this.playButton,
+      this.toolsCanvas.width / 2 - this.toolsCanvas.width / 2,
+      this.toolsCanvas.height / 2 - this.toolsCanvas.height / 2
+    );
+  }
+
   drawStage2Cover() {
     this.toolsCtx.drawImage(this.cover,
       this.toolsCanvas.width / 2 - this.toolsCanvas.width / 2,
@@ -15675,7 +15696,7 @@ class Ui {
   }
 
   drawMuteButton() {
-    if (this.shouldDrawMainMenu === true) {
+    if (this.shouldDrawMainMenu === true && this.shouldDrawPlayButton === false) {
       this.toolsCtx.beginPath();
       this.toolsCtx.strokeStyle = 'red';
       this.toolsCtx.lineWidth = 4;
@@ -15856,7 +15877,11 @@ class Ui {
   render() {
     const animateCallback = () => {
       this.toolsCtx.clearRect(0, 0, this.toolsCanvas.width, this.toolsCanvas.height);
-      this.shouldDrawMainMenu === true ? this.drawMainMenu() : null;
+      if(this.shouldDrawPlayButton === false){
+        this.shouldDrawMainMenu === true ? this.drawMainMenu() : null;
+      } else {
+        this.drawPlayButton();
+      }
 
       if (this.score > 60 && this.score < 80 && window.difficultyLevel === 2 && this.shouldDrawMainMenu === false) {
         this.drawStage2Cover();
