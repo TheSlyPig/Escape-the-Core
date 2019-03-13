@@ -1,6 +1,6 @@
 # Event Horizon
 
-A fast-paced psuedo-rhythm game where the player must find the gaps in the enclosing shapes to escape the event horizon.
+A fast-paced pseudo-rhythm game where the player must find the gaps in the enclosing shapes to escape the event horizon.
 
 Play now! - http://kegan-cunningham.me/Event-Horizon
 
